@@ -4,7 +4,7 @@ all: build
 
 build:
 	@mkdir -p build
-	@cd build/ && cmake .. && make
+	@cd build/ && cmake .. && make -j4
 	# cp --no-preserve=mode,ownership -r ${CEF_PACKAGE_PATH}/lib/* ./build/lib/
 	# cp --no-preserve=mode,ownership -r ${CEF_PACKAGE_PATH}/share/cef/* ./build/lib/
 	cp build/compile_commands.json .

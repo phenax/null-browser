@@ -15,6 +15,8 @@
             clang-tools
 
             pkgs.qt6.full
+            luajit
+            # lua51Packages.lua
             # libcef
             # nss
           ];
