@@ -6,12 +6,12 @@
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
   QWidget mainWindow;
-  mainWindow.setWindowTitle("Qt6 WebEngine");
+  mainWindow.setWindowTitle("web-browser");
 
-  QVBoxLayout *layout = new QVBoxLayout(&mainWindow);
-  QWebEngineView *view = new QWebEngineView();
+  auto layout = new QVBoxLayout(&mainWindow);
+  auto view = new QWebEngineView();
   view->setFixedSize(400, 400);
-  view->setUrl(QUrl("https://www.qt.io"));
+  view->setUrl(QUrl("https://ediblemonad.dev"));
 
   layout->addWidget(view);
   mainWindow.show();

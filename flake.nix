@@ -7,13 +7,21 @@
   outputs = { self, nixpkgs, flake-utils, ... }:
     let
       shell = { pkgs, ... }:
-        pkgs.mkShell {
+        pkgs.mkShell rec {
           buildInputs = with pkgs; [
             cmake
             gnumake
-            pkgs.qt6.full
+            pkg-config
             clang-tools
+
+            pkgs.qt6.full
+            # libcef
+            # nss
           ];
+          nativeBuildInputs = [];
+
+          # CEF_PACKAGE_PATH = "${pkgs.libcef}";
+          LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath (buildInputs ++ nativeBuildInputs)}";
         };
     in flake-utils.lib.eachDefaultSystem (system:
       let
