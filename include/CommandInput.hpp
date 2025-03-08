@@ -1,17 +1,8 @@
 #pragma once
 
-#include <QApplication>
-#include <QDialog>
+#include <QBoxLayout>
 #include <QKeyEvent>
-#include <QLabel>
 #include <QLineEdit>
-#include <QObject>
-#include <QVBoxLayout>
-#include <QWebEnginePage>
-#include <QWebEngineView>
-#include <QWidget>
-#include <QWindow>
-#include <lua.hpp>
 
 class CommandInput : public QFrame {
   Q_OBJECT
@@ -20,6 +11,7 @@ public:
   CommandInput(QString defaultInput = "", QWidget *parentNode = nullptr);
   void setInputFocus(bool focussed);
   bool isInputFocussed();
+  QString getInputCommand();
 
 signals:
   void submitted(QString command);

@@ -1,16 +1,9 @@
-#include <QApplication>
-#include <QDialog>
 #include <QKeyEvent>
-#include <QLabel>
 #include <QLineEdit>
-#include <QObject>
 #include <QVBoxLayout>
-#include <QWebEnginePage>
-#include <QWebEngineView>
 #include <QWidget>
 #include <QWindow>
 #include <iostream>
-#include <lua.hpp>
 
 #include "CommandInput.hpp"
 
@@ -27,13 +20,14 @@ CommandInput::CommandInput(QString defaultInput, QWidget *parentNode)
   layout->setContentsMargins(0, 0, 0, 0);
   input = new QLineEdit(defaultInput, this);
   input->setContentsMargins(0, 0, 0, 0);
+  input->setFocusPolicy(Qt::StrongFocus);
   layout->addWidget(input);
 }
 
 void CommandInput::keyPressEvent(QKeyEvent *event) {
   auto combo = event->keyCombination();
   if (combo.key() == Qt::Key_Return) {
-    emit submitted(input->text());
+    emit submitted(getInputCommand());
   }
 }
 
@@ -41,7 +35,9 @@ bool CommandInput::isInputFocussed() { return input->hasFocus(); }
 
 void CommandInput::setInputFocus(bool focussed) {
   if (focussed)
-    input->setFocus();
+    input->setFocus(Qt::PopupFocusReason);
   else
     input->clearFocus();
 }
+
+QString CommandInput::getInputCommand() { return input->text(); }

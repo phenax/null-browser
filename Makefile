@@ -1,4 +1,4 @@
-.PHONY: clean build
+.PHONY: clean build test
 
 all: build
 
@@ -9,11 +9,14 @@ build:
 	# cp --no-preserve=mode,ownership -r ${CEF_PACKAGE_PATH}/share/cef/* ./build/lib/
 	cp build/compile_commands.json .
 
+test: build
+	cd build && ctest -V
+
 clean:
 	rm -rf build/
 	rm -f compile_commands.json
 
-run:
+run: build
 	./build/web-browser
 
 # -DCMAKE_BUILD_TYPE=Release
