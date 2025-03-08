@@ -26,21 +26,54 @@ private slots:
       QCOMPARE(inputWidget.getInputCommand(),
                QString("Initial content updated"));
     }
+
+    context("when setInputText is called");
+    it("sets input command") {
+      CommandInput inputWidget("Initial content", new QWidget());
+
+      inputWidget.setInputText("New content");
+
+      QCOMPARE(inputWidget.getInputCommand(), QString("New content"));
+    }
   }
 
   void testSubmitSignalOnReturnKey() {
     context("when user hits return key");
     it("emits the submitted signal with the input command") {
       CommandInput inputWidget("Initial content", new QWidget());
-      QSignalSpy spy(&inputWidget, &CommandInput::submitted);
+      QSignalSpy submitSignal(&inputWidget, &CommandInput::submitted);
 
       auto input = inputWidget.findChild<QLineEdit *>();
       QTest::keyClicks(input, " updated");
       QTest::keyClick(&inputWidget, Qt::Key_Return);
 
-      QCOMPARE(spy.count(), 1);
-      QCOMPARE(spy.takeFirst().at(0).toString(),
+      QCOMPARE(submitSignal.count(), 1);
+      QCOMPARE(submitSignal.takeFirst().at(0).toString(),
                QString("Initial content updated"));
+    }
+  }
+
+  void testCancelSignalOnEscapeKey() {
+    context("when user hits escape key");
+    it("emits 'cancelled' signal") {
+      CommandInput inputWidget("Initial content", new QWidget());
+      QSignalSpy cancelSignal(&inputWidget, &CommandInput::cancelled);
+
+      auto input = inputWidget.findChild<QLineEdit *>();
+      QTest::keyClick(&inputWidget, Qt::Key_Escape);
+
+      QCOMPARE(cancelSignal.count(), 1);
+    }
+
+    context("when user hits ctrl+l key");
+    it("emits 'cancelled' signal") {
+      CommandInput inputWidget("Initial content", new QWidget());
+      QSignalSpy cancelSignal(&inputWidget, &CommandInput::cancelled);
+
+      auto input = inputWidget.findChild<QLineEdit *>();
+      QTest::keyClick(&inputWidget, Qt::Key_L, Qt::ControlModifier);
+
+      QCOMPARE(cancelSignal.count(), 1);
     }
   }
 

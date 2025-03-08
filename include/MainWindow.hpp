@@ -14,8 +14,9 @@ protected:
   void keyPressEvent(QKeyEvent *event) override;
   void toggleURLInput();
   void evaluateCommand(QString command);
+  void hideInput();
 
 private:
   QWebEngineView *web;
-  CommandInput *urlInputUI;
+  CommandInput *commandInput;
 };

@@ -4,7 +4,7 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 
-class CommandInput : public QFrame {
+class CommandInput : public QWidget {
   Q_OBJECT
 
 public:
@@ -12,12 +12,15 @@ public:
   void setInputFocus(bool focussed);
   bool isInputFocussed();
   QString getInputCommand();
+  void setInputText(QString text);
 
 signals:
   void submitted(QString command);
+  void cancelled();
 
 protected:
   void keyPressEvent(QKeyEvent *event) override;
+  void emitSubmit();
 
 private:
   QBoxLayout *layout;

@@ -1,3 +1,4 @@
+#include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QVBoxLayout>
@@ -8,28 +9,35 @@
 #include "CommandInput.hpp"
 
 CommandInput::CommandInput(QString defaultInput, QWidget *parentNode)
-    : QFrame(parentNode) {
+    : QWidget(parentNode) {
   setContentsMargins(0, 0, 0, 0);
-  // setFrameRect(QRect(0, 0, parentWidget()->width(), 50));
-  setFixedWidth(parentWidget()->width());
-  setFrameShadow(QFrame::Shadow::Raised);
-  setFrameShape(QFrame::Box);
-  setStyleSheet("background-color: #333; color: #fff;");
+  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  setStyleSheet("background-color: #000; color: #fff; border-radius: 0;");
 
   auto layout = new QVBoxLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
   input = new QLineEdit(defaultInput, this);
-  input->setContentsMargins(0, 0, 0, 0);
   input->setFocusPolicy(Qt::StrongFocus);
   layout->addWidget(input);
+  setFixedHeight(input->sizeHint().height());
 }
+
+void CommandInput::emitSubmit() { emit submitted(getInputCommand()); }
 
 void CommandInput::keyPressEvent(QKeyEvent *event) {
   auto combo = event->keyCombination();
-  if (combo.key() == Qt::Key_Return) {
-    emit submitted(getInputCommand());
-  }
+  auto ctrlL = combo.key() == Qt::Key_L &&
+               combo.keyboardModifiers().testFlag(Qt::ControlModifier);
+  auto esc = combo.key() == Qt::Key_Escape;
+  auto enter = combo.key() == Qt::Key_Return || combo.key() == Qt::Key_Enter;
+
+  if (esc || ctrlL)
+    emit cancelled();
+  else if (enter)
+    emitSubmit();
 }
+
+void CommandInput::setInputText(QString text) { input->setText(text); }
 
 bool CommandInput::isInputFocussed() { return input->hasFocus(); }
 
