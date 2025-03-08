@@ -5,30 +5,34 @@
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }:
-    let
-      shell = { pkgs, ... }:
-        pkgs.mkShell rec {
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+        packages = with pkgs; [
+          pkg-config
+          qt6.full
+          qt6.qtbase
+          luajit
+          # libcef
+          # nss
+        ];
+      in {
+        packages.default = pkgs.stdenv.mkDerivation {
+          pname = "web-browser";
+          version = "0.0.0";
+          src = ./.;
+
+          buildInputs = packages;
+          nativeBuildInputs = with pkgs; [ cmake qt6.wrapQtAppsHook ];
+        };
+
+        devShells.default = pkgs.mkShell rec {
           buildInputs = with pkgs; [
             cmake
             gnumake
-            pkg-config
             clang-tools
-
-            pkgs.qt6.full
-            luajit
-            # lua51Packages.lua
-            # libcef
-            # nss
-          ];
-          nativeBuildInputs = [];
-
-          # CEF_PACKAGE_PATH = "${pkgs.libcef}";
-          LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath (buildInputs ++ nativeBuildInputs)}";
+          ] ++ packages;
+          LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath buildInputs}";
         };
-    in flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-      in {
-        devShells.default = shell { inherit pkgs system; };
       });
 }
