@@ -4,9 +4,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QWindow>
-#include <iostream>
 
-#include "CommandInput.hpp"
+#include "widgets/CommandInput.hpp"
 
 CommandInput::CommandInput(QString defaultInput, QWidget *parentNode)
     : QWidget(parentNode) {

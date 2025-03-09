@@ -1,4 +1,4 @@
-#include "TestUtils.h"
+#include "testUtils.h"
 #include <QtWidgets/qapplication.h>
 
 int main(int argc, char **argv) {

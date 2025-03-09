@@ -3,9 +3,9 @@
 #include <QVBoxLayout>
 #include <QWebEngineView>
 
-#include "BrowserManager.hpp"
-#include "CommandInput.hpp"
-#include "MainWindow.hpp"
+#include "widgets/BrowserManager.hpp"
+#include "widgets/CommandInput.hpp"
+#include "widgets/MainWindow.hpp"
 
 MainWindow::MainWindow() {
   setStyleSheet("background-color: #000; color: #fff;");

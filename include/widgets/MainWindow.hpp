@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QWebEngineView>
 
-#include "BrowserManager.hpp"
-#include "CommandInput.hpp"
+#include "widgets/BrowserManager.hpp"
+#include "widgets/CommandInput.hpp"
 
 class MainWindow : public QMainWindow {
 public:

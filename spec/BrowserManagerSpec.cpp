@@ -2,8 +2,8 @@
 #include <QWebEngineProfile>
 #include <vector>
 
-#include "BrowserManager.hpp"
-#include "TestUtils.h"
+#include "testUtils.h"
+#include "widgets/BrowserManager.hpp"
 
 class BrowserManagerSpec : public QObject {
   Q_OBJECT

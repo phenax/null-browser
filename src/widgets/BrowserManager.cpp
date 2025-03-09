@@ -2,7 +2,7 @@
 #include <QWebEngineNewWindowRequest>
 #include <QWebEngineView>
 
-#include "BrowserManager.hpp"
+#include "widgets/BrowserManager.hpp"
 
 BrowserManager::BrowserManager(QWebEngineProfile *profile) : QWidget() {
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

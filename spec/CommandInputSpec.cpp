@@ -1,6 +1,6 @@
-#include "TestUtils.h"
+#include "testUtils.h"
 
-#include "CommandInput.hpp"
+#include "widgets/CommandInput.hpp"
 
 class CommandInputSpec : public QObject {
   Q_OBJECT
