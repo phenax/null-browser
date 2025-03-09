@@ -1,4 +1,7 @@
+#pragma once
+
 #include <QtTest/QtTest>
+#include <QtTest/qtestcase.h>
 #include <cstdio>
 
 #define ANSI_BOLD "\x1b[1m"
@@ -18,3 +21,20 @@
 #define xit(msg)                                                               \
   printf("    ⚪" COLOR_SKIP "SKIPPED it %s" ANSI_RESET "\n", msg);            \
   if (0)
+
+#define STRINGIFY(x) #x
+
+std::vector<std::function<QObject *()>> &getQTestRegistry();
+int runAllTests();
+
+#define QTEST_REGISTER(klass)                                                  \
+  namespace {                                                                  \
+  const bool registered__##klass = []() {                                      \
+    getQTestRegistry().push_back([]() {                                        \
+      auto t = new klass;                                                      \
+      t->setObjectName(#klass);                                                \
+      return t;                                                                \
+    });                                                                        \
+    return true;                                                               \
+  }();                                                                         \
+  };

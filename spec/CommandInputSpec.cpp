@@ -100,5 +100,5 @@ private slots:
   }
 };
 
-QTEST_MAIN(CommandInputSpec)
+QTEST_REGISTER(CommandInputSpec)
 #include "CommandInputSpec.moc"

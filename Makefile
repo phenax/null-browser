@@ -7,7 +7,7 @@ build:
 	@cd build/ && cmake .. && make -j4
 	# cp --no-preserve=mode,ownership -r ${CEF_PACKAGE_PATH}/lib/* ./build/lib/
 	# cp --no-preserve=mode,ownership -r ${CEF_PACKAGE_PATH}/share/cef/* ./build/lib/
-	cp build/compile_commands.json .
+	@cp build/compile_commands.json .
 
 test: build
 	cd build && ctest -V
@@ -18,5 +18,3 @@ clean:
 
 run: build
 	./build/web-browser
-
-# -DCMAKE_BUILD_TYPE=Release
