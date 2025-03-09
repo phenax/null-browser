@@ -1,0 +1,19 @@
+** Current
+- [X] Multi tabs
+- [X] Open in new tab/new window
+- [ ] Lua for command input
+- [ ] Modal keys
+- [ ] Tab history navigation
+
+** Next
+- [ ] History persistance
+- [ ] Sketch lua api for managing ui
+- [ ] Simpler shell-ey/vimscript-ey language for command input
+
+** Later
+- [ ] Fullscreen
+- [ ] File picker
+- [ ] Dev tools
+- [ ] remote debugging with cdp (spider-repl)
+
+** Maybe

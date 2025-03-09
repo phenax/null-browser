@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QWebEngineView>
 
+#include "BrowserManager.hpp"
 #include "CommandInput.hpp"
 
 class MainWindow : public QMainWindow {
@@ -14,9 +15,10 @@ protected:
   void keyPressEvent(QKeyEvent *event) override;
   void toggleURLInput();
   void evaluateCommand(QString command);
-  void hideInput();
+  void hideURLInput();
+  void showURLInput();
 
 private:
-  QWebEngineView *web;
+  BrowserManager *browserManager;
   CommandInput *commandInput;
 };
