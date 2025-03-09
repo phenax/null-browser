@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QWebEngineView>
 
+#include "CommandParser.hpp"
 #include "widgets/BrowserManager.hpp"
 #include "widgets/CommandInput.hpp"
 #include "widgets/MainWindow.hpp"
@@ -12,7 +13,7 @@ MainWindow::MainWindow() {
   setCentralWidget(new QWidget());
 
   // Root stacked layout
-  auto layout = new QStackedLayout();
+  layout = new QStackedLayout();
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
   layout->setStackingMode(QStackedLayout::StackAll);
@@ -46,22 +47,38 @@ void MainWindow::hideURLInput() {
 }
 
 void MainWindow::showURLInput() {
-  commandInput->setInputText(browserManager->currentUrl().toString());
-  commandInput->raise();
+  commandInput->setInputText("open " + browserManager->currentUrl().toString());
   commandInput->setHidden(false);
+  layout->setCurrentWidget(commandInput);
   commandInput->setInputFocus(true);
 }
 
 void MainWindow::evaluateCommand(QString command) {
-  if (!command.isEmpty()) {
-    // TODO: Temporary hack
-    if (command.startsWith("lua ")) {
-      luaRuntime->evaluate(command.slice(4).toStdString().c_str());
-    } else {
-      browserManager->setCurrentUrl(command);
-    }
-  }
   hideURLInput();
+
+  // TODO: Temporary hack
+  CommandParser parser;
+  auto cmd = parser.parse(command);
+
+  switch (cmd.command) {
+  case CommandType::LuaEval:
+    luaRuntime->evaluate(cmd.args.join(" ").toStdString().c_str());
+    break;
+  case CommandType::Open:
+    browserManager->openUrl(cmd.args.first(), OpenType::OpenUrl);
+    break;
+  case CommandType::TabOpen:
+    browserManager->openUrl(cmd.args.at(1), OpenType::OpenUrlInTab);
+    break;
+  case CommandType::TabNext:
+    browserManager->nextWebView();
+    break;
+  case CommandType::TabPrev:
+    browserManager->previousWebView();
+    break;
+  case CommandType::Noop:
+    break;
+  }
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {

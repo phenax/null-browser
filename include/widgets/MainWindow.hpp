@@ -2,6 +2,7 @@
 
 #include <QMainWindow>
 #include <QObject>
+#include <QStackedLayout>
 #include <QWebEngineView>
 
 #include "LuaRuntime.hpp"
@@ -23,4 +24,5 @@ private:
   BrowserManager *browserManager;
   CommandInput *commandInput;
   LuaRuntime *luaRuntime;
+  QStackedLayout *layout;
 };
