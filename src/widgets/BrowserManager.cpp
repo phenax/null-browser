@@ -16,6 +16,23 @@ BrowserManager::BrowserManager(QWebEngineProfile *profile) : QWidget() {
   createNewWebView(BrowserManager::NewtabURL, true);
 }
 
+void BrowserManager::openUrl(QUrl url, OpenType openType) {
+  switch (openType) {
+  case OpenType::OpenUrl:
+    setCurrentUrl(url);
+    break;
+  case OpenType::OpenUrlInTab:
+    createNewWebView(url, true);
+    break;
+  case OpenType::OpenUrlInBgTab:
+    createNewWebView(url, false);
+    break;
+  case OpenType::OpenUrlInWindow:
+    // TODO: impl
+    break;
+  }
+}
+
 QWebEngineView *BrowserManager::createNewWebView(QUrl url, bool focus) {
   auto webview = new QWebEngineView(profile);
   webview->setUrl(url);
@@ -24,6 +41,16 @@ QWebEngineView *BrowserManager::createNewWebView(QUrl url, bool focus) {
 
   connect(webview->page(), &QWebEnginePage::newWindowRequested, this,
           &BrowserManager::onNewWebViewRequest);
+  // connect(webview->page(), &QWebEnginePage::windowCloseRequested, this,
+  //         [this, webview]() {
+  //           for (int i = 0; i <= this->webViewList.length(); i++) {
+  //             auto w = this->webViewList.at(0);
+  //             printf("::::: %d\n\n", w == webview);
+  //             if (w == webview) {
+  //               this->closeWebView(i);
+  //             }
+  //           }
+  //         });
 
   if (focus)
     focusWebView(webViewList.length() - 1);

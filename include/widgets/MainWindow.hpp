@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QWebEngineView>
 
+#include "LuaRuntime.hpp"
 #include "widgets/BrowserManager.hpp"
 #include "widgets/CommandInput.hpp"
 
@@ -21,4 +22,5 @@ protected:
 private:
   BrowserManager *browserManager;
   CommandInput *commandInput;
+  LuaRuntime *luaRuntime;
 };

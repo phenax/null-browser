@@ -23,7 +23,7 @@ MainWindow::MainWindow() {
   layout->addWidget(browserManager);
 
   // Command input
-  commandInput = new CommandInput(browserManager->currentUrl().toString());
+  commandInput = new CommandInput;
   hideURLInput();
   commandInput->move(0, 0);
   connect(commandInput, &CommandInput::submitted, this,
@@ -31,6 +31,13 @@ MainWindow::MainWindow() {
   connect(commandInput, &CommandInput::cancelled, this,
           &MainWindow::hideURLInput);
   layout->addWidget(commandInput);
+
+  // Lua runtime
+  luaRuntime = LuaRuntime::instance();
+  connect(luaRuntime, &LuaRuntime::urlOpenned, this,
+          [this](QString url, OpenType openType) {
+            this->browserManager->openUrl(QUrl(url), openType);
+          });
 }
 
 void MainWindow::hideURLInput() {
@@ -46,8 +53,14 @@ void MainWindow::showURLInput() {
 }
 
 void MainWindow::evaluateCommand(QString command) {
-  if (!command.isEmpty())
-    browserManager->setCurrentUrl(command);
+  if (!command.isEmpty()) {
+    // TODO: Temporary hack
+    if (command.startsWith("lua ")) {
+      luaRuntime->evaluate(command.slice(4).toStdString().c_str());
+    } else {
+      browserManager->setCurrentUrl(command);
+    }
+  }
   hideURLInput();
 }
 

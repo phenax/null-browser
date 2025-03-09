@@ -32,8 +32,7 @@ target_link_libraries(${PROJECT}
 
 # LuaJIT
 pkg_check_modules(LuaJIT REQUIRED luajit)
-include_directories(${LuaJIT_INCLUDE_DIRS})
-link_directories(${LuaJIT_LIBRARY_DIRS})
+target_include_directories(${PROJECT} PRIVATE ${LuaJIT_INCLUDE_DIRS})
 target_link_libraries(${PROJECT} ${LuaJIT_LINK_LIBRARIES})
 
 # CEF (experiment)
@@ -45,12 +44,13 @@ target_link_libraries(${PROJECT} ${LuaJIT_LINK_LIBRARIES})
 enable_testing()
 add_executable(tests)
 target_sources(tests PRIVATE ${SOURCE_FILES} ${MOC_SRCS} ${SPEC_FILES})
-target_include_directories(tests PRIVATE include/ spec/)
+target_include_directories(tests PRIVATE include/ spec/ ${LuaJIT_INCLUDE_DIRS})
 target_link_libraries(tests PRIVATE
   Qt6::Core
   Qt6::Widgets
   Qt6::WebEngineWidgets
-  Qt6::Test)
+  Qt6::Test
+  ${LuaJIT_LINK_LIBRARIES})
 add_test(NAME CommandInputSpec COMMAND tests)
 
 install(TARGETS ${PROJECT} RUNTIME DESTINATION bin)

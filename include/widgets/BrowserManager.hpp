@@ -5,6 +5,8 @@
 #include <QWebEngineView>
 #include <sys/types.h>
 
+enum OpenType { OpenUrl, OpenUrlInTab, OpenUrlInBgTab, OpenUrlInWindow };
+
 class BrowserManager : public QWidget {
   Q_OBJECT
 
@@ -19,6 +21,9 @@ public:
 
   QWebEngineView *createNewWebView(QUrl url = BrowserManager::NewtabURL,
                                    bool focus = false);
+
+  void openUrl(QUrl url = BrowserManager::NewtabURL,
+               OpenType openType = OpenType::OpenUrl);
 
   std::vector<QUrl> webViewUrls();
   u_int32_t currentWebViewIndex();
