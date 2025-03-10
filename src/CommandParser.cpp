@@ -9,11 +9,15 @@ Cmd CommandParser::parse(QString input) {
   auto parts = input.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
 
   if (parts.isEmpty())
-    return Cmd();
+    return {.command = Noop, .argsString = "", .rawInput = input};
 
-  auto cmd = toCommandType(parts.first());
+  auto cmdStr = parts.first();
+  auto cmd = toCommandType(cmdStr);
+  auto rawArgs = input.slice(cmdStr.length());
+
   parts.removeFirst();
-  return Cmd(cmd, parts);
+
+  return {.command = cmd, .argsString = rawArgs, .rawInput = input};
 }
 
 CommandType CommandParser::toCommandType(QString cmd) {

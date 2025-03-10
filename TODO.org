@@ -1,14 +1,18 @@
 ** Current
 - [X] Multi tabs
 - [X] Open in new tab/new window
-- [ ] Lua for command input
+- [X] Lua for command input
+- [X] Simpler shell-ey/vimscript-ey language for command input
+- [X] Command completion
+- [ ] Buffer list/search
 - [ ] Modal keys
 - [ ] Tab history navigation
+- [ ] Refactor MainWindow
 
 ** Next
 - [ ] History persistance
+- [ ] History completion
 - [ ] Sketch lua api for managing ui
-- [ ] Simpler shell-ey/vimscript-ey language for command input
 
 ** Later
 - [ ] Fullscreen

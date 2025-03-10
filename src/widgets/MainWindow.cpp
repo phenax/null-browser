@@ -37,7 +37,7 @@ MainWindow::MainWindow() {
   luaRuntime = LuaRuntime::instance();
   connect(luaRuntime, &LuaRuntime::urlOpenned, this,
           [this](QString url, OpenType openType) {
-            this->browserManager->openUrl(QUrl(url), openType);
+            browserManager->openUrl(QUrl(url), openType);
           });
 }
 
@@ -56,19 +56,18 @@ void MainWindow::showURLInput() {
 void MainWindow::evaluateCommand(QString command) {
   hideURLInput();
 
-  // TODO: Temporary hack
   CommandParser parser;
   auto cmd = parser.parse(command);
 
   switch (cmd.command) {
   case CommandType::LuaEval:
-    luaRuntime->evaluate(cmd.args.join(" ").toStdString().c_str());
+    luaRuntime->evaluate(cmd.argsString);
     break;
   case CommandType::Open:
-    browserManager->openUrl(cmd.args.first(), OpenType::OpenUrl);
+    browserManager->openUrl(cmd.argsString, OpenType::OpenUrl);
     break;
   case CommandType::TabOpen:
-    browserManager->openUrl(cmd.args.at(1), OpenType::OpenUrlInTab);
+    browserManager->openUrl(cmd.argsString, OpenType::OpenUrlInTab);
     break;
   case CommandType::TabNext:
     browserManager->nextWebView();
@@ -88,7 +87,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
     toggleURLInput();
   } else if (combo.key() == Qt::Key_T &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    browserManager->createNewWebView(QUrl("https://duckduckgo.com"), true);
+    browserManager->createNewWebView(QUrl("https://lite.duckduckgo.com"), true);
   } else if (combo.key() == Qt::Key_J &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
     browserManager->nextWebView();

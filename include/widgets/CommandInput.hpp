@@ -1,8 +1,9 @@
 #pragma once
 
 #include <QBoxLayout>
-#include <QKeyEvent>
 #include <QLineEdit>
+#include <QWidget>
+#include <QtCore>
 
 class CommandInput : public QWidget {
   Q_OBJECT

@@ -13,7 +13,7 @@ public:
     return &inst;
   }
 
-  void evaluate(const char *code);
+  void evaluate(QString code);
 
 protected:
   LuaRuntime();

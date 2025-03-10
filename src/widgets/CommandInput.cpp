@@ -1,23 +1,57 @@
+#include <QCompleter>
 #include <QHBoxLayout>
 #include <QKeyEvent>
+#include <QLabel>
 #include <QLineEdit>
+#include <QStringListModel>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QWidgetAction>
 #include <QWindow>
+#include <QtCore/qnamespace.h>
+#include <QtCore/qstringlistmodel.h>
+#include <QtWidgets/qboxlayout.h>
 
+#include "completion/CommandsModel.hpp"
+#include "completion/Completer.hpp"
 #include "widgets/CommandInput.hpp"
+
+const char *rootStyles = R"(
+  background-color: #000;
+  color: #fff;
+  border-radius: 0;
+)";
 
 CommandInput::CommandInput(QString defaultInput, QWidget *parentNode)
     : QWidget(parentNode) {
   setContentsMargins(0, 0, 0, 0);
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-  setStyleSheet("background-color: #000; color: #fff; border-radius: 0;");
+  setStyleSheet(rootStyles);
 
   auto layout = new QVBoxLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
-  input = new QLineEdit(defaultInput, this);
+
+  auto listModel = new CommandsModel();
+  auto completer = new Completer(this);
+  completer->setModel(listModel);
+
+  auto cmdLineBox = new QWidget();
+  layout->addWidget(cmdLineBox);
+  auto cmdLineLayout = new QHBoxLayout();
+  cmdLineBox->setLayout(cmdLineLayout);
+  cmdLineBox->layout()->setContentsMargins(0, 0, 0, 0);
+  cmdLineLayout->setSpacing(0);
+
+  auto promptPrefix = new QLabel(tr(":"));
+  promptPrefix->setContentsMargins(0, 0, 0, 0);
+  input = new QLineEdit(defaultInput);
   input->setFocusPolicy(Qt::StrongFocus);
-  layout->addWidget(input);
+  input->setCompleter(completer);
+  // input->installEventFilter(completer);
+
+  cmdLineLayout->addWidget(promptPrefix);
+  cmdLineLayout->addWidget(input);
+
   setFixedHeight(input->sizeHint().height());
 }
 

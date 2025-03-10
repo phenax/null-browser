@@ -15,7 +15,9 @@ LuaRuntime::LuaRuntime() {
   lua_setglobal(state, "web");
 }
 
-void LuaRuntime::evaluate(const char *code) { luaL_dostring(state, code); }
+void LuaRuntime::evaluate(QString code) {
+  luaL_dostring(state, code.toStdString().c_str());
+}
 
 int LuaRuntime::lua_onUrlOpen(lua_State *state) {
   const char *url = luaL_optstring(state, 1, "");

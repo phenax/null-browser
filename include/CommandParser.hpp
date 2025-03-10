@@ -12,13 +12,10 @@ enum CommandType {
   TabPrev,
 };
 
-class Cmd {
-public:
+struct Cmd {
   CommandType command;
-  QStringList args;
-
-  Cmd(CommandType command = Noop, QStringList args = QStringList())
-      : command(command), args(args) {}
+  QString argsString;
+  QString rawInput;
 };
 
 class CommandParser {
