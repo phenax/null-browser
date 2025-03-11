@@ -7,34 +7,37 @@
 
 enum OpenType { OpenUrl, OpenUrlInTab, OpenUrlInBgTab, OpenUrlInWindow };
 
-class BrowserManager : public QWidget {
+class WebViewStack : public QWidget {
   Q_OBJECT
 
 public:
   inline static const QUrl NewtabURL = QUrl("about:blank");
 
 public:
-  BrowserManager(QWebEngineProfile *profile = new QWebEngineProfile);
+  WebViewStack(QWebEngineProfile *profile = new QWebEngineProfile,
+               QWidget *parent = nullptr);
 
-  QUrl currentUrl();
-  void setCurrentUrl(QUrl url);
-
-  QWebEngineView *createNewWebView(QUrl url = BrowserManager::NewtabURL,
-                                   bool focus = false);
-
-  void openUrl(QUrl url = BrowserManager::NewtabURL,
+  void openUrl(QUrl url = WebViewStack::NewtabURL,
                OpenType openType = OpenType::OpenUrl);
 
-  std::vector<QUrl> webViewUrls();
+  std::vector<QUrl> urls();
   u_int32_t currentWebViewIndex();
-  u_int32_t webViewCount();
+  u_int32_t count();
+  QUrl currentUrl();
+
   void focusWebView(long index);
-  void nextWebView();
-  void previousWebView();
+  void next();
+  void previous();
 
-  void closeWebView(long index);
-  void closeCurrentWebView();
+  void close(long index);
+  void closeCurrent();
 
+private:
+  void setCurrentUrl(QUrl url);
+  QWebEngineView *createNewWebView(QUrl url = WebViewStack::NewtabURL,
+                                   bool focus = false);
+
+private slots:
   void onNewWebViewRequest(QWebEngineNewWindowRequest &request);
 
 private:

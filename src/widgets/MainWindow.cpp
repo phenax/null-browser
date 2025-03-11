@@ -7,9 +7,9 @@
 #include "CommandParser.hpp"
 #include "completion/CommandsAdapter.hpp"
 #include "completion/UrlAdapter.hpp"
-#include "widgets/BrowserManager.hpp"
 #include "widgets/InputLine.hpp"
 #include "widgets/MainWindow.hpp"
+#include "widgets/WebViewStack.hpp"
 
 MainWindow::MainWindow() {
   setStyleSheet("background-color: #000; color: #fff;");
@@ -23,8 +23,8 @@ MainWindow::MainWindow() {
   centralWidget()->setLayout(layout);
 
   // Web engine
-  browserManager = new BrowserManager(new QWebEngineProfile("web-browser"));
-  layout->addWidget(browserManager);
+  webViewStack = new WebViewStack(new QWebEngineProfile("web-browser"));
+  layout->addWidget(webViewStack);
 
   // Command input
   inputLine = new InputLine;
@@ -38,7 +38,7 @@ MainWindow::MainWindow() {
   luaRuntime = LuaRuntime::instance();
   connect(luaRuntime, &LuaRuntime::urlOpened, this,
           [this](QString url, OpenType openType) {
-            browserManager->openUrl(QUrl(url), openType);
+            webViewStack->openUrl(QUrl(url), openType);
           });
 }
 
@@ -78,7 +78,7 @@ void MainWindow::onInputSubmit(QString input) {
   if (dynamic_cast<CommandEval *>(currentEvaluationType)) {
     evaluateCommand(input);
   } else if (auto urlEval = dynamic_cast<UrlEval *>(currentEvaluationType)) {
-    browserManager->openUrl(input, urlEval->type());
+    webViewStack->openUrl(input, urlEval->type());
   }
 }
 
@@ -94,19 +94,19 @@ void MainWindow::evaluateCommand(QString command) {
     if (cmd.argsString.trimmed().isEmpty())
       showURLInput("", OpenType::OpenUrl);
     else
-      browserManager->openUrl(cmd.argsString, OpenType::OpenUrl);
+      webViewStack->openUrl(cmd.argsString, OpenType::OpenUrl);
     break;
   case CommandType::TabOpen:
     if (cmd.argsString.trimmed().isEmpty())
       showURLInput("", OpenType::OpenUrlInTab);
     else
-      browserManager->openUrl(cmd.argsString, OpenType::OpenUrlInTab);
+      webViewStack->openUrl(cmd.argsString, OpenType::OpenUrlInTab);
     break;
   case CommandType::TabNext:
-    browserManager->nextWebView();
+    webViewStack->next();
     break;
   case CommandType::TabPrev:
-    browserManager->previousWebView();
+    webViewStack->previous();
     break;
   case CommandType::Noop:
     break;
@@ -117,21 +117,22 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   auto combo = event->keyCombination();
   if (combo.key() == Qt::Key_L &&
       combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    showURLInput(browserManager->currentUrl().toString(), OpenType::OpenUrl);
+    showURLInput(webViewStack->currentUrl().toString(), OpenType::OpenUrl);
   } else if (combo.key() == Qt::Key_Semicolon &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
     showCommandInput("");
   } else if (combo.key() == Qt::Key_T &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    browserManager->createNewWebView(QUrl("https://lite.duckduckgo.com"), true);
+    webViewStack->openUrl(QUrl("https://lite.duckduckgo.com"),
+                          OpenType::OpenUrlInTab);
   } else if (combo.key() == Qt::Key_J &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    browserManager->nextWebView();
+    webViewStack->next();
   } else if (combo.key() == Qt::Key_K &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    browserManager->previousWebView();
+    webViewStack->previous();
   } else if (combo.key() == Qt::Key_W &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    browserManager->closeCurrentWebView();
+    webViewStack->closeCurrent();
   }
 }

@@ -2,7 +2,7 @@
 #include <QtCore>
 #include <lua.hpp>
 
-#include "widgets/BrowserManager.hpp"
+#include "widgets/WebViewStack.hpp"
 
 class LuaRuntime : public QObject {
   Q_OBJECT
@@ -15,14 +15,12 @@ public:
 
   void evaluate(QString code);
 
-protected:
-  LuaRuntime();
-  ~LuaRuntime();
-
 signals:
   void urlOpened(QString url, OpenType openType);
 
 protected:
+  LuaRuntime();
+  ~LuaRuntime();
   static int lua_onUrlOpen(lua_State *state);
   static int lua_onUrlTabOpen(lua_State *state);
 

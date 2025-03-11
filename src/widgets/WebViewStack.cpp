@@ -2,21 +2,20 @@
 #include <QWebEngineNewWindowRequest>
 #include <QWebEngineView>
 
-#include "widgets/BrowserManager.hpp"
+#include "widgets/WebViewStack.hpp"
 
-BrowserManager::BrowserManager(QWebEngineProfile *profile) : QWidget() {
+WebViewStack::WebViewStack(QWebEngineProfile *profile, QWidget *parent)
+    : QWidget(parent), profile(profile) {
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   layout = new QStackedLayout(this);
   layout->setStackingMode(QStackedLayout::StackAll);
   layout->setContentsMargins(0, 0, 0, 0);
 
-  this->profile = profile;
-
-  createNewWebView(BrowserManager::NewtabURL, true);
+  createNewWebView(WebViewStack::NewtabURL, true);
 }
 
-void BrowserManager::openUrl(QUrl url, OpenType openType) {
+void WebViewStack::openUrl(QUrl url, OpenType openType) {
   switch (openType) {
   case OpenType::OpenUrl:
     setCurrentUrl(url);
@@ -28,29 +27,19 @@ void BrowserManager::openUrl(QUrl url, OpenType openType) {
     createNewWebView(url, false);
     break;
   case OpenType::OpenUrlInWindow:
-    // TODO: impl
+    createNewWebView(url, true);
     break;
   }
 }
 
-QWebEngineView *BrowserManager::createNewWebView(QUrl url, bool focus) {
+QWebEngineView *WebViewStack::createNewWebView(QUrl url, bool focus) {
   auto webview = new QWebEngineView(profile);
   webview->setUrl(url);
   layout->addWidget(webview);
   webViewList.append(webview);
 
   connect(webview->page(), &QWebEnginePage::newWindowRequested, this,
-          &BrowserManager::onNewWebViewRequest);
-  // connect(webview->page(), &QWebEnginePage::windowCloseRequested, this,
-  //         [this, webview]() {
-  //           for (int i = 0; i <= this->webViewList.length(); i++) {
-  //             auto w = this->webViewList.at(0);
-  //             printf("::::: %d\n\n", w == webview);
-  //             if (w == webview) {
-  //               this->closeWebView(i);
-  //             }
-  //           }
-  //         });
+          &WebViewStack::onNewWebViewRequest);
 
   if (focus)
     focusWebView(webViewList.length() - 1);
@@ -58,7 +47,7 @@ QWebEngineView *BrowserManager::createNewWebView(QUrl url, bool focus) {
   return webview;
 }
 
-void BrowserManager::onNewWebViewRequest(QWebEngineNewWindowRequest &request) {
+void WebViewStack::onNewWebViewRequest(QWebEngineNewWindowRequest &request) {
   switch (request.destination()) {
   case QWebEngineNewWindowRequest::InNewTab:
     createNewWebView(request.requestedUrl(), true);
@@ -77,7 +66,7 @@ void BrowserManager::onNewWebViewRequest(QWebEngineNewWindowRequest &request) {
   }
 }
 
-void BrowserManager::nextWebView() {
+void WebViewStack::next() {
   if (webViewList.isEmpty())
     return;
   auto index = currentWebViewIndex() + 1;
@@ -86,7 +75,7 @@ void BrowserManager::nextWebView() {
   focusWebView(index);
 }
 
-void BrowserManager::previousWebView() {
+void WebViewStack::previous() {
   if (webViewList.isEmpty())
     return;
   auto index = currentWebViewIndex() - 1;
@@ -95,11 +84,9 @@ void BrowserManager::previousWebView() {
   focusWebView(index);
 }
 
-void BrowserManager::closeCurrentWebView() {
-  closeWebView(currentWebViewIndex());
-}
+void WebViewStack::closeCurrent() { close(currentWebViewIndex()); }
 
-void BrowserManager::closeWebView(long index) {
+void WebViewStack::close(long index) {
   if (index < 0 || index >= webViewList.length())
     return;
 
@@ -112,23 +99,21 @@ void BrowserManager::closeWebView(long index) {
   focusWebView(currentWebViewIndex());
 
   if (webViewList.isEmpty()) {
-    createNewWebView(BrowserManager::NewtabURL, true);
+    createNewWebView(WebViewStack::NewtabURL, true);
   }
 }
 
-std::vector<QUrl> BrowserManager::webViewUrls() {
+std::vector<QUrl> WebViewStack::urls() {
   std::vector<QUrl> urls;
   for (auto &view : webViewList)
     urls.push_back(view->url());
   return urls;
 }
 
-u_int32_t BrowserManager::currentWebViewIndex() {
-  return layout->currentIndex();
-}
-u_int32_t BrowserManager::webViewCount() { return webViewList.length(); }
+u_int32_t WebViewStack::currentWebViewIndex() { return layout->currentIndex(); }
+u_int32_t WebViewStack::count() { return webViewList.length(); }
 
-void BrowserManager::focusWebView(long index) {
+void WebViewStack::focusWebView(long index) {
   if (webViewList.isEmpty())
     return;
 
@@ -136,14 +121,14 @@ void BrowserManager::focusWebView(long index) {
   layout->setCurrentIndex(index);
 }
 
-QUrl BrowserManager::currentUrl() {
+QUrl WebViewStack::currentUrl() {
   if (currentWebViewIndex() >= webViewList.length())
-    return QUrl("about:newtab");
+    return QUrl("");
 
   return webViewList.at(currentWebViewIndex())->url();
 }
 
-void BrowserManager::setCurrentUrl(QUrl url) {
+void WebViewStack::setCurrentUrl(QUrl url) {
   if (currentWebViewIndex() >= webViewList.length())
     return;
 

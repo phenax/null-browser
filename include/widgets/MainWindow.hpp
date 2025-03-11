@@ -6,8 +6,8 @@
 #include <QWebEngineView>
 
 #include "LuaRuntime.hpp"
-#include "widgets/BrowserManager.hpp"
 #include "widgets/InputLine.hpp"
+#include "widgets/WebViewStack.hpp"
 
 class EvaluationType {
 public:
@@ -20,10 +20,12 @@ class MainWindow : public QMainWindow {
 public:
   MainWindow();
 
-protected:
+private:
   void keyPressEvent(QKeyEvent *event) override;
   void onInputSubmit(QString input);
+
   void evaluateCommand(QString command);
+
   void hideInputLine();
   void showInputLine();
   void showURLInput(QString url, OpenType openType);
@@ -32,7 +34,7 @@ protected:
   void setEvaluationType(EvaluationType *);
 
 private:
-  BrowserManager *browserManager;
+  WebViewStack *webViewStack;
   InputLine *inputLine;
   LuaRuntime *luaRuntime;
   QStackedLayout *layout;
