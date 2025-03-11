@@ -20,7 +20,7 @@ protected:
   ~LuaRuntime();
 
 signals:
-  void urlOpenned(QString url, OpenType openType);
+  void urlOpened(QString url, OpenType openType);
 
 protected:
   static int lua_onUrlOpen(lua_State *state);

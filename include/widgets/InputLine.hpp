@@ -18,6 +18,7 @@ public:
   QString getInputCommand();
   void setInputText(QString text);
   void setAdapter(Adapter *adapter);
+  Adapter *adapter();
 
 signals:
   void submitted(QString command);
@@ -31,5 +32,5 @@ private:
   QBoxLayout *layout;
   QLineEdit *input;
   QLabel *promptPrefix;
-  Adapter *adapter = nullptr;
+  Adapter *adapterInstance = nullptr;
 };

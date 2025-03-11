@@ -30,13 +30,13 @@ MainWindow::MainWindow() {
   inputLine = new InputLine;
   inputLine->setHidden(true);
   inputLine->move(0, 0);
-  connect(inputLine, &InputLine::submitted, this, &MainWindow::evaluateCommand);
+  connect(inputLine, &InputLine::submitted, this, &MainWindow::onInputSubmit);
   connect(inputLine, &InputLine::cancelled, this, &MainWindow::hideInputLine);
   layout->addWidget(inputLine);
 
   // Lua runtime
   luaRuntime = LuaRuntime::instance();
-  connect(luaRuntime, &LuaRuntime::urlOpenned, this,
+  connect(luaRuntime, &LuaRuntime::urlOpened, this,
           [this](QString url, OpenType openType) {
             browserManager->openUrl(QUrl(url), openType);
           });
@@ -53,21 +53,36 @@ void MainWindow::showInputLine() {
   inputLine->setInputFocus(true);
 }
 
-void MainWindow::showURLInput(QString url) {
-  showInputLine();
+void MainWindow::showURLInput(QString url, OpenType openType) {
+  setEvaluationType(new UrlEval(openType));
   inputLine->setAdapter(new UrlAdapter);
   inputLine->setInputText(url);
+  showInputLine();
 }
 
 void MainWindow::showCommandInput(QString cmd) {
-  showInputLine();
+  setEvaluationType(new CommandEval());
   inputLine->setAdapter(new CommandsAdapter);
   inputLine->setInputText(cmd);
+  showInputLine();
+}
+void MainWindow::setEvaluationType(EvaluationType *evalType) {
+  if (currentEvaluationType)
+    delete currentEvaluationType;
+  currentEvaluationType = evalType;
+}
+
+void MainWindow::onInputSubmit(QString input) {
+  hideInputLine();
+
+  if (dynamic_cast<CommandEval *>(currentEvaluationType)) {
+    evaluateCommand(input);
+  } else if (auto urlEval = dynamic_cast<UrlEval *>(currentEvaluationType)) {
+    browserManager->openUrl(input, urlEval->type());
+  }
 }
 
 void MainWindow::evaluateCommand(QString command) {
-  hideInputLine();
-
   CommandParser parser;
   auto cmd = parser.parse(command);
 
@@ -76,14 +91,16 @@ void MainWindow::evaluateCommand(QString command) {
     luaRuntime->evaluate(cmd.argsString);
     break;
   case CommandType::Open:
-    if (cmd.argsString.trimmed().isEmpty()) {
-      showURLInput();
-    } else {
+    if (cmd.argsString.trimmed().isEmpty())
+      showURLInput("", OpenType::OpenUrl);
+    else
       browserManager->openUrl(cmd.argsString, OpenType::OpenUrl);
-    }
     break;
   case CommandType::TabOpen:
-    browserManager->openUrl(cmd.argsString, OpenType::OpenUrlInTab);
+    if (cmd.argsString.trimmed().isEmpty())
+      showURLInput("", OpenType::OpenUrlInTab);
+    else
+      browserManager->openUrl(cmd.argsString, OpenType::OpenUrlInTab);
     break;
   case CommandType::TabNext:
     browserManager->nextWebView();
@@ -100,10 +117,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   auto combo = event->keyCombination();
   if (combo.key() == Qt::Key_L &&
       combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    showURLInput(browserManager->currentUrl().toString());
+    showURLInput(browserManager->currentUrl().toString(), OpenType::OpenUrl);
   } else if (combo.key() == Qt::Key_Semicolon &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    showCommandInput();
+    showCommandInput("");
   } else if (combo.key() == Qt::Key_T &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
     browserManager->createNewWebView(QUrl("https://lite.duckduckgo.com"), true);

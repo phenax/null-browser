@@ -54,10 +54,12 @@ InputLine::InputLine(QString defaultInput, QWidget *parentNode)
   setAdapter(new CommandsAdapter());
 }
 
+Adapter *InputLine::adapter() { return adapterInstance; }
+
 void InputLine::setAdapter(Adapter *adapter) {
-  if (this->adapter)
-    delete this->adapter;
-  this->adapter = adapter;
+  if (this->adapterInstance)
+    delete this->adapterInstance;
+  this->adapterInstance = adapter;
   promptPrefix->setText(adapter->prompt());
   input->setCompleter(adapter->completer());
 }
