@@ -1,15 +1,15 @@
 #include "testUtils.h"
 
-#include "widgets/CommandInput.hpp"
+#include "widgets/InputLine.hpp"
 
-class CommandInputSpec : public QObject {
+class InputLineSpec : public QObject {
   Q_OBJECT
 
 private slots:
   void testWithInitialInput() {
     context("when initialized with some text");
     it("sets the initial input text") {
-      CommandInput inputWidget("Initial content", new QWidget());
+      InputLine inputWidget("Initial content", new QWidget());
 
       QCOMPARE(inputWidget.getInputCommand(), QString("Initial content"));
     }
@@ -18,7 +18,7 @@ private slots:
   void testInputUpdate() {
     context("when user types in input");
     it("updates input command") {
-      CommandInput inputWidget("Initial content", new QWidget());
+      InputLine inputWidget("Initial content", new QWidget());
 
       auto input = inputWidget.findChild<QLineEdit *>();
       QTest::keyClicks(input, " updated");
@@ -29,7 +29,7 @@ private slots:
 
     context("when setInputText is called");
     it("sets input command") {
-      CommandInput inputWidget("Initial content", new QWidget());
+      InputLine inputWidget("Initial content", new QWidget());
 
       inputWidget.setInputText("New content");
 
@@ -40,8 +40,8 @@ private slots:
   void testSubmitSignalOnReturnKey() {
     context("when user hits return key");
     it("emits the submitted signal with the input command") {
-      CommandInput inputWidget("Initial content", new QWidget());
-      QSignalSpy submitSignal(&inputWidget, &CommandInput::submitted);
+      InputLine inputWidget("Initial content", new QWidget());
+      QSignalSpy submitSignal(&inputWidget, &InputLine::submitted);
 
       auto input = inputWidget.findChild<QLineEdit *>();
       QTest::keyClicks(input, " updated");
@@ -56,8 +56,8 @@ private slots:
   void testCancelSignalOnEscapeKey() {
     context("when user hits escape key");
     it("emits 'cancelled' signal") {
-      CommandInput inputWidget("Initial content", new QWidget());
-      QSignalSpy cancelSignal(&inputWidget, &CommandInput::cancelled);
+      InputLine inputWidget("Initial content", new QWidget());
+      QSignalSpy cancelSignal(&inputWidget, &InputLine::cancelled);
 
       auto input = inputWidget.findChild<QLineEdit *>();
       QTest::keyClick(&inputWidget, Qt::Key_Escape);
@@ -67,8 +67,8 @@ private slots:
 
     context("when user hits ctrl+l key");
     it("emits 'cancelled' signal") {
-      CommandInput inputWidget("Initial content", new QWidget());
-      QSignalSpy cancelSignal(&inputWidget, &CommandInput::cancelled);
+      InputLine inputWidget("Initial content", new QWidget());
+      QSignalSpy cancelSignal(&inputWidget, &InputLine::cancelled);
 
       auto input = inputWidget.findChild<QLineEdit *>();
       QTest::keyClick(&inputWidget, Qt::Key_L, Qt::ControlModifier);
@@ -80,7 +80,7 @@ private slots:
   void testSetFocus() {
     context("when setInputFocus is called with true");
     xit("focusses input field") {
-      CommandInput inputWidget("Initial content", new QWidget());
+      InputLine inputWidget("Initial content", new QWidget());
 
       inputWidget.setInputFocus(true);
       QApplication::processEvents();
@@ -90,7 +90,7 @@ private slots:
 
     context("when setInputFocus is called with false");
     xit("unfocusses input field") {
-      CommandInput inputWidget("Initial content", new QWidget());
+      InputLine inputWidget("Initial content", new QWidget());
 
       inputWidget.setInputFocus(false);
       QApplication::processEvents();
@@ -100,5 +100,5 @@ private slots:
   }
 };
 
-QTEST_REGISTER(CommandInputSpec)
-#include "CommandInputSpec.moc"
+QTEST_REGISTER(InputLineSpec)
+#include "InputLineSpec.moc"

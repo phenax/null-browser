@@ -7,7 +7,7 @@
 
 #include "LuaRuntime.hpp"
 #include "widgets/BrowserManager.hpp"
-#include "widgets/CommandInput.hpp"
+#include "widgets/InputLine.hpp"
 
 class MainWindow : public QMainWindow {
 public:
@@ -15,14 +15,15 @@ public:
 
 protected:
   void keyPressEvent(QKeyEvent *event) override;
-  void toggleURLInput();
   void evaluateCommand(QString command);
-  void hideURLInput();
-  void showURLInput();
+  void hideInputLine();
+  void showInputLine();
+  void showURLInput(QString url = "");
+  void showCommandInput(QString command = "");
 
 private:
   BrowserManager *browserManager;
-  CommandInput *commandInput;
+  InputLine *inputLine;
   LuaRuntime *luaRuntime;
   QStackedLayout *layout;
 };

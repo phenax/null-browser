@@ -1,19 +1,23 @@
 #pragma once
 
 #include <QBoxLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QWidget>
 #include <QtCore>
 
-class CommandInput : public QWidget {
+#include "completion/Adapter.hpp"
+
+class InputLine : public QWidget {
   Q_OBJECT
 
 public:
-  CommandInput(QString defaultInput = "", QWidget *parentNode = nullptr);
+  InputLine(QString defaultInput = "", QWidget *parentNode = nullptr);
   void setInputFocus(bool focussed);
   bool isInputFocussed();
   QString getInputCommand();
   void setInputText(QString text);
+  void setAdapter(Adapter *adapter);
 
 signals:
   void submitted(QString command);
@@ -26,4 +30,6 @@ protected:
 private:
   QBoxLayout *layout;
   QLineEdit *input;
+  QLabel *promptPrefix;
+  Adapter *adapter = nullptr;
 };

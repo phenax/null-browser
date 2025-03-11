@@ -6,6 +6,7 @@
 CommandParser::CommandParser() {}
 
 Cmd CommandParser::parse(QString input) {
+  // TODO: simplify this to only parse the command
   auto parts = input.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
 
   if (parts.isEmpty())
@@ -13,9 +14,7 @@ Cmd CommandParser::parse(QString input) {
 
   auto cmdStr = parts.first();
   auto cmd = toCommandType(cmdStr);
-  auto rawArgs = input.slice(cmdStr.length());
-
-  parts.removeFirst();
+  auto rawArgs = input.slice(cmdStr.length()).trimmed();
 
   return {.command = cmd, .argsString = rawArgs, .rawInput = input};
 }

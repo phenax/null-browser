@@ -51,6 +51,6 @@ target_link_libraries(tests PRIVATE
   Qt6::WebEngineWidgets
   Qt6::Test
   ${LuaJIT_LINK_LIBRARIES})
-add_test(NAME CommandInputSpec COMMAND tests)
+add_test(NAME InputLineSpec COMMAND tests)
 
 install(TARGETS ${PROJECT} RUNTIME DESTINATION bin)

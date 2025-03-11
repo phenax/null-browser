@@ -2,10 +2,13 @@
 #include <QStackedLayout>
 #include <QVBoxLayout>
 #include <QWebEngineView>
+#include <QtCore/qnamespace.h>
 
 #include "CommandParser.hpp"
+#include "completion/CommandsAdapter.hpp"
+#include "completion/UrlAdapter.hpp"
 #include "widgets/BrowserManager.hpp"
-#include "widgets/CommandInput.hpp"
+#include "widgets/InputLine.hpp"
 #include "widgets/MainWindow.hpp"
 
 MainWindow::MainWindow() {
@@ -24,14 +27,12 @@ MainWindow::MainWindow() {
   layout->addWidget(browserManager);
 
   // Command input
-  commandInput = new CommandInput;
-  hideURLInput();
-  commandInput->move(0, 0);
-  connect(commandInput, &CommandInput::submitted, this,
-          &MainWindow::evaluateCommand);
-  connect(commandInput, &CommandInput::cancelled, this,
-          &MainWindow::hideURLInput);
-  layout->addWidget(commandInput);
+  inputLine = new InputLine;
+  inputLine->setHidden(true);
+  inputLine->move(0, 0);
+  connect(inputLine, &InputLine::submitted, this, &MainWindow::evaluateCommand);
+  connect(inputLine, &InputLine::cancelled, this, &MainWindow::hideInputLine);
+  layout->addWidget(inputLine);
 
   // Lua runtime
   luaRuntime = LuaRuntime::instance();
@@ -41,20 +42,31 @@ MainWindow::MainWindow() {
           });
 }
 
-void MainWindow::hideURLInput() {
-  commandInput->setInputFocus(false);
-  commandInput->setHidden(true);
+void MainWindow::hideInputLine() {
+  inputLine->setInputFocus(false);
+  inputLine->setHidden(true);
 }
 
-void MainWindow::showURLInput() {
-  commandInput->setInputText("open " + browserManager->currentUrl().toString());
-  commandInput->setHidden(false);
-  layout->setCurrentWidget(commandInput);
-  commandInput->setInputFocus(true);
+void MainWindow::showInputLine() {
+  inputLine->setHidden(false);
+  layout->setCurrentWidget(inputLine);
+  inputLine->setInputFocus(true);
+}
+
+void MainWindow::showURLInput(QString url) {
+  showInputLine();
+  inputLine->setAdapter(new UrlAdapter);
+  inputLine->setInputText(url);
+}
+
+void MainWindow::showCommandInput(QString cmd) {
+  showInputLine();
+  inputLine->setAdapter(new CommandsAdapter);
+  inputLine->setInputText(cmd);
 }
 
 void MainWindow::evaluateCommand(QString command) {
-  hideURLInput();
+  hideInputLine();
 
   CommandParser parser;
   auto cmd = parser.parse(command);
@@ -64,7 +76,11 @@ void MainWindow::evaluateCommand(QString command) {
     luaRuntime->evaluate(cmd.argsString);
     break;
   case CommandType::Open:
-    browserManager->openUrl(cmd.argsString, OpenType::OpenUrl);
+    if (cmd.argsString.trimmed().isEmpty()) {
+      showURLInput();
+    } else {
+      browserManager->openUrl(cmd.argsString, OpenType::OpenUrl);
+    }
     break;
   case CommandType::TabOpen:
     browserManager->openUrl(cmd.argsString, OpenType::OpenUrlInTab);
@@ -84,7 +100,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   auto combo = event->keyCombination();
   if (combo.key() == Qt::Key_L &&
       combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    toggleURLInput();
+    showURLInput(browserManager->currentUrl().toString());
+  } else if (combo.key() == Qt::Key_Semicolon &&
+             combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
+    showCommandInput();
   } else if (combo.key() == Qt::Key_T &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
     browserManager->createNewWebView(QUrl("https://lite.duckduckgo.com"), true);
@@ -98,8 +117,4 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
     browserManager->closeCurrentWebView();
   }
-}
-
-void MainWindow::toggleURLInput() {
-  commandInput->isHidden() ? showURLInput() : hideURLInput();
 }

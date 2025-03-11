@@ -13,11 +13,12 @@
 - [ ] History persistance
 - [ ] History completion
 - [ ] Sketch lua api for managing ui
+- [ ] Open url parsing (add protocol if missing, remove quotes, etc)
 
 ** Later
 - [ ] Fullscreen
-- [ ] File picker
 - [ ] Dev tools
 - [ ] remote debugging with cdp (spider-repl)
 
 ** Maybe
+- [ ] Custom file picker

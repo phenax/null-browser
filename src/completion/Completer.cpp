@@ -27,9 +27,7 @@ Completer::Completer(QObject *parent) : QCompleter(parent) {
   treeView->setRootIsDecorated(false);
   treeView->setUniformRowHeights(true);
   treeView->header()->hide();
-  treeView->setColumnWidth(1, 160);
-
-  complete();
+  treeView->setColumnWidth(1, 300);
 }
 
 // bool Completer::eventFilter(QObject *watched, QEvent *event) {

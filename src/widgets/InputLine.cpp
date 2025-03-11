@@ -1,20 +1,17 @@
+#include <QBoxLayout>
 #include <QCompleter>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
 #include <QStringListModel>
-#include <QVBoxLayout>
 #include <QWidget>
 #include <QWidgetAction>
 #include <QWindow>
-#include <QtCore/qnamespace.h>
-#include <QtCore/qstringlistmodel.h>
-#include <QtWidgets/qboxlayout.h>
+#include <QtCore>
 
-#include "completion/CommandsModel.hpp"
-#include "completion/Completer.hpp"
-#include "widgets/CommandInput.hpp"
+#include "completion/CommandsAdapter.hpp"
+#include "widgets/InputLine.hpp"
 
 const char *rootStyles = R"(
   background-color: #000;
@@ -22,7 +19,13 @@ const char *rootStyles = R"(
   border-radius: 0;
 )";
 
-CommandInput::CommandInput(QString defaultInput, QWidget *parentNode)
+const char *promptStyles = R"(
+  background-color: #aaa;
+  color: #555;
+  padding: 0 2px;
+)";
+
+InputLine::InputLine(QString defaultInput, QWidget *parentNode)
     : QWidget(parentNode) {
   setContentsMargins(0, 0, 0, 0);
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -31,10 +34,6 @@ CommandInput::CommandInput(QString defaultInput, QWidget *parentNode)
   auto layout = new QVBoxLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
 
-  auto listModel = new CommandsModel();
-  auto completer = new Completer(this);
-  completer->setModel(listModel);
-
   auto cmdLineBox = new QWidget();
   layout->addWidget(cmdLineBox);
   auto cmdLineLayout = new QHBoxLayout();
@@ -42,22 +41,30 @@ CommandInput::CommandInput(QString defaultInput, QWidget *parentNode)
   cmdLineBox->layout()->setContentsMargins(0, 0, 0, 0);
   cmdLineLayout->setSpacing(0);
 
-  auto promptPrefix = new QLabel(tr(":"));
+  promptPrefix = new QLabel();
+  promptPrefix->setStyleSheet(promptStyles);
   promptPrefix->setContentsMargins(0, 0, 0, 0);
   input = new QLineEdit(defaultInput);
   input->setFocusPolicy(Qt::StrongFocus);
-  input->setCompleter(completer);
-  // input->installEventFilter(completer);
 
   cmdLineLayout->addWidget(promptPrefix);
   cmdLineLayout->addWidget(input);
-
   setFixedHeight(input->sizeHint().height());
+
+  setAdapter(new CommandsAdapter());
 }
 
-void CommandInput::emitSubmit() { emit submitted(getInputCommand()); }
+void InputLine::setAdapter(Adapter *adapter) {
+  if (this->adapter)
+    delete this->adapter;
+  this->adapter = adapter;
+  promptPrefix->setText(adapter->prompt());
+  input->setCompleter(adapter->completer());
+}
 
-void CommandInput::keyPressEvent(QKeyEvent *event) {
+void InputLine::emitSubmit() { emit submitted(getInputCommand()); }
+
+void InputLine::keyPressEvent(QKeyEvent *event) {
   auto combo = event->keyCombination();
   auto ctrlL = combo.key() == Qt::Key_L &&
                combo.keyboardModifiers().testFlag(Qt::ControlModifier);
@@ -70,15 +77,15 @@ void CommandInput::keyPressEvent(QKeyEvent *event) {
     emitSubmit();
 }
 
-void CommandInput::setInputText(QString text) { input->setText(text); }
+void InputLine::setInputText(QString text) { input->setText(text); }
 
-bool CommandInput::isInputFocussed() { return input->hasFocus(); }
+bool InputLine::isInputFocussed() { return input->hasFocus(); }
 
-void CommandInput::setInputFocus(bool focussed) {
+void InputLine::setInputFocus(bool focussed) {
   if (focussed)
     input->setFocus(Qt::PopupFocusReason);
   else
     input->clearFocus();
 }
 
-QString CommandInput::getInputCommand() { return input->text(); }
+QString InputLine::getInputCommand() { return input->text(); }
