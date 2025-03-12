@@ -5,10 +5,10 @@
 - [X] Simpler shell-ey/vimscript-ey language for command input
 - [X] Command completion
 - [X] Command/URL input executor
+- [X] Refactor MainWindow
 - [ ] Buffer list/search
 - [ ] Modal keys
 - [ ] Tab history navigation
-- [ ] Refactor MainWindow
 - [ ] Press tab/shift-tab for next/prev in completion
 - [ ] Enter in completion should run cmd
 

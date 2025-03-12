@@ -1,5 +1,4 @@
 #include "testUtils.h"
-
 #include "widgets/InputLine.hpp"
 
 class InputLineSpec : public QObject {
@@ -11,35 +10,34 @@ private slots:
     it("sets the initial input text") {
       InputLine inputWidget("Initial content", new QWidget());
 
-      QCOMPARE(inputWidget.getInputCommand(), QString("Initial content"));
+      QCOMPARE(inputWidget.getInputText(), QString("Initial content"));
     }
   }
 
   void testInputUpdate() {
     context("when user types in input");
-    it("updates input command") {
+    it("updates input text") {
       InputLine inputWidget("Initial content", new QWidget());
 
       auto input = inputWidget.findChild<QLineEdit *>();
       QTest::keyClicks(input, " updated");
 
-      QCOMPARE(inputWidget.getInputCommand(),
-               QString("Initial content updated"));
+      QCOMPARE(inputWidget.getInputText(), QString("Initial content updated"));
     }
 
     context("when setInputText is called");
-    it("sets input command") {
+    it("sets input text") {
       InputLine inputWidget("Initial content", new QWidget());
 
       inputWidget.setInputText("New content");
 
-      QCOMPARE(inputWidget.getInputCommand(), QString("New content"));
+      QCOMPARE(inputWidget.getInputText(), QString("New content"));
     }
   }
 
   void testSubmitSignalOnReturnKey() {
     context("when user hits return key");
-    it("emits the submitted signal with the input command") {
+    it("emits the submitted signal with the input text") {
       InputLine inputWidget("Initial content", new QWidget());
       QSignalSpy submitSignal(&inputWidget, &InputLine::submitted);
 

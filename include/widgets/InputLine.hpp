@@ -7,6 +7,7 @@
 #include <QtCore>
 
 #include "completion/Adapter.hpp"
+#include "utils.hpp"
 
 class InputLine : public QWidget {
   Q_OBJECT
@@ -15,13 +16,15 @@ public:
   InputLine(QString defaultInput = "", QWidget *parentNode = nullptr);
   void setInputFocus(bool focussed);
   bool isInputFocussed();
-  QString getInputCommand();
-  void setInputText(QString text);
   void setAdapter(Adapter *adapter);
-  Adapter *adapter();
+
+  DELEGATE(input, hasFocus, isInputFocussed)
+  DELEGATE(input, setText, setInputText)
+  DELEGATE(input, text, getInputText)
+  DELEGATE(adapterInstance, prompt, prompt)
 
 signals:
-  void submitted(QString command);
+  void submitted(QString text);
   void cancelled();
 
 protected:

@@ -12,8 +12,8 @@ struct Command {
 const QList<Command> commands = {
     {.name = "open", .description = "Open a url in the current tab"},
     {.name = "tabopen", .description = "Open a url in a new tab"},
-    {.name = "bnext", .description = "Go to next tab"},
-    {.name = "bprev", .description = "Go to previous tab"},
+    {.name = "tabnext", .description = "Go to next tab"},
+    {.name = "tabbprev", .description = "Go to previous tab"},
 };
 
 class CommandsModel : public QAbstractListModel {

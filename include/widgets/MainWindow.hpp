@@ -5,16 +5,7 @@
 #include <QStackedLayout>
 #include <QWebEngineView>
 
-#include "LuaRuntime.hpp"
-#include "widgets/InputLine.hpp"
-#include "widgets/WebViewStack.hpp"
-
-class EvaluationType {
-public:
-  EvaluationType() {}
-  virtual ~EvaluationType() = default;
-};
-class NoopEval : public EvaluationType {};
+#include "InputMediator.hpp"
 
 class MainWindow : public QMainWindow {
 public:
@@ -22,33 +13,7 @@ public:
 
 private:
   void keyPressEvent(QKeyEvent *event) override;
-  void onInputSubmit(QString input);
-
-  void evaluateCommand(QString command);
-
-  void hideInputLine();
-  void showInputLine();
-  void showURLInput(QString url, OpenType openType);
-  void showCommandInput(QString command = "");
-
-  void setEvaluationType(EvaluationType *);
 
 private:
-  WebViewStack *webViewStack;
-  InputLine *inputLine;
-  LuaRuntime *luaRuntime;
-  QStackedLayout *layout;
-
-  EvaluationType *currentEvaluationType = new NoopEval();
+  InputMediator *inputMediator;
 };
-
-class UrlEval : public EvaluationType {
-public:
-  UrlEval(OpenType type) : EvaluationType(), openType(type) {}
-  OpenType type() { return openType; }
-
-private:
-  OpenType openType;
-};
-
-class CommandEval : public EvaluationType {};

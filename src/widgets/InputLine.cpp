@@ -20,14 +20,15 @@ const char *rootStyles = R"(
 )";
 
 const char *promptStyles = R"(
-  background-color: #aaa;
-  color: #555;
+  background-color: #222;
+  color: #fff;
   padding: 0 2px;
 )";
 
 InputLine::InputLine(QString defaultInput, QWidget *parentNode)
     : QWidget(parentNode) {
   setContentsMargins(0, 0, 0, 0);
+  move(0, 0);
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   setStyleSheet(rootStyles);
 
@@ -54,8 +55,6 @@ InputLine::InputLine(QString defaultInput, QWidget *parentNode)
   setAdapter(new CommandsAdapter());
 }
 
-Adapter *InputLine::adapter() { return adapterInstance; }
-
 void InputLine::setAdapter(Adapter *adapter) {
   if (this->adapterInstance)
     delete this->adapterInstance;
@@ -64,7 +63,7 @@ void InputLine::setAdapter(Adapter *adapter) {
   input->setCompleter(adapter->completer());
 }
 
-void InputLine::emitSubmit() { emit submitted(getInputCommand()); }
+void InputLine::emitSubmit() { emit submitted(getInputText()); }
 
 void InputLine::keyPressEvent(QKeyEvent *event) {
   auto combo = event->keyCombination();
@@ -79,15 +78,9 @@ void InputLine::keyPressEvent(QKeyEvent *event) {
     emitSubmit();
 }
 
-void InputLine::setInputText(QString text) { input->setText(text); }
-
-bool InputLine::isInputFocussed() { return input->hasFocus(); }
-
 void InputLine::setInputFocus(bool focussed) {
   if (focussed)
     input->setFocus(Qt::PopupFocusReason);
   else
     input->clearFocus();
 }
-
-QString InputLine::getInputCommand() { return input->text(); }

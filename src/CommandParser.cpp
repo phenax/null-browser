@@ -26,9 +26,9 @@ CommandType CommandParser::toCommandType(QString cmd) {
     return Open;
   if (cmd == "tabopen")
     return TabOpen;
-  if (cmd == "bn" || cmd == "bnext")
+  if (cmd == "tn" || cmd == "tabnext")
     return TabNext;
-  if (cmd == "bp" || cmd == "bprevious")
+  if (cmd == "tp" || cmd == "tabprev")
     return TabPrev;
 
   return Noop;
