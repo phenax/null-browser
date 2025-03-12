@@ -9,12 +9,16 @@ std::vector<std::function<QObject *()>> &getQTestRegistry() {
 
 int runAllTests() {
   int exitCode = 0;
+
+  QString testName = getenv("TEST_NAME");
+
   for (const auto &runTest : getQTestRegistry()) {
     auto test = runTest();
-    // printf(":::: %s\n", test->objectName().toStdString().c_str());
-    exitCode |= QTest::qExec(test);
+    if (testName.isEmpty() || test->objectName().contains(testName))
+      exitCode |= QTest::qExec(test);
     delete test;
   }
+
   getQTestRegistry().clear();
   return exitCode;
 }

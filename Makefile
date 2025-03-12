@@ -10,7 +10,7 @@ build:
 	@cp build/compile_commands.json .
 
 test: build
-	cd build && ctest -V
+	cd build && QT_QPA_PLATFORM=offscreen ctest -V
 
 clean:
 	rm -rf build/
