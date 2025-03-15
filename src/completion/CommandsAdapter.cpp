@@ -8,8 +8,8 @@
 const QString cmdPrompt = "[exec]";
 
 CommandsAdapter::CommandsAdapter() : Adapter() {
-  completerInstance = new Completer(this);
-  completerInstance->setModel(new CommandsModel(this));
+  completerInstance = new Completer();
+  completerInstance->setSourceModel(new CommandsModel(this));
 }
 
 Completer *CommandsAdapter::completer() { return completerInstance; }
@@ -17,6 +17,6 @@ Completer *CommandsAdapter::completer() { return completerInstance; }
 QString CommandsAdapter::prompt() { return cmdPrompt; }
 
 CommandsAdapter::~CommandsAdapter() {
-  delete completerInstance->model();
+  delete completerInstance->sourceModel();
   delete completerInstance;
 }

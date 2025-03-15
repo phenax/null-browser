@@ -21,7 +21,9 @@ public:
   DELEGATE(input, hasFocus, isInputFocussed)
   DELEGATE(input, setText, setInputText)
   DELEGATE(input, text, getInputText)
-  DELEGATE(adapterInstance, prompt, prompt)
+  DELEGATE(promptPrefix, text, prompt)
+
+  // bool eventFilter(QObject *obj, QEvent *event) override;
 
 signals:
   void submitted(QString text);
@@ -32,7 +34,6 @@ protected:
   void emitSubmit();
 
 private:
-  QBoxLayout *layout;
   QLineEdit *input;
   QLabel *promptPrefix;
   Adapter *adapterInstance = nullptr;

@@ -24,6 +24,7 @@ public:
 
   void showURLInput(QString url = "", OpenType openType = OpenType::OpenUrl);
   void showCommandInput(QString command = "");
+  void showBufferInput(QString command = "");
   void hideInputLine();
 
   DELEGATE(webViewStack, openUrl, openUrl)
@@ -58,3 +59,5 @@ private:
 };
 
 class CommandEval : public EvaluationType {};
+
+class BufferEval : public EvaluationType {};

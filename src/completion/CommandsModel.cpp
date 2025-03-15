@@ -16,10 +16,10 @@ QVariant CommandsModel::data(const QModelIndex &index, int role) const {
 
   if (role == Qt::DisplayRole)
     return item.name;
-  else if (role == Qt::ToolTipRole)
-    return item.description;
   else if (role == Qt::UserRole)
     return item.description;
+  else if (role == Qt::AccessibleDescriptionRole)
+    return item.name + item.description;
 
   return QVariant();
 }
@@ -28,6 +28,7 @@ QHash<int, QByteArray> CommandsModel::roleNames() const {
   QHash<int, QByteArray> roles;
   roles[Qt::DisplayRole] = "name";
   roles[Qt::UserRole] = "description";
+  roles[Qt::AccessibleDescriptionRole] = "full";
   return roles;
 }
 

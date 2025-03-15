@@ -5,6 +5,7 @@
 #include "InputMediator.hpp"
 #include "LuaRuntime.hpp"
 #include "completion/CommandsAdapter.hpp"
+#include "completion/TabsAdapter.hpp"
 #include "completion/UrlAdapter.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -32,6 +33,9 @@ void InputMediator::onInputSubmit(QString input) {
 
   if (auto urlEval = dynamic_cast<UrlEval *>(currentEvaluationType))
     return webViewStack->openUrl(input, urlEval->type());
+
+  if (dynamic_cast<BufferEval *>(currentEvaluationType))
+    return webViewStack->focusWebView(1);
 }
 
 void InputMediator::hideInputLine() {
@@ -49,6 +53,13 @@ void InputMediator::showCommandInput(QString cmd) {
   setEvaluationType(new CommandEval());
   inputLine->setAdapter(new CommandsAdapter);
   inputLine->setInputText(cmd);
+  showInputLine();
+}
+
+void InputMediator::showBufferInput(QString url) {
+  setEvaluationType(new CommandEval());
+  inputLine->setAdapter(new TabsAdapter);
+  inputLine->setInputText(url);
   showInputLine();
 }
 
@@ -77,19 +88,23 @@ void InputMediator::evaluateCommand(QString command) {
     if (cmd.argsString.trimmed().isEmpty())
       showURLInput("", OpenType::OpenUrl);
     else
-      webViewStack->openUrl(cmd.argsString, OpenType::OpenUrl);
+      openUrl(cmd.argsString, OpenType::OpenUrl);
     break;
   case CommandType::TabOpen:
     if (cmd.argsString.trimmed().isEmpty())
       showURLInput("", OpenType::OpenUrlInTab);
     else
-      webViewStack->openUrl(cmd.argsString, OpenType::OpenUrlInTab);
+      openUrl(cmd.argsString, OpenType::OpenUrlInTab);
     break;
   case CommandType::TabNext:
-    webViewStack->next();
+    nextWebView();
     break;
   case CommandType::TabPrev:
-    webViewStack->previous();
+    previousWebView();
+    break;
+  case CommandType::TabSelect:
+    showBufferInput();
+    // focusWebView(long index) // TODO: parse index and select
     break;
   case CommandType::Noop:
     break;

@@ -1,8 +1,30 @@
+#include "completion/Adapter.hpp"
+#include "completion/Completer.hpp"
 #include "testUtils.h"
 #include "widgets/InputLine.hpp"
+#include <QAbstractItemView>
+#include <QtCore/qsharedpointer.h>
+#include <QtCore/qstringlistmodel.h>
+#include <QtCore>
+#include <QtTest/qtestkeyboard.h>
 
 class InputLineSpec : public QObject {
   Q_OBJECT
+
+  class FakeInputAdapter : public Adapter {
+  public:
+    FakeInputAdapter() : Adapter() {
+      completerInstance = new Completer;
+      QStringList list = {"one", "two", "three"};
+      QStringListModel model(list);
+      completerInstance->setSourceModel(&model);
+    }
+    Completer *completer() { return completerInstance; }
+    QString prompt() { return "fake prompt"; }
+
+  private:
+    Completer *completerInstance;
+  };
 
 private slots:
   void testWithInitialInput() {
@@ -10,7 +32,7 @@ private slots:
     it("sets the initial input text") {
       InputLine inputWidget("Initial content", new QWidget());
 
-      QCOMPARE(inputWidget.getInputText(), QString("Initial content"));
+      QCOMPARE(inputWidget.getInputText(), "Initial content");
     }
   }
 
@@ -22,7 +44,7 @@ private slots:
       auto input = inputWidget.findChild<QLineEdit *>();
       QTest::keyClicks(input, " updated");
 
-      QCOMPARE(inputWidget.getInputText(), QString("Initial content updated"));
+      QCOMPARE(inputWidget.getInputText(), "Initial content updated");
     }
 
     context("when setInputText is called");
@@ -31,7 +53,7 @@ private slots:
 
       inputWidget.setInputText("New content");
 
-      QCOMPARE(inputWidget.getInputText(), QString("New content"));
+      QCOMPARE(inputWidget.getInputText(), "New content");
     }
   }
 
@@ -96,6 +118,18 @@ private slots:
       QVERIFY(!inputWidget.isInputFocussed());
     }
   }
+
+  void testInputPrompt() {
+    it("sets the prompt text using the adapter") {
+      InputLine inputWidget("Initial content", new QWidget());
+      FakeInputAdapter inputAdapter;
+      inputWidget.setAdapter(&inputAdapter);
+
+      QCOMPARE(inputWidget.prompt(), "fake prompt");
+    }
+  }
+
+  // TODO: completions test
 };
 
 QTEST_REGISTER(InputLineSpec)

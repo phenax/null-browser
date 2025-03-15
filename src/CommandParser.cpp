@@ -30,6 +30,8 @@ CommandType CommandParser::toCommandType(QString cmd) {
     return TabNext;
   if (cmd == "tp" || cmd == "tabprev")
     return TabPrev;
+  if (cmd == "tabs")
+    return TabSelect;
 
   return Noop;
 }

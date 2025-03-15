@@ -9,11 +9,13 @@ struct Command {
   QString description;
 };
 
+// TODO: Combine commands model completion and commands evaluation
 const QList<Command> commands = {
-    {.name = "open", .description = "Open a url in the current tab"},
+    {.name = "open", .description = "Update current URL"},
+    {.name = "tabs", .description = "Select a tab"},
     {.name = "tabopen", .description = "Open a url in a new tab"},
     {.name = "tabnext", .description = "Go to next tab"},
-    {.name = "tabbprev", .description = "Go to previous tab"},
+    {.name = "tabprev", .description = "Go to previous tab"},
 };
 
 class CommandsModel : public QAbstractListModel {

@@ -9,13 +9,19 @@
 CompleterDelegate::CompleterDelegate(QObject *parent)
     : QStyledItemDelegate(parent) {}
 
+void CompleterDelegate::setCurrentRow(uint32_t r) { row = r; }
+
+uint32_t CompleterDelegate::currentRow() { return row; }
+
 void CompleterDelegate::paint(QPainter *painter,
                               const QStyleOptionViewItem &option,
                               const QModelIndex &index) const {
   painter->save();
 
+  bool selected = index.row() == row;
+
   // Style
-  if (option.state & QStyle::State_Selected) {
+  if (selected) {
     painter->fillRect(option.rect, QColor("#aaa"));
     painter->setPen(Qt::black);
   } else {

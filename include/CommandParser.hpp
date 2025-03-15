@@ -10,6 +10,7 @@ enum CommandType {
   TabOpen,
   TabNext,
   TabPrev,
+  TabSelect,
 };
 
 struct Cmd {

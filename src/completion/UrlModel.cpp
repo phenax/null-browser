@@ -1,5 +1,6 @@
 #include <QAbstractListModel>
 #include <QWidget>
+#include <QtCore/qnamespace.h>
 #include <QtCore>
 
 #include "completion/UrlModel.hpp"
@@ -22,10 +23,10 @@ QVariant UrlModel::data(const QModelIndex &index, int role) const {
 
   if (role == Qt::DisplayRole)
     return item.url;
-  else if (role == Qt::ToolTipRole)
-    return item.description;
   else if (role == Qt::UserRole)
     return item.description;
+  else if (role == Qt::AccessibleDescriptionRole)
+    return item.url + " " + item.description;
 
   return QVariant();
 }
@@ -34,6 +35,7 @@ QHash<int, QByteArray> UrlModel::roleNames() const {
   QHash<int, QByteArray> roles;
   roles[Qt::DisplayRole] = "url";
   roles[Qt::UserRole] = "description";
+  roles[Qt::AccessibleDescriptionRole] = "full";
   return roles;
 }
 
@@ -44,5 +46,5 @@ int UrlModel::rowCount(const QModelIndex &parent) const {
 
 int UrlModel::columnCount(const QModelIndex &parent) const {
   Q_UNUSED(parent);
-  return 2; // name + description
+  return 2; // url + description
 }
