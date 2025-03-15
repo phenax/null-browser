@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QCompleter>
+#include <QHBoxLayout>
 #include <QSortFilterProxyModel>
 #include <QWidget>
 #include <QtCore>
@@ -15,9 +16,9 @@ class Completer : public QWidget {
   Q_OBJECT
 
 public:
-  Completer();
-  void setSourceModel(QAbstractItemModel *model);
+  Completer(QWidget *parentNode = nullptr);
 
+  DELEGATE((&proxyModel), setSourceModel, setSourceModel)
   DELEGATE((&proxyModel), sourceModel, sourceModel)
 
 signals:
@@ -28,12 +29,14 @@ public slots:
   bool onKeyPressEvent(QKeyEvent *event);
 
 protected:
-  void keyPressEvent(QKeyEvent *event) override { onKeyPressEvent(event); }
   void setHighlightedRow(uint32_t);
   void acceptHighlighted();
+
+  DELEGATE(this, onKeyPressEvent, keyPressEvent)
 
 private:
   QTreeView *view;
   FuzzySearchProxyModel proxyModel;
   CompleterDelegate *viewDelegate;
+  QHBoxLayout *layout;
 };

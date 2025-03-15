@@ -14,6 +14,7 @@ class InputLine : public QWidget {
 
 public:
   InputLine(QString defaultInput = "", QWidget *parentNode = nullptr);
+
   void setInputFocus(bool focussed);
   bool isInputFocussed();
   void setAdapter(Adapter *adapter);
@@ -37,4 +38,5 @@ private:
   QLineEdit *input;
   QLabel *promptPrefix;
   Adapter *adapterInstance = nullptr;
+  QVBoxLayout *layout;
 };

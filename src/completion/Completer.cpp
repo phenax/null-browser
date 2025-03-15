@@ -9,6 +9,7 @@
 #include <QtCore/qnamespace.h>
 #include <QtCore/qsortfilterproxymodel.h>
 #include <QtCore>
+#include <QtWidgets/qboxlayout.h>
 
 #include "completion/Completer.hpp"
 #include "completion/CompleterDelegate.hpp"
@@ -17,41 +18,44 @@ const char *completerStyles = R"(
   background-color: #111;
   color: #fff;
   border-radius: 0;
-  width: 100%;
 )";
 
-Completer::Completer() : QWidget() {
-  view = new QTreeView(this);
+Completer::Completer(QWidget *parentNode) : QWidget(parentNode) {
+  layout = new QHBoxLayout(this);
+  layout->setContentsMargins(0, 0, 0, 0);
+  layout->setSpacing(0);
+
+  setLayout(layout);
+  setStyleSheet(completerStyles);
+  setContentsMargins(0, 0, 0, 0);
+
+  view = new QTreeView();
+  layout->addWidget(view, 0);
   viewDelegate = new CompleterDelegate(view);
-  view->setStyleSheet(completerStyles);
   view->setItemDelegate(viewDelegate);
   view->setRootIsDecorated(false);
   view->setUniformRowHeights(true);
   view->header()->hide();
-  view->setColumnWidth(1, 500);
+  view->setColumnWidth(0, 500);
   view->setModel(&proxyModel);
   view->setFocusPolicy(Qt::NoFocus);
-  view->setEditTriggers(QAbstractItemView::NoEditTriggers);
   view->setSelectionMode(QAbstractItemView::SingleSelection);
-}
-
-void Completer::setSourceModel(QAbstractItemModel *model) {
-  proxyModel.setSourceModel(model);
-}
-
-void Completer::onTextChange(QString text) {
-  proxyModel.setFilterWildcard(text);
-}
-
-void Completer::setHighlightedRow(uint32_t row) {
-  viewDelegate->setCurrentRow(row);
-  view->update();
+  view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+  view->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+  view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 void Completer::acceptHighlighted() {
   auto index = proxyModel.index(viewDelegate->currentRow(), 0);
   auto text = proxyModel.data(index, Qt::DisplayRole).toString();
+  setHighlightedRow(0);
   emit accepted(text);
+}
+
+void Completer::onTextChange(QString text) {
+  setHighlightedRow(0);
+  proxyModel.setFilterWildcard(text);
 }
 
 bool Completer::onKeyPressEvent(QKeyEvent *event) {
@@ -83,4 +87,9 @@ bool Completer::onKeyPressEvent(QKeyEvent *event) {
   }
 
   return false;
+}
+
+void Completer::setHighlightedRow(uint32_t row) {
+  viewDelegate->setCurrentRow(row);
+  view->update();
 }

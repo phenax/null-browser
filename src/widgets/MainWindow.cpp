@@ -11,7 +11,7 @@
 
 MainWindow::MainWindow() {
   setStyleSheet("background-color: #000; color: #fff;");
-  setCentralWidget(new QWidget());
+  setCentralWidget(new QWidget()); // TODO: manage widget memory
 
   // Root stacked layout
   auto layout = new QStackedLayout();
@@ -25,7 +25,7 @@ MainWindow::MainWindow() {
   layout->addWidget(webViewStack);
 
   // Command input
-  auto inputLine = new InputLine;
+  auto inputLine = new InputLine();
   layout->addWidget(inputLine);
 
   inputMediator =

@@ -6,11 +6,9 @@
 
 WebViewStack::WebViewStack(QWebEngineProfile *profile, QWidget *parent)
     : QWidget(parent), profile(profile) {
-  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
   layout = new QStackedLayout(this);
-  layout->setStackingMode(QStackedLayout::StackAll);
   layout->setContentsMargins(0, 0, 0, 0);
+  layout->setStackingMode(QStackedLayout::StackOne);
 
   createNewWebView(WebViewStack::NewtabURL, true);
 }

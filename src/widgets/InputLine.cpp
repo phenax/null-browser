@@ -8,9 +8,11 @@
 #include <QWidget>
 #include <QWidgetAction>
 #include <QWindow>
+#include <QtCore/qnamespace.h>
 #include <QtCore>
 #include <QtWidgets/qboxlayout.h>
 #include <QtWidgets/qlineedit.h>
+#include <QtWidgets/qwidget.h>
 
 #include "completion/CommandsAdapter.hpp"
 #include "widgets/InputLine.hpp"
@@ -24,53 +26,59 @@ const char *rootStyles = R"(
 const char *promptStyles = R"(
   background-color: #222;
   color: #fff;
-  padding: 0 2px;
+  padding: 0 4px;
+)";
+
+const char *inputStyles = R"(
+  color: #fff;
+  padding: 0 4px;
 )";
 
 InputLine::InputLine(QString defaultInput, QWidget *parentNode)
     : QWidget(parentNode) {
   setContentsMargins(0, 0, 0, 0);
-  move(0, 0);
-  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   setStyleSheet(rootStyles);
 
-  auto layout = new QVBoxLayout(this);
+  layout = new QVBoxLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
+  layout->setSpacing(0);
   setLayout(layout);
+  setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
   auto cmdLineBox = new QWidget();
-  layout->addWidget(cmdLineBox);
   auto cmdLineLayout = new QHBoxLayout();
-  cmdLineBox->setLayout(cmdLineLayout);
-  cmdLineBox->layout()->setContentsMargins(0, 0, 0, 0);
-  cmdLineBox->setContentsMargins(0, 0, 0, 0);
+  cmdLineLayout->setContentsMargins(0, 0, 0, 0);
   cmdLineLayout->setSpacing(0);
+  cmdLineBox->setLayout(cmdLineLayout);
 
   promptPrefix = new QLabel();
   promptPrefix->setStyleSheet(promptStyles);
   promptPrefix->setContentsMargins(0, 0, 0, 0);
   input = new QLineEdit(defaultInput);
+  input->setStyleSheet(inputStyles);
   input->setFocusPolicy(Qt::StrongFocus);
   input->setContentsMargins(0, 0, 0, 0);
 
   cmdLineLayout->addWidget(promptPrefix);
-  cmdLineLayout->addWidget(input);
+  cmdLineLayout->addWidget(input, 1);
   cmdLineBox->setFixedHeight(input->sizeHint().height());
+
+  layout->addWidget(cmdLineBox, 0);
 
   setAdapter(new CommandsAdapter());
 }
 
 void InputLine::setAdapter(Adapter *adapter) {
   if (this->adapterInstance) {
-    layout()->removeWidget(this->adapterInstance->completer());
+    layout->removeWidget(this->adapterInstance->completer());
     delete this->adapterInstance;
   }
   this->adapterInstance = adapter;
   promptPrefix->setText(adapter->prompt());
 
   auto completer = adapter->completer();
-  layout()->addWidget(completer);
-  completer->move(0, 0);
+  layout->insertWidget(1, completer, 0, Qt::AlignmentFlag::AlignTop);
+
   connect(input, &QLineEdit::textChanged, completer, &Completer::onTextChange);
   connect(completer, &Completer::accepted, input, &QLineEdit::setText);
 }
