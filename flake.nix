@@ -8,7 +8,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        packages = with pkgs; [
+        dependencies = with pkgs; [
           pkg-config
           qt6.full
           qt6.qtbase
@@ -22,7 +22,7 @@
           version = "0.0.0";
           src = ./.;
 
-          buildInputs = packages;
+          buildInputs = dependencies;
           nativeBuildInputs = with pkgs; [ cmake qt6.wrapQtAppsHook ];
         };
 
@@ -31,7 +31,8 @@
             cmake
             gnumake
             clang-tools
-          ] ++ packages;
+          ] ++ dependencies;
+
           LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath buildInputs}";
         };
       });

@@ -11,8 +11,9 @@ private slots:
   void testInputTypes() {
     context("when showCommandInput is called");
     it("shows url input with default command") {
-      auto inputLine = InputLine();
-      auto webViewStack = WebViewStack();
+      InputLine inputLine;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       auto luaRuntime = LuaRuntime::instance();
       InputMediator inputMediator(&inputLine, &webViewStack, luaRuntime);
       QCOMPARE(inputLine.isHidden(), true);
@@ -26,8 +27,9 @@ private slots:
 
     context("when showURLInput is called");
     it("shows url input with default url") {
-      auto inputLine = InputLine();
-      auto webViewStack = WebViewStack();
+      InputLine inputLine;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       auto luaRuntime = LuaRuntime::instance();
       InputMediator inputMediator(&inputLine, &webViewStack, luaRuntime);
       QCOMPARE(inputLine.isHidden(), true);
@@ -44,8 +46,9 @@ private slots:
     context("when command open is executed");
     context("- without args");
     it("opens url input") {
-      auto inputLine = InputLine();
-      auto webViewStack = WebViewStack();
+      InputLine inputLine;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       auto luaRuntime = LuaRuntime::instance();
       InputMediator inputMediator(&inputLine, &webViewStack, luaRuntime);
 
@@ -58,8 +61,9 @@ private slots:
     context("when command open is executed");
     context("- with url as an arg");
     it("opens url in current tab") {
-      auto inputLine = InputLine();
-      auto webViewStack = WebViewStack();
+      InputLine inputLine;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       auto luaRuntime = LuaRuntime::instance();
       InputMediator inputMediator(&inputLine, &webViewStack, luaRuntime);
 
@@ -76,8 +80,9 @@ private slots:
     context("when command tabopen is run");
     context("- without args");
     it("opens url in a new tab") {
-      auto inputLine = InputLine();
-      auto webViewStack = WebViewStack();
+      InputLine inputLine;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       auto luaRuntime = LuaRuntime::instance();
       InputMediator inputMediator(&inputLine, &webViewStack, luaRuntime);
 
@@ -90,15 +95,16 @@ private slots:
     context("when command tabopen is executed");
     context("- with url as an arg");
     it("opens url in a new tab") {
-      auto inputLine = InputLine();
-      auto webViewStack = WebViewStack();
+      InputLine inputLine;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       auto luaRuntime = LuaRuntime::instance();
       InputMediator inputMediator(&inputLine, &webViewStack, luaRuntime);
 
       inputMediator.showCommandInput();
       emit inputLine.submitted("tabopen http://a.com");
 
-      std::vector<QUrl> urls = {QUrl(WebViewStack::NewtabURL),
+      std::vector<QUrl> urls = {QUrl(configuration.newTabUrl),
                                 QUrl("http://a.com")};
       QCOMPARE(webViewStack.urls(), urls);
       QCOMPARE(webViewStack.currentWebViewIndex(), 1);
@@ -108,8 +114,9 @@ private slots:
   void testCommandEvaluationTabNextPrev() {
     context("when command tabnext is executed");
     it("jumps to next tab") {
-      auto inputLine = InputLine();
-      auto webViewStack = WebViewStack();
+      InputLine inputLine;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       auto luaRuntime = LuaRuntime::instance();
       InputMediator inputMediator(&inputLine, &webViewStack, luaRuntime);
       webViewStack.openUrl(QUrl("https://a1.com"), OpenType::OpenUrl);
@@ -125,8 +132,9 @@ private slots:
 
     context("when command tabprev is executed");
     it("jumps to previous tab") {
-      auto inputLine = InputLine();
-      auto webViewStack = WebViewStack();
+      InputLine inputLine;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       auto luaRuntime = LuaRuntime::instance();
       InputMediator inputMediator(&inputLine, &webViewStack, luaRuntime);
       webViewStack.openUrl(QUrl("https://a1.com"), OpenType::OpenUrl);
@@ -144,8 +152,9 @@ private slots:
   void testHideInputLine() {
     context("when hideInputLine is called");
     it("hides input") {
-      auto inputLine = InputLine();
-      auto webViewStack = WebViewStack();
+      InputLine inputLine;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       auto luaRuntime = LuaRuntime::instance();
       InputMediator inputMediator(&inputLine, &webViewStack, luaRuntime);
       inputMediator.showURLInput();

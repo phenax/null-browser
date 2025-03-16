@@ -5,6 +5,7 @@
 #include <QStackedLayout>
 #include <QWebEngineView>
 
+#include "Configuration.hpp"
 #include "InputMediator.hpp"
 
 class MainWindow : public QMainWindow {
@@ -16,4 +17,5 @@ private:
 
 private:
   InputMediator *inputMediator;
+  Configuration configuration;
 };

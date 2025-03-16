@@ -2,6 +2,7 @@
 #include <QWebEngineProfile>
 #include <vector>
 
+#include "Configuration.hpp"
 #include "testUtils.h"
 #include "widgets/WebViewStack.hpp"
 
@@ -19,10 +20,11 @@ private slots:
   void testInitialState() {
     context("when initialized");
     it("opens a single tab") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
 
       QCOMPARE(webViewStack.count(), 1);
-      QCOMPARE(webViewStack.currentUrl(), WebViewStack::NewtabURL);
+      QCOMPARE(webViewStack.currentUrl(), configuration.newTabUrl);
       webViewStack.deleteLater();
     }
   }
@@ -30,42 +32,45 @@ private slots:
   void testOpenUrl() {
     context("when openUrl is called without an open type");
     it("replaces current tab url with newtab url") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("http://a.com"), OpenType::OpenUrl);
 
-      webViewStack.openUrl();
+      webViewStack.openUrl(QUrl(configuration.newTabUrl));
 
       QCOMPARE(webViewStack.count(), 1);
-      std::vector<QUrl> urls = {QUrl(WebViewStack::NewtabURL)};
+      std::vector<QUrl> urls = {QUrl(configuration.newTabUrl)};
       QCOMPARE(webViewStack.urls(), urls);
       QCOMPARE(webViewStack.currentWebViewIndex(), 0);
-      QCOMPARE(webViewStack.currentUrl(), WebViewStack::NewtabURL);
+      QCOMPARE(webViewStack.currentUrl(), configuration.newTabUrl);
     }
 
     context("when creating a new webview with a url and focus is false");
     it("opens the given url in background") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
 
       webViewStack.openUrl(QUrl("https://duckduckgo.com"),
                            OpenType::OpenUrlInBgTab);
 
       QCOMPARE(webViewStack.count(), 2);
-      std::vector<QUrl> urls = {QUrl(WebViewStack::NewtabURL),
+      std::vector<QUrl> urls = {QUrl(configuration.newTabUrl),
                                 QUrl("https://duckduckgo.com")};
       QCOMPARE(webViewStack.urls(), urls);
       QCOMPARE(webViewStack.currentWebViewIndex(), 0);
-      QCOMPARE(webViewStack.currentUrl(), WebViewStack::NewtabURL);
+      QCOMPARE(webViewStack.currentUrl(), configuration.newTabUrl);
     }
 
     context("when creating a new webview with a url and focus is true");
     it("opens the given url as current view") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
 
       webViewStack.openUrl(QUrl("https://duckduckgo.com"),
                            OpenType::OpenUrlInTab);
 
       QCOMPARE(webViewStack.count(), 2);
-      std::vector<QUrl> urls = {QUrl(WebViewStack::NewtabURL),
+      std::vector<QUrl> urls = {QUrl(configuration.newTabUrl),
                                 QUrl("https://duckduckgo.com")};
       QCOMPARE(webViewStack.urls(), urls);
       QCOMPARE(webViewStack.currentWebViewIndex(), 1);
@@ -77,18 +82,20 @@ private slots:
     context("when nextWebView is called");
     context("- and there is only 1 tab");
     it("does nothing") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
 
       webViewStack.next();
 
       QCOMPARE(webViewStack.currentWebViewIndex(), 0);
-      QCOMPARE(webViewStack.currentUrl(), WebViewStack::NewtabURL);
+      QCOMPARE(webViewStack.currentUrl(), configuration.newTabUrl);
     }
 
     context("when nextWebView is called");
     context("- and there are tabs after the current tab");
     it("goes to the next tab") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("http://a1.com"), OpenType::OpenUrlInBgTab);
       webViewStack.openUrl(QUrl("http://a2.com"), OpenType::OpenUrlInBgTab);
 
@@ -101,7 +108,8 @@ private slots:
     context("when nextWebView is called");
     context("- and current tab is the last tab");
     it("jumps to the first tab") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("http://a1.com"), OpenType::OpenUrlInBgTab);
       webViewStack.openUrl(QUrl("http://a2.com"), OpenType::OpenUrlInTab);
       QCOMPARE(webViewStack.currentWebViewIndex(), 2);
@@ -109,7 +117,7 @@ private slots:
       webViewStack.next();
 
       QCOMPARE(webViewStack.currentWebViewIndex(), 0);
-      QCOMPARE(webViewStack.currentUrl(), WebViewStack::NewtabURL);
+      QCOMPARE(webViewStack.currentUrl(), configuration.newTabUrl);
     }
   }
 
@@ -117,18 +125,20 @@ private slots:
     context("when previousWebView is called");
     context("- and there is only 1 tab");
     it("does nothing") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
 
       webViewStack.previous();
 
       QCOMPARE(webViewStack.currentWebViewIndex(), 0);
-      QCOMPARE(webViewStack.currentUrl(), WebViewStack::NewtabURL);
+      QCOMPARE(webViewStack.currentUrl(), configuration.newTabUrl);
     }
 
     context("when previousWebView is called");
     context("- and there are tabs before the current tab");
     it("goes to the next tab") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("http://a1.com"), OpenType::OpenUrlInBgTab);
       webViewStack.openUrl(QUrl("http://a2.com"), OpenType::OpenUrlInTab);
       QCOMPARE(webViewStack.currentWebViewIndex(), 2);
@@ -142,7 +152,8 @@ private slots:
     context("when previousWebView is called");
     context("- and current tab is the last tab");
     it("jumps to the last tab") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("http://a1.com"), OpenType::OpenUrlInBgTab);
       webViewStack.openUrl(QUrl("http://a2.com"), OpenType::OpenUrlInBgTab);
 
@@ -157,7 +168,8 @@ private slots:
     context("when closeWebView is called");
     context("- with out of bounds index");
     it("does nothing") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("https://a.com"), OpenType::OpenUrl);
 
       webViewStack.close(1);
@@ -171,7 +183,8 @@ private slots:
     context("when closeWebView is called");
     context("- and there is only 1 tab");
     it("closes the tab and opens empty tab in its place") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("https://a.com"), OpenType::OpenUrl);
       QCOMPARE(webViewStack.count(), 1);
 
@@ -179,16 +192,17 @@ private slots:
 
       QCOMPARE(webViewStack.count(), 1);
       QCOMPARE(webViewStack.urls(),
-               (std::vector<QUrl>{WebViewStack::NewtabURL}));
+               (std::vector<QUrl>{configuration.newTabUrl}));
       QCOMPARE(webViewStack.currentWebViewIndex(), 0);
-      QCOMPARE(webViewStack.currentUrl(), WebViewStack::NewtabURL);
+      QCOMPARE(webViewStack.currentUrl(), configuration.newTabUrl);
     }
 
     context("when closeWebView is called");
     context("- with the current tab index");
     context("- and there are some tabs after");
     it("closes the tab and focuses the next tab") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("https://a1.com"), OpenType::OpenUrlInTab);
       webViewStack.openUrl(QUrl("https://a2.com"), OpenType::OpenUrlInBgTab);
       QCOMPARE(webViewStack.count(), 3);
@@ -199,7 +213,7 @@ private slots:
       QCOMPARE(webViewStack.count(), 2);
       QCOMPARE(
           webViewStack.urls(),
-          (std::vector<QUrl>{WebViewStack::NewtabURL, QUrl("https://a2.com")}));
+          (std::vector<QUrl>{configuration.newTabUrl, QUrl("https://a2.com")}));
       QCOMPARE(webViewStack.currentWebViewIndex(), 1);
       QCOMPARE(webViewStack.currentUrl(), QUrl("https://a2.com"));
     }
@@ -208,7 +222,8 @@ private slots:
     context("- with the current tab index");
     context("- which is the last tab");
     it("closes the tab and focusses previous tab") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("https://a1.com"), OpenType::OpenUrlInBgTab);
       webViewStack.openUrl(QUrl("https://a2.com"), OpenType::OpenUrlInTab);
       QCOMPARE(webViewStack.count(), 3);
@@ -219,7 +234,7 @@ private slots:
       QCOMPARE(webViewStack.count(), 2);
       QCOMPARE(
           webViewStack.urls(),
-          (std::vector<QUrl>{WebViewStack::NewtabURL, QUrl("https://a1.com")}));
+          (std::vector<QUrl>{configuration.newTabUrl, QUrl("https://a1.com")}));
       QCOMPARE(webViewStack.currentWebViewIndex(), 1);
       QCOMPARE(webViewStack.currentUrl(), QUrl("https://a1.com"));
     }
@@ -229,7 +244,8 @@ private slots:
     context("when webview emits a newWindowRequested signal");
     context("- of type new tab");
     it("opens a new web view and focusses it") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("https://a.com"), OpenType::OpenUrl);
       auto webview = webViewStack.findChild<QWebEngineView *>();
       QCOMPARE(webViewStack.count(), 1);
@@ -250,7 +266,8 @@ private slots:
     context("when webview emits a newWindowRequested signal");
     context("- of type new background tab");
     it("opens a new web view in the background") {
-      WebViewStack webViewStack;
+      Configuration configuration;
+      WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("https://a.com"), OpenType::OpenUrl);
       auto webview = webViewStack.findChild<QWebEngineView *>();
 

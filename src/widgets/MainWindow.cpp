@@ -21,7 +21,8 @@ MainWindow::MainWindow() {
   centralWidget()->setLayout(layout);
 
   // Web engine
-  auto webViewStack = new WebViewStack(new QWebEngineProfile("web-browser"));
+  auto webViewStack = new WebViewStack((const Configuration *)&configuration,
+                                       new QWebEngineProfile("web-browser"));
   layout->addWidget(webViewStack);
 
   // Command input
@@ -44,8 +45,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
     inputMediator->showCommandInput("");
   } else if (combo.key() == Qt::Key_T &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    inputMediator->openUrl(QUrl("https://lite.duckduckgo.com"),
-                           OpenType::OpenUrlInTab);
+    inputMediator->showTabsInput();
   } else if (combo.key() == Qt::Key_J &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
     inputMediator->nextWebView();

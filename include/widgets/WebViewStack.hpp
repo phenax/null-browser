@@ -5,6 +5,7 @@
 #include <QWebEngineView>
 #include <sys/types.h>
 
+#include "Configuration.hpp"
 #include "completion/TabsModel.hpp"
 
 enum OpenType { OpenUrl, OpenUrlInTab, OpenUrlInBgTab, OpenUrlInWindow };
@@ -16,11 +17,11 @@ public:
   inline static const QUrl NewtabURL = QUrl("about:blank");
 
 public:
-  WebViewStack(QWebEngineProfile *profile = new QWebEngineProfile,
+  WebViewStack(const Configuration *configuration,
+               QWebEngineProfile *profile = new QWebEngineProfile,
                QWidget *parent = nullptr);
 
-  void openUrl(QUrl url = WebViewStack::NewtabURL,
-               OpenType openType = OpenType::OpenUrl);
+  void openUrl(QUrl url, OpenType openType = OpenType::OpenUrl);
 
   std::vector<QUrl> urls();
   u_int32_t currentWebViewIndex();
@@ -38,13 +39,13 @@ public:
 
 private:
   void setCurrentUrl(QUrl url);
-  QWebEngineView *createNewWebView(QUrl url = WebViewStack::NewtabURL,
-                                   bool focus = false);
+  QWebEngineView *createNewWebView(QUrl url, bool focus = false);
 
 private slots:
   void onNewWebViewRequest(QWebEngineNewWindowRequest &request);
 
 private:
+  const Configuration *configuration;
   QWebEngineProfile *profile;
   QStackedLayout *layout;
   QList<QWebEngineView *> webViewList;

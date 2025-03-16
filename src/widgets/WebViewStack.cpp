@@ -4,13 +4,14 @@
 
 #include "widgets/WebViewStack.hpp"
 
-WebViewStack::WebViewStack(QWebEngineProfile *profile, QWidget *parent)
-    : QWidget(parent), profile(profile) {
+WebViewStack::WebViewStack(const Configuration *configuration,
+                           QWebEngineProfile *profile, QWidget *parent)
+    : QWidget(parent), profile(profile), configuration(configuration) {
   layout = new QStackedLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setStackingMode(QStackedLayout::StackOne);
 
-  createNewWebView(WebViewStack::NewtabURL, true);
+  createNewWebView(configuration->newTabUrl, true);
 }
 
 void WebViewStack::openUrl(QUrl url, OpenType openType) {
@@ -104,7 +105,7 @@ void WebViewStack::close(long index) {
   focusWebView(currentWebViewIndex());
 
   if (webViewList.isEmpty()) {
-    createNewWebView(WebViewStack::NewtabURL, true);
+    createNewWebView(configuration->newTabUrl, true);
   }
 }
 
@@ -116,6 +117,7 @@ std::vector<QUrl> WebViewStack::urls() {
 }
 
 u_int32_t WebViewStack::currentWebViewIndex() { return layout->currentIndex(); }
+
 u_int32_t WebViewStack::count() { return webViewList.length(); }
 
 void WebViewStack::focusWebView(long index) {
