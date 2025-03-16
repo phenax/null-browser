@@ -1,3 +1,4 @@
+#include <QList>
 #include <QWidget>
 #include <QtCore>
 
@@ -28,14 +29,17 @@ InputMediator::InputMediator(InputLine *inputLine, WebViewStack *webViewStack,
 void InputMediator::onInputSubmit(QString input) {
   hideInputLine();
 
+  // Evaluate input from command
   if (dynamic_cast<CommandEval *>(currentEvaluationType))
     return evaluateCommand(input);
 
+  // Evaluate input from url
   if (auto urlEval = dynamic_cast<UrlEval *>(currentEvaluationType))
     return webViewStack->openUrl(input, urlEval->type());
 
-  if (dynamic_cast<BufferEval *>(currentEvaluationType))
-    return webViewStack->focusWebView(1);
+  // Evaluate input from tab list
+  if (dynamic_cast<TabsEval *>(currentEvaluationType))
+    return webViewStack->focusWebView(input.toLong());
 }
 
 void InputMediator::hideInputLine() {
@@ -56,9 +60,10 @@ void InputMediator::showCommandInput(QString cmd) {
   showInputLine();
 }
 
-void InputMediator::showBufferInput(QString url) {
-  setEvaluationType(new CommandEval());
-  inputLine->setAdapter(new TabsAdapter);
+void InputMediator::showTabsInput(QString url) {
+  setEvaluationType(new TabsEval());
+  QList<Tab> tabs = webViewStack->getTabList();
+  inputLine->setAdapter(new TabsAdapter(tabs));
   inputLine->setInputText(url);
   showInputLine();
 }
@@ -103,7 +108,7 @@ void InputMediator::evaluateCommand(QString command) {
     previousWebView();
     break;
   case CommandType::TabSelect:
-    showBufferInput();
+    showTabsInput();
     // focusWebView(long index) // TODO: parse index and select
     break;
   case CommandType::Noop:

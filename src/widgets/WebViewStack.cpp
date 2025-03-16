@@ -45,6 +45,13 @@ QWebEngineView *WebViewStack::createNewWebView(QUrl url, bool focus) {
   return webview;
 }
 
+QList<Tab> WebViewStack::getTabList() {
+  QList<Tab> urls;
+  for (auto &view : webViewList)
+    urls.append((Tab){.url = view->url().toString(), .title = view->title()});
+  return urls;
+}
+
 void WebViewStack::onNewWebViewRequest(QWebEngineNewWindowRequest &request) {
   switch (request.destination()) {
   case QWebEngineNewWindowRequest::InNewTab:

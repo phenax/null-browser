@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QtCore>
 
-struct Buffer {
+struct Tab {
   QString url;
   QString title;
 };
@@ -13,7 +13,7 @@ class TabsModel : public QAbstractListModel {
   Q_OBJECT
 
 public:
-  TabsModel(QObject *parent = nullptr);
+  TabsModel(QList<Tab> tabs, QObject *parent = nullptr);
   int rowCount(const QModelIndex &parent = QModelIndex()) const override;
   int columnCount(const QModelIndex &parent = QModelIndex()) const override;
   QHash<int, QByteArray> roleNames() const override;
@@ -21,5 +21,5 @@ public:
                 int role = Qt::DisplayRole) const override;
 
 private:
-  QList<Buffer> items;
+  QList<Tab> items;
 };

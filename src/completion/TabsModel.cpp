@@ -4,19 +4,14 @@
 
 #include "completion/TabsModel.hpp"
 
-TabsModel::TabsModel(QObject *parent) : QAbstractListModel(parent) {
-  items = {
-      {.url = "https://ediblemonad.dev", .title = "EdibleMonad website"},
-      {.url = "https://lite.duckduckgo.com", .title = "DDG lite"},
-      {.url = "https://github.com/trending", .title = "Github trending"},
-  };
-}
+TabsModel::TabsModel(QList<Tab> tabs, QObject *parent)
+    : QAbstractListModel(parent), items(tabs) {}
 
 QVariant TabsModel::data(const QModelIndex &index, int role) const {
   if (!index.isValid() || index.row() >= items.size())
     return QVariant();
 
-  const Buffer &item = items.at(index.row());
+  const Tab &item = items.at(index.row());
 
   if (role == Qt::DisplayRole)
     return index.row();

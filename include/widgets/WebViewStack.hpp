@@ -5,6 +5,8 @@
 #include <QWebEngineView>
 #include <sys/types.h>
 
+#include "completion/TabsModel.hpp"
+
 enum OpenType { OpenUrl, OpenUrlInTab, OpenUrlInBgTab, OpenUrlInWindow };
 
 class WebViewStack : public QWidget {
@@ -31,6 +33,8 @@ public:
 
   void close(long index);
   void closeCurrent();
+
+  QList<Tab> getTabList();
 
 private:
   void setCurrentUrl(QUrl url);

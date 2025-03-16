@@ -5,9 +5,9 @@
 #include "completion/TabsAdapter.hpp"
 #include "completion/TabsModel.hpp"
 
-TabsAdapter::TabsAdapter() : Adapter() {
+TabsAdapter::TabsAdapter(QList<Tab> tabs) : Adapter() {
   completerInstance = new Completer();
-  completerInstance->setSourceModel(new TabsModel(this));
+  completerInstance->setSourceModel(new TabsModel(tabs, this));
 }
 
 Completer *TabsAdapter::completer() { return completerInstance; }

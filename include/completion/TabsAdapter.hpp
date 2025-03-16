@@ -4,12 +4,13 @@
 #include <QtCore>
 
 #include "completion/Adapter.hpp"
+#include "completion/TabsModel.hpp"
 
 class TabsAdapter : public Adapter {
   Q_OBJECT
 
 public:
-  TabsAdapter();
+  TabsAdapter(QList<Tab> tabs);
   ~TabsAdapter();
   Completer *completer() override;
   QString prompt() override;
