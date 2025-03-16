@@ -6,20 +6,23 @@
 - [X] Command completion
 - [X] Command/URL input executor
 - [X] Refactor MainWindow
-- [ ] Buffer list/search
-- [ ] Keybindings
-- [ ] Modal keys
+- [X] Buffer list/search
+- [ ] Multi-window
+- [ ] Keybindings (lua api)
 - [ ] Tab history navigation
-- [ ] Press tab/shift-tab for next/prev in completion
-- [ ] Enter in completion should run cmd
+- [ ] Press tab for fill highlighted item in completion
+- [ ] Assign ID to each tab (reference in lua api)
 
 ** Next
+- [ ] Modal keys
 - [ ] History persistance
 - [ ] History completion
 - [ ] Open url parsing (add protocol if missing, remove quotes, etc)
 - [ ] Destructor for completer instance
+- [ ] Bookmarking
 
 ** Later
+- [ ] Search aliasing (lua api)
 - [ ] downloading
 - [ ] Search text in page
 - [ ] Notifications
@@ -32,5 +35,4 @@
 - [ ] Pipe page contents to external program
 
 ** Maybe
-- [ ] lua api for managing ui
 - [ ] Custom file picker

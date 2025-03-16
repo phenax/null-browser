@@ -18,7 +18,7 @@
         ];
       in {
         packages.default = pkgs.stdenv.mkDerivation {
-          pname = "web-browser";
+          pname = "null-browser";
           version = "0.0.0";
           src = ./.;
 

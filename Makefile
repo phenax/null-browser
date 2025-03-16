@@ -17,4 +17,4 @@ clean:
 	rm -f compile_commands.json
 
 run: build
-	./build/web-browser
+	./build/null-browser

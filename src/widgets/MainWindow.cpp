@@ -22,7 +22,7 @@ MainWindow::MainWindow() {
 
   // Web engine
   auto webViewStack = new WebViewStack((const Configuration *)&configuration,
-                                       new QWebEngineProfile("web-browser"));
+                                       new QWebEngineProfile("null-browser"));
   layout->addWidget(webViewStack);
 
   // Command input

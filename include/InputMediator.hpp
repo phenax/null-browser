@@ -8,6 +8,7 @@
 #include "widgets/InputLine.hpp"
 #include "widgets/WebViewStack.hpp"
 
+// TODO: Rethink evaluation
 class EvaluationType {
 public:
   EvaluationType() {}
