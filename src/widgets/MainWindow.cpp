@@ -6,7 +6,6 @@
 #include <QtWidgets/qapplication.h>
 
 #include "InputMediator.hpp"
-#include "widgets/InputLine.hpp"
 #include "widgets/MainWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -28,13 +27,16 @@ MainWindow::MainWindow() {
                                        new QWebEngineProfile("null-browser"));
   layout->addWidget(webViewStack);
 
-  // Command input
-  auto inputLine = new InputLine();
-  layout->addWidget(inputLine);
+  // TODO: remoev
+  webViewStack->openUrl(QUrl("https://duckduckgo.com"), OpenType::OpenUrl);
+  webViewStack->openUrl(QUrl("https://ediblemonad.dev"),
+                        OpenType::OpenUrlInBgTab);
+  webViewStack->openUrl(QUrl("https://github.com/trending"),
+                        OpenType::OpenUrlInBgTab);
 
-  inputMediator =
-      new InputMediator(inputLine, webViewStack, LuaRuntime::instance());
+  inputMediator = new InputMediator(webViewStack, LuaRuntime::instance());
 
+  // TODO: remove
   keymapEvaluator.addKeymap("default", "<c-t>a", "Stuff");
   keymapEvaluator.addKeymap("default", "<c-t>b", "Other stuff");
 }
@@ -42,18 +44,8 @@ MainWindow::MainWindow() {
 void MainWindow::keyPressEvent(QKeyEvent *event) {
   auto combo = event->keyCombination();
 
-  if (combo.key() == Qt::Key_L &&
+  if (combo.key() == Qt::Key_J &&
       combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    inputMediator->showURLInput(inputMediator->currentUrl().toString(),
-                                OpenType::OpenUrl);
-  } else if (combo.key() == Qt::Key_Semicolon &&
-             combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    inputMediator->showCommandInput("");
-  } else if (combo.key() == Qt::Key_T &&
-             combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    inputMediator->showTabsInput();
-  } else if (combo.key() == Qt::Key_J &&
-             combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
     inputMediator->nextWebView();
   } else if (combo.key() == Qt::Key_K &&
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
@@ -65,17 +57,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event) {
-  if (event->type() != QEvent::KeyPress && event->type() != QEvent::KeyRelease)
+  if (event->type() != QEvent::KeyPress)
     return false;
 
-  if (auto keyEvent = dynamic_cast<QKeyEvent *>(event)) {
-    if (keyEvent->type() == QEvent::KeyPress)
-      keymapEvaluator.evaluate(keyEvent->modifiers(), (Qt::Key)keyEvent->key());
+  auto keyEvent = static_cast<QKeyEvent *>(event);
+  keymapEvaluator.evaluate(keyEvent->modifiers(), (Qt::Key)keyEvent->key());
 
-    // qDebug() << "EV SELF: " << (object == this) << " | " << event->type();
-    // qDebug() << "Key: " << keyEvent->modifiers() << keyEvent->key();
-    return true;
-  }
-
-  return false;
+  return true;
 }

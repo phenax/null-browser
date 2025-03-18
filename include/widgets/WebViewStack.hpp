@@ -5,10 +5,14 @@
 #include <sys/types.h>
 
 #include "Configuration.hpp"
-#include "completion/TabsModel.hpp"
 #include "widgets/WebView.hpp"
 
 enum OpenType { OpenUrl, OpenUrlInTab, OpenUrlInBgTab, OpenUrlInWindow };
+
+struct Tab {
+  QString url;
+  QString title;
+};
 
 class WebViewStack : public QWidget {
   Q_OBJECT

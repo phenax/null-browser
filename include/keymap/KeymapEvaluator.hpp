@@ -5,7 +5,6 @@
 #include <QtCore/qmap.h>
 #include <QtCore/qnamespace.h>
 #include <QtCore>
-#include <algorithm>
 
 struct KeyMap {
   KeySequence keySequence;
