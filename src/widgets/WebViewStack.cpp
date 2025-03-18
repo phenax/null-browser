@@ -1,6 +1,5 @@
 #include <QStackedLayout>
 #include <QWebEngineNewWindowRequest>
-#include <QWebEngineView>
 
 #include "widgets/WebViewStack.hpp"
 
@@ -31,8 +30,8 @@ void WebViewStack::openUrl(QUrl url, OpenType openType) {
   }
 }
 
-QWebEngineView *WebViewStack::createNewWebView(QUrl url, bool focus) {
-  auto webview = new QWebEngineView(profile);
+WebView *WebViewStack::createNewWebView(QUrl url, bool focus) {
+  auto webview = new WebView(profile);
   webview->setUrl(url);
   layout->addWidget(webview);
   webViewList.append(webview);

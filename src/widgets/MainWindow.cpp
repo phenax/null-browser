@@ -1,8 +1,9 @@
 #include <QKeyEvent>
 #include <QStackedLayout>
 #include <QVBoxLayout>
-#include <QWebEngineView>
+#include <QtCore/qcoreevent.h>
 #include <QtCore/qnamespace.h>
+#include <QtWidgets/qapplication.h>
 
 #include "InputMediator.hpp"
 #include "widgets/InputLine.hpp"
@@ -12,6 +13,8 @@
 MainWindow::MainWindow() {
   setStyleSheet("background-color: #000; color: #fff;");
   setCentralWidget(new QWidget()); // TODO: manage widget memory
+
+  qApp->installEventFilter(this);
 
   // Root stacked layout
   auto layout = new QStackedLayout();
@@ -31,6 +34,9 @@ MainWindow::MainWindow() {
 
   inputMediator =
       new InputMediator(inputLine, webViewStack, LuaRuntime::instance());
+
+  keymapEvaluator.addKeymap("default", "<c-t>a", "Stuff");
+  keymapEvaluator.addKeymap("default", "<c-t>b", "Other stuff");
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
@@ -56,4 +62,20 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
              combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
     inputMediator->closeCurrentWebView();
   }
+}
+
+bool MainWindow::eventFilter(QObject *object, QEvent *event) {
+  if (event->type() != QEvent::KeyPress && event->type() != QEvent::KeyRelease)
+    return false;
+
+  if (auto keyEvent = dynamic_cast<QKeyEvent *>(event)) {
+    if (keyEvent->type() == QEvent::KeyPress)
+      keymapEvaluator.evaluate(keyEvent->modifiers(), (Qt::Key)keyEvent->key());
+
+    // qDebug() << "EV SELF: " << (object == this) << " | " << event->type();
+    // qDebug() << "Key: " << keyEvent->modifiers() << keyEvent->key();
+    return true;
+  }
+
+  return false;
 }

@@ -24,8 +24,6 @@ public:
   DELEGATE(input, text, getInputText)
   DELEGATE(promptPrefix, text, prompt)
 
-  // bool eventFilter(QObject *obj, QEvent *event) override;
-
 signals:
   void submitted(QString text);
   void cancelled();

@@ -1,12 +1,10 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QObject>
-#include <QStackedLayout>
-#include <QWebEngineView>
 
 #include "Configuration.hpp"
 #include "InputMediator.hpp"
+#include "keymap/KeymapEvaluator.hpp"
 
 class MainWindow : public QMainWindow {
 public:
@@ -14,8 +12,10 @@ public:
 
 private:
   void keyPressEvent(QKeyEvent *event) override;
+  bool eventFilter(QObject *object, QEvent *event) override;
 
 private:
   InputMediator *inputMediator;
   Configuration configuration;
+  KeymapEvaluator keymapEvaluator;
 };

@@ -2,11 +2,11 @@
 
 #include <QStackedLayout>
 #include <QWebEngineProfile>
-#include <QWebEngineView>
 #include <sys/types.h>
 
 #include "Configuration.hpp"
 #include "completion/TabsModel.hpp"
+#include "widgets/WebView.hpp"
 
 enum OpenType { OpenUrl, OpenUrlInTab, OpenUrlInBgTab, OpenUrlInWindow };
 
@@ -24,6 +24,7 @@ public:
   void openUrl(QUrl url, OpenType openType = OpenType::OpenUrl);
 
   std::vector<QUrl> urls();
+  QList<Tab> getTabList();
   u_int32_t currentWebViewIndex();
   u_int32_t count();
   QUrl currentUrl();
@@ -35,11 +36,9 @@ public:
   void close(long index);
   void closeCurrent();
 
-  QList<Tab> getTabList();
-
 private:
   void setCurrentUrl(QUrl url);
-  QWebEngineView *createNewWebView(QUrl url, bool focus = false);
+  WebView *createNewWebView(QUrl url, bool focus = false);
 
 private slots:
   void onNewWebViewRequest(QWebEngineNewWindowRequest &request);
@@ -48,5 +47,5 @@ private:
   const Configuration *configuration;
   QWebEngineProfile *profile;
   QStackedLayout *layout;
-  QList<QWebEngineView *> webViewList;
+  QList<WebView *> webViewList;
 };

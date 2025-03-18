@@ -4,6 +4,7 @@
 
 #include "Configuration.hpp"
 #include "testUtils.h"
+#include "widgets/WebView.hpp"
 #include "widgets/WebViewStack.hpp"
 
 class WebViewStackSpec : public QObject {
@@ -247,7 +248,7 @@ private slots:
       Configuration configuration;
       WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("https://a.com"), OpenType::OpenUrl);
-      auto webview = webViewStack.findChild<QWebEngineView *>();
+      auto webview = webViewStack.findChild<WebView *>();
       QCOMPARE(webViewStack.count(), 1);
 
       FakeNewWindowRequest windowRequest(
@@ -269,7 +270,7 @@ private slots:
       Configuration configuration;
       WebViewStack webViewStack(&configuration);
       webViewStack.openUrl(QUrl("https://a.com"), OpenType::OpenUrl);
-      auto webview = webViewStack.findChild<QWebEngineView *>();
+      auto webview = webViewStack.findChild<WebView *>();
 
       FakeNewWindowRequest windowRequest(
           FakeNewWindowRequest::DestinationType::InNewBackgroundTab,
