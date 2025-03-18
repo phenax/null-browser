@@ -4,7 +4,6 @@
 
 #include "Configuration.hpp"
 #include "InputMediator.hpp"
-#include "keymap/KeymapEvaluator.hpp"
 
 class MainWindow : public QMainWindow {
 public:
@@ -17,5 +16,4 @@ private:
 private:
   InputMediator *inputMediator;
   Configuration configuration;
-  KeymapEvaluator keymapEvaluator;
 };

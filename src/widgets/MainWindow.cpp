@@ -6,6 +6,7 @@
 #include <QtWidgets/qapplication.h>
 
 #include "InputMediator.hpp"
+#include "keymap/KeymapEvaluator.hpp"
 #include "widgets/MainWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -34,11 +35,23 @@ MainWindow::MainWindow() {
   webViewStack->openUrl(QUrl("https://github.com/trending"),
                         OpenType::OpenUrlInBgTab);
 
-  inputMediator = new InputMediator(webViewStack, LuaRuntime::instance());
+  auto keymapEvaluator = new KeymapEvaluator;
+
+  inputMediator =
+      new InputMediator(webViewStack, LuaRuntime::instance(), keymapEvaluator);
 
   // TODO: remove
-  keymapEvaluator.addKeymap("default", "<c-t>a", "Stuff");
-  keymapEvaluator.addKeymap("default", "<c-t>b", "Other stuff");
+  keymapEvaluator->addKeymap(KeyMode::Normal, "i", [keymapEvaluator]() {
+    keymapEvaluator->setCurrentMode(KeyMode::Insert);
+  });
+  keymapEvaluator->addKeymap(KeyMode::Insert, "<esc>", [keymapEvaluator]() {
+    keymapEvaluator->setCurrentMode(KeyMode::Normal);
+  });
+
+  keymapEvaluator->addKeymap(KeyMode::Normal, "<c-t>a",
+                             []() { qDebug() << "Stuff"; });
+  keymapEvaluator->addKeymap(KeyMode::Normal, "<c-t>b",
+                             []() { qDebug() << "Else"; });
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
@@ -61,7 +74,8 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event) {
     return false;
 
   auto keyEvent = static_cast<QKeyEvent *>(event);
-  keymapEvaluator.evaluate(keyEvent->modifiers(), (Qt::Key)keyEvent->key());
+  bool shouldSkip = inputMediator->evaluateKeymap(keyEvent->modifiers(),
+                                                  (Qt::Key)keyEvent->key());
 
-  return true;
+  return shouldSkip;
 }

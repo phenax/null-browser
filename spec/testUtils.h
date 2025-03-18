@@ -4,6 +4,8 @@
 #include <QtTest/qtestcase.h>
 #include <cstdio>
 
+#define NOT !
+
 #define ANSI_BOLD "\x1b[1m"
 #define COLOR_CONTEXT "\x1b[32m" ANSI_BOLD
 #define COLOR_IT "\x1b[36m" ANSI_BOLD

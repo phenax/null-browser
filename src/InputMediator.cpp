@@ -7,8 +7,10 @@
 #include "LuaRuntime.hpp"
 #include "widgets/WebViewStack.hpp"
 
-InputMediator::InputMediator(WebViewStack *webViewStack, LuaRuntime *luaRuntime)
-    : QObject(), webViewStack(webViewStack), luaRuntime(luaRuntime) {
+InputMediator::InputMediator(WebViewStack *webViewStack, LuaRuntime *luaRuntime,
+                             KeymapEvaluator *keymapEvaluator)
+    : QObject(), webViewStack(webViewStack), luaRuntime(luaRuntime),
+      keymapEvaluator(keymapEvaluator) {
   connect(luaRuntime, &LuaRuntime::urlOpened, webViewStack,
           &WebViewStack::openUrl);
 }
@@ -40,3 +42,5 @@ void InputMediator::evaluateCommand(QString command) {
     break;
   }
 }
+
+InputMediator::~InputMediator() { delete webViewStack; }

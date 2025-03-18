@@ -1,17 +1,10 @@
 ** Current
-- [X] Multi tabs
-- [X] Open in new tab/new window
-- [X] Lua for command input
-- [X] Simpler shell-ey/vimscript-ey language for command input
-- [X] Command completion
-- [X] Command/URL input executor
-- [X] Refactor MainWindow
-- [X] Buffer list/search
-- [ ] Multi-window
+- [ ] Process spawning lua (+ stdio)
 - [ ] Keybindings (lua api)
 - [ ] Tab history navigation
 - [ ] Press tab for fill highlighted item in completion
 - [ ] Assign ID to each tab (reference in lua api)
+- [ ] Multi-window
 
 ** Next
 - [ ] Modal keys
