@@ -2,9 +2,22 @@
 
 #include "LuaRuntime.hpp"
 
+extern "C" {
+#include <luv.h>
+// Forward declare luv registration function
+// LUALIB_API int luaopen_luv(lua_State *L);
+}
+
 LuaRuntime::LuaRuntime() {
   state = luaL_newstate();
   luaL_openlibs(state);
+  luaopen_luv(state);
+
+  if (luaL_dostring(state, "_G.uv = require'luv'")) {
+    qDebug() << "Unable to load luv: " << lua_tostring(state, -1);
+  } else {
+    qDebug() << "succ";
+  }
 
   luaL_Reg weblib[] = {
       {"open", &LuaRuntime::lua_onUrlOpen},
@@ -13,6 +26,34 @@ LuaRuntime::LuaRuntime() {
   };
   luaL_newlib(state, weblib);
   lua_setglobal(state, "web");
+
+  // auto pp = R"(
+  // print('Hello -- ');
+  // local h = uv.fs_open('foobar', 'w', tonumber('644', 8), function(err, h)
+  //  assert(not err, err);
+  //  print('inside');
+  //  print(h);
+  //  print(err);
+  //  uv.fs_write(h, 'Hello world');
+  // end);
+  // print(h);
+  // uv.run();
+  // print('-- end');
+  // )";
+  // auto pp = R"(
+  // print('Hello -- ');
+  // local t = uv.new_timer();
+  // uv.timer_start(t, 7000, 0, function()
+  //   print('after time')
+  // end);
+  // uv.run();
+  // print('-- end');
+  // )";
+  // if (luaL_dostring(state, pp)) {
+  //   qDebug() << "Lua Error: " << lua_tostring(state, -1);
+  // } else {
+  //   qDebug() << "succ";
+  // }
 }
 
 void LuaRuntime::evaluate(QString code) {

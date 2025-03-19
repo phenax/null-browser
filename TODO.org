@@ -1,10 +1,12 @@
 ** Current
-- [ ] Process spawning lua (+ stdio)
+- [X] Process spawning lua (+ stdio)
 - [ ] Keybindings (lua api)
 - [ ] Tab history navigation
 - [ ] Press tab for fill highlighted item in completion
 - [ ] Assign ID to each tab (reference in lua api)
 - [ ] Multi-window
+- [ ] Fix segfault on quit
+- [ ] event loop for async work
 
 ** Next
 - [ ] Modal keys

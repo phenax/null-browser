@@ -18,6 +18,24 @@
         "type": "github"
       }
     },
+    "lua-luv-source": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1738768796,
+        "narHash": "sha256-E75DkNBmyLTq9vw3o6CxiTBATMLJmBvTGPTt+bvbloA=",
+        "ref": "refs/heads/master",
+        "rev": "ec4185f98209d5e5cf96885ab126d4c2a26dfaa9",
+        "revCount": 1390,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/luvit/luv"
+      },
+      "original": {
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/luvit/luv"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1741037377,
@@ -37,6 +55,7 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
+        "lua-luv-source": "lua-luv-source",
         "nixpkgs": "nixpkgs"
       }
     },
