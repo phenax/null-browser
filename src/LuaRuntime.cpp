@@ -1,24 +1,20 @@
+#include <QtCore>
 #include <lua.hpp>
-
-#include "LuaRuntime.hpp"
-
 extern "C" {
 #include <luv.h>
-// Forward declare luv registration function
-// LUALIB_API int luaopen_luv(lua_State *L);
 }
+
+#include "LuaRuntime.hpp"
 
 LuaRuntime::LuaRuntime() {
   state = luaL_newstate();
   luaL_openlibs(state);
+
+  // Load `uv` (luv)
   luaopen_luv(state);
+  lua_setglobal(state, "uv");
 
-  if (luaL_dostring(state, "_G.uv = require'luv'")) {
-    qDebug() << "Unable to load luv: " << lua_tostring(state, -1);
-  } else {
-    qDebug() << "succ";
-  }
-
+  // Load `web`
   luaL_Reg weblib[] = {
       {"open", &LuaRuntime::lua_onUrlOpen},
       {"tabopen", &LuaRuntime::lua_onUrlTabOpen},
@@ -43,7 +39,7 @@ LuaRuntime::LuaRuntime() {
   // auto pp = R"(
   // print('Hello -- ');
   // local t = uv.new_timer();
-  // uv.timer_start(t, 7000, 0, function()
+  // uv.timer_start(t, 4000, 0, function()
   //   print('after time')
   // end);
   // uv.run();

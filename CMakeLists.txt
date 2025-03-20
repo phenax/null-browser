@@ -14,13 +14,13 @@ find_package(PkgConfig REQUIRED)
 # Source
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 list(FILTER SOURCE_FILES EXCLUDE REGEX "src/main.cpp$")
-file(GLOB_RECURSE HEADER_FILES include/*.hpp)
+file(GLOB_RECURSE HEADER_FILES src/*.hpp)
 file(GLOB_RECURSE SPEC_FILES spec/*.cpp)
 
 # project
 add_executable(${PROJECT})
 target_sources(${PROJECT} PRIVATE src/main.cpp ${SOURCE_FILES})
-target_include_directories(${PROJECT} PRIVATE include/)
+target_include_directories(${PROJECT} PRIVATE src/)
 
 # Qt
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets WebEngineWidgets Test)
@@ -53,7 +53,7 @@ enable_testing()
 add_executable(tests)
 target_sources(tests PRIVATE ${SOURCE_FILES} ${MOC_SRCS} ${SPEC_FILES})
 target_include_directories(tests PRIVATE
-  include/
+  src/
   spec/
   ${LuaJIT_INCLUDE_DIRS}
   ${LibUV_INCLUDE_DIRS}

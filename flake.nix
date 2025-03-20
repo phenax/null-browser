@@ -16,11 +16,10 @@
 
         dependencies = with pkgs; [
           qt6.full
-          qt6.qtbase
           luajit
           libuv
           luajitPackages.libluv
-          luajitPackages.luv
+          # luajitPackages.luv
           # libcef
           # nss
         ];
@@ -30,7 +29,9 @@
           version = "0.0.0";
           src = ./.;
 
-          buildInputs = dependencies;
+          buildInputs = with pkgs; [
+            qt6.qtbase
+          ] ++ dependencies;
           nativeBuildInputs = with pkgs; [ cmake qt6.wrapQtAppsHook pkg-config ];
         };
 
