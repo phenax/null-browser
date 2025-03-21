@@ -11,6 +11,8 @@ void KeymapEvaluator::addKeymap(KeyMode mode, QString key, KeyAction action) {
   if (!modalKeys.contains(mode))
     modalKeys.insert(mode, {});
 
+  qDebug() << "    " << mode << key;
+
   auto keySeq = keySeqParser.parse(key);
   modalKeys[mode].append((KeyMap){.keySequence = keySeq, .action = action});
 }
@@ -56,4 +58,12 @@ const QList<KeyMap> *KeymapEvaluator::currentModeKeys() {
     return new QList<KeyMap>();
 
   return &modalKeys[currentMode];
+}
+
+KeyMode KeymapEvaluator::modeFromString(QString modeString) {
+  if (modeString == "n")
+    return KeyMode::Normal;
+  if (modeString == "i")
+    return KeyMode::Insert;
+  return KeyMode::Normal;
 }

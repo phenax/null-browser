@@ -1,12 +1,16 @@
 ** Current
 - [X] Process spawning lua (+ stdio)
-- [ ] Keybindings (lua api)
+- [X] Keybindings (lua api)
+- [ ] example: trigger dmenu for simple selection
+- [ ] Config loading and runtime path
 - [ ] Tab history navigation
-- [ ] Press tab for fill highlighted item in completion
+- [ ] Tab next/prev
+- [ ] Get tab list api
 - [ ] Assign ID to each tab (reference in lua api)
-- [ ] Multi-window
+- [ ] Tab select by id
+- [X] event loop for async work
 - [ ] Fix segfault on quit
-- [ ] event loop for async work
+- [ ] Multi-window
 
 ** Next
 - [ ] Modal keys
@@ -17,6 +21,7 @@
 - [ ] Bookmarking
 
 ** Later
+- [ ] Support multiple modes for keymap.set: `web.keymap.set({'n','i'}, ...)`
 - [ ] Search aliasing (lua api)
 - [ ] downloading
 - [ ] Search text in page

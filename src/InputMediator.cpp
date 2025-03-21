@@ -5,14 +5,24 @@
 #include "CommandParser.hpp"
 #include "InputMediator.hpp"
 #include "LuaRuntime.hpp"
+#include "keymap/KeymapEvaluator.hpp"
 #include "widgets/WebViewStack.hpp"
 
+// TODO: Rename this
 InputMediator::InputMediator(WebViewStack *webViewStack, LuaRuntime *luaRuntime,
                              KeymapEvaluator *keymapEvaluator)
     : QObject(), webViewStack(webViewStack), luaRuntime(luaRuntime),
       keymapEvaluator(keymapEvaluator) {
   connect(luaRuntime, &LuaRuntime::urlOpened, webViewStack,
           &WebViewStack::openUrl);
+  connect(luaRuntime, &LuaRuntime::keymapAddRequested, this,
+          &InputMediator::addKeymap);
+}
+
+void InputMediator::addKeymap(QString modeString, QString keyseq,
+                              std::function<void()> action) {
+  KeyMode mode = keymapEvaluator->modeFromString(modeString);
+  keymapEvaluator->addKeymap(mode, keyseq, action);
 }
 
 void InputMediator::evaluateCommand(QString command) {

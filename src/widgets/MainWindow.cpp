@@ -14,6 +14,7 @@ MainWindow::MainWindow() {
   setStyleSheet("background-color: #000; color: #fff;");
   setCentralWidget(new QWidget()); // TODO: manage widget memory
 
+  // Global event filter
   qApp->installEventFilter(this);
 
   // Root stacked layout
@@ -39,6 +40,9 @@ MainWindow::MainWindow() {
 
   inputMediator =
       new InputMediator(webViewStack, LuaRuntime::instance(), keymapEvaluator);
+
+  // NOTE: TMP
+  LuaRuntime::instance()->loadFile("./config.lua");
 
   // TODO: remove
   keymapEvaluator->addKeymap(KeyMode::Normal, "i", [keymapEvaluator]() {

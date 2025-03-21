@@ -26,6 +26,7 @@ public:
 
   void addKeymap(KeyMode mode, QString key, KeyAction action);
   bool evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key);
+  KeyMode modeFromString(QString modeString);
 
   DEFINE_SETTER(setCurrentMode, currentMode)
   DEFINE_GETTER(getCurrentMode, currentMode)

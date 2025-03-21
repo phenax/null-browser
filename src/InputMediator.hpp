@@ -23,8 +23,9 @@ public:
   DELEGATE(webViewStack, closeCurrent, closeCurrentWebView)
   DELEGATE(keymapEvaluator, evaluate, evaluateKeymap)
 
-private:
+protected:
   void evaluateCommand(QString command);
+  void addKeymap(QString mode, QString keyseq, std::function<void()> action);
 
 private:
   WebViewStack *webViewStack;
