@@ -1,73 +1,108 @@
-#include "testUtils.h"
 #include <QtCore>
-#include <atomic>
 #include <uv.h>
 
 #include "LuaRuntime.hpp"
+#include "testUtils.h"
 
 class LuaRuntimeSpec : public QObject {
   Q_OBJECT
 
 private slots:
-  void cleanupTestCase() { uv_library_shutdown(); }
+  void beforeTestCase() { LuaRuntime::instance()->startEventLoop(); }
 
-  void testSanityCheckBuiltins() {
-    auto lua = LuaRuntime::instance();
+  void cleanupTestCase() {
+    LuaRuntime::instance()->stopEventLoop();
+    uv_library_shutdown();
+  }
 
-    it("evaluates simple expression") {
-      lua->startEventLoop();
-      std::atomic<int> foobar = 2;
+  void testEvaluate() {
+    context("when given an expression returning a number");
+    it("emits evaluationCompleted with the result") {
+      auto lua = LuaRuntime::instance();
+      QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
 
-      lua->queueTask([&foobar]() { foobar = 10; });
+      lua->evaluate("return 20 + 1 * 5");
 
-      lua->evaluate(R"(
-        print('Hello -- ');
-        local timer = uv.new_timer();
-        timer:start(1000, 0, function()
-          print('inside timer 1')
-          print('inside timer 2')
-          print('inside timer 3')
-          print('inside timer 4')
-          print('inside timer 5')
-          timer:close()
-        end);
-        print('-- end');
-      )");
-      lua->queueTask([]() { qDebug() << "---- 1"; });
-      lua->queueTask([]() { qDebug() << "---- 2"; });
-      lua->queueTask([]() { qDebug() << "---- 3"; });
-      std::this_thread::sleep_for(std::chrono::seconds(2));
-      // std::this_thread::sleep_for(std::chrono::milliseconds(20));
-      lua->stopEventLoop();
+      evaluationCompletedSpy.wait();
+      QCOMPARE(evaluationCompletedSpy.count(), 1);
+      QVariant result = evaluationCompletedSpy.takeFirst().at(0);
+      QCOMPARE(result, 25);
+    }
 
-      qDebug() << "foobar" << foobar;
+    context("when given an expression returning a string");
+    it("emits evaluationCompleted with the result") {
+      auto lua = LuaRuntime::instance();
+      QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
 
-      QCOMPARE(1, 1);
+      lua->evaluate("local name = 'world'; return 'hello ' .. name");
+
+      evaluationCompletedSpy.wait();
+      QCOMPARE(evaluationCompletedSpy.count(), 1);
+      QVariant result = evaluationCompletedSpy.takeFirst().at(0);
+      QCOMPARE(result, "hello world");
+    }
+
+    context("when given an expression returning a boolean");
+    it("emits evaluationCompleted with the result") {
+      auto lua = LuaRuntime::instance();
+      QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
+
+      lua->evaluate("local num = 5; return 5 == num");
+
+      evaluationCompletedSpy.wait();
+      QCOMPARE(evaluationCompletedSpy.count(), 1);
+      QVariant result = evaluationCompletedSpy.takeFirst().at(0);
+      QCOMPARE(result, true);
+    }
+
+    context("when given an expression returning nil");
+    it("emits evaluationCompleted with the result") {
+      auto lua = LuaRuntime::instance();
+      QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
+
+      lua->evaluate("return nil");
+
+      QVERIFY(evaluationCompletedSpy.wait());
+      QCOMPARE(evaluationCompletedSpy.count(), 1);
+      QVariant result = evaluationCompletedSpy.takeFirst().at(0);
+      QCOMPARE(result, 0);
     }
   }
 
-  void testSanityCheckBuiltins2() {
-    auto lua = LuaRuntime::instance();
+  void testQueueTask() {
+    context("when task is queued");
+    it("evaluates task asynchronously") {
+      auto lua = LuaRuntime::instance();
+      bool wasTaskCalled = false;
 
-    it("evaluates again") {
-      lua->startEventLoop();
+      lua->queueTask([&wasTaskCalled]() { wasTaskCalled = true; });
+      QVERIFY(NOT wasTaskCalled);
 
-      lua->queueTask([]() { qDebug() << "---- 5"; });
+      QVERIFY(QTest::qWaitFor([&wasTaskCalled]() { return wasTaskCalled; }));
+      QVERIFY(wasTaskCalled);
+    }
+  }
+
+  void testSanityCheckUV() {
+    context("when a 1 second timer is set");
+    it("calls callback after 1 second") {
+      auto lua = LuaRuntime::instance();
+      QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
+
       lua->evaluate(R"(
-        print('Hello -- ');
+        _G.wasTimerCalled = false;
         local timer = uv.new_timer();
         timer:start(1000, 0, function()
-          print('%%%%% blagb')
+          _G.wasTimerCalled = true;
           timer:close()
-        end);
-        print('-- end');
+        end)
       )");
-      lua->queueTask([]() { qDebug() << "---- 5"; });
-      // TODO: Impl
-      std::this_thread::sleep_for(std::chrono::seconds(2));
-      lua->stopEventLoop();
+      QVERIFY(evaluationCompletedSpy.wait());
+      QVERIFY(NOT lua->evaluateSync("return _G.wasTimerCalled").toBool());
 
-      QCOMPARE(1, 1);
+      QVERIFY(QTest::qWaitFor([&lua]() {
+        return lua->evaluateSync("return _G.wasTimerCalled").toBool();
+      }));
     }
   }
 };

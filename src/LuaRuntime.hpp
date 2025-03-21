@@ -16,14 +16,20 @@ public:
   }
 
   void evaluate(QString code);
+  QVariant evaluateSync(QString code);
 
   void stopEventLoop();
   void startEventLoop();
+
+  QVariant getValue(int idx);
 
   DELEGATE(eventLoop, queueTask, queueTask)
 
 signals:
   void urlOpened(QString url, OpenType openType);
+  void evaluationCompleted(QVariant value);
+  void evaluationFailed(QString value);
+  // void outputProduced(QVariant value);
 
 protected:
   LuaRuntime();

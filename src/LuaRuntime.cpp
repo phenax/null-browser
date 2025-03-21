@@ -52,11 +52,40 @@ void LuaRuntime::stopEventLoop() {
 void LuaRuntime::evaluate(QString code) {
   eventLoop->queueTask([this, code]() {
     if (luaL_dostring(state, code.toStdString().c_str())) {
-      qDebug() << "Lua Error: " << lua_tostring(state, -1);
+      auto value = lua_tostring(state, -1);
       lua_pop(state, 1);
-    } else
-      qDebug() << "done";
+
+      qDebug() << "Lua Error: " << value;
+      emit evaluationFailed(value);
+    } else {
+      auto value = getValue(-1);
+      lua_pop(state, 1);
+
+      qDebug() << "result: " << value;
+      emit evaluationCompleted(value);
+    }
   });
+}
+
+QVariant LuaRuntime::evaluateSync(QString code) {
+  auto result = luaL_dostring(state, code.toStdString().c_str());
+  return getValue(-1); // TODO: error handling
+}
+
+QVariant LuaRuntime::getValue(int idx) {
+  if (lua_isstring(state, idx))
+    return lua_tostring(state, idx);
+
+  if (lua_isnumber(state, idx))
+    return lua_tonumber(state, idx);
+
+  if (lua_isboolean(state, idx))
+    return lua_toboolean(state, idx);
+
+  if (lua_isnil(state, idx))
+    return 0; // TODO: nil representation
+
+  return lua_tostring(state, idx);
 }
 
 int LuaRuntime::lua_onUrlOpen(lua_State *state) {
