@@ -7,8 +7,9 @@ path="$2"
 
 [ -z "$class_name" ] && exit 1
 
-mkdir -p "./include/$path";
-mkdir -p "./src/$path";
+if ! [ -z "$path" ]; then
+  mkdir -p "./src/$path"
+fi
 
 # Header
 echo "#pragma once
@@ -22,7 +23,7 @@ class $class_name : public QWidget {
   public:
   $class_name();
 };
-" > "./include/$path/$class_name.hpp"
+" > "./src/$path/$class_name.hpp"
 
 # Implementation
 echo "#include <QtCore>

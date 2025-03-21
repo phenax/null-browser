@@ -1,7 +1,9 @@
 #pragma once
+
 #include <QtCore>
 #include <lua.hpp>
 
+#include "AsyncEventLoop.hpp"
 #include "widgets/WebViewStack.hpp"
 
 class LuaRuntime : public QObject {
@@ -15,6 +17,11 @@ public:
 
   void evaluate(QString code);
 
+  void stopEventLoop();
+  void startEventLoop();
+
+  DELEGATE(eventLoop, queueTask, queueTask)
+
 signals:
   void urlOpened(QString url, OpenType openType);
 
@@ -26,4 +33,5 @@ protected:
 
 private:
   lua_State *state;
+  AsyncEventLoop *eventLoop = nullptr;
 };

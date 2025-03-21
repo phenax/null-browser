@@ -4,15 +4,15 @@ extern "C" {
 #include <luv.h>
 }
 
+#include "AsyncEventLoop.hpp"
 #include "LuaRuntime.hpp"
+
+const char *uv_global_name = "uv";
+const char *web_global_name = "web";
 
 LuaRuntime::LuaRuntime() {
   state = luaL_newstate();
   luaL_openlibs(state);
-
-  // Load `uv` (luv)
-  luaopen_luv(state);
-  lua_setglobal(state, "uv");
 
   // Load `web`
   luaL_Reg weblib[] = {
@@ -21,39 +21,42 @@ LuaRuntime::LuaRuntime() {
       {NULL, NULL},
   };
   luaL_newlib(state, weblib);
-  lua_setglobal(state, "web");
+  lua_setglobal(state, web_global_name);
+}
 
-  // auto pp = R"(
-  // print('Hello -- ');
-  // local h = uv.fs_open('foobar', 'w', tonumber('644', 8), function(err, h)
-  //  assert(not err, err);
-  //  print('inside');
-  //  print(h);
-  //  print(err);
-  //  uv.fs_write(h, 'Hello world');
-  // end);
-  // print(h);
-  // uv.run();
-  // print('-- end');
-  // )";
-  // auto pp = R"(
-  // print('Hello -- ');
-  // local t = uv.new_timer();
-  // uv.timer_start(t, 4000, 0, function()
-  //   print('after time')
-  // end);
-  // uv.run();
-  // print('-- end');
-  // )";
-  // if (luaL_dostring(state, pp)) {
-  //   qDebug() << "Lua Error: " << lua_tostring(state, -1);
-  // } else {
-  //   qDebug() << "succ";
-  // }
+void LuaRuntime::startEventLoop() {
+  if (eventLoop != nullptr)
+    stopEventLoop();
+
+  // Init event loop
+  eventLoop = new AsyncEventLoop();
+
+  // Load `uv` (luv)
+  luv_set_loop(state, eventLoop->getUVLoop());
+  luaopen_luv(state);
+  lua_setglobal(state, uv_global_name);
+}
+
+void LuaRuntime::stopEventLoop() {
+  if (eventLoop == nullptr)
+    return;
+  delete eventLoop;
+  eventLoop = nullptr;
+
+  // Clear the uv global
+  lua_pushnil(state);
+  lua_setglobal(state, uv_global_name);
+  lua_gc(state, LUA_GCCOLLECT, 0);
 }
 
 void LuaRuntime::evaluate(QString code) {
-  luaL_dostring(state, code.toStdString().c_str());
+  eventLoop->queueTask([this, code]() {
+    if (luaL_dostring(state, code.toStdString().c_str())) {
+      qDebug() << "Lua Error: " << lua_tostring(state, -1);
+      lua_pop(state, 1);
+    } else
+      qDebug() << "done";
+  });
 }
 
 int LuaRuntime::lua_onUrlOpen(lua_State *state) {
@@ -70,4 +73,8 @@ int LuaRuntime::lua_onUrlTabOpen(lua_State *state) {
   return 1;
 }
 
-LuaRuntime::~LuaRuntime() { lua_close(state); }
+LuaRuntime::~LuaRuntime() {
+  stopEventLoop();
+  lua_close(state);
+  state = nullptr;
+}

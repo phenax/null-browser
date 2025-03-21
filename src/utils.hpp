@@ -8,4 +8,4 @@
   template <typename Arg> void METHOD(Arg val) { PROPERTY = val; }
 
 #define DEFINE_GETTER(METHOD, EXPR)                                            \
-  template <typename Arg> decltype(auto) METHOD() { return EXPR; }
+  decltype(auto) METHOD() { return EXPR; }
