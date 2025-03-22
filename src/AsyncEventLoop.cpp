@@ -41,11 +41,12 @@ void AsyncEventLoop::processTasks() {
 void AsyncEventLoop::runLoop() {
   isLoopRunning = true;
   while (isLoopRunning) {
-    int result = uv_run(loop, UV_RUN_ONCE);
-    if (result == 0)
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    /* int _result =  */ uv_run(loop, UV_RUN_NOWAIT);
+    // qDebug() << "Tasks handled:" << result;
+    // uv_print_active_handles(loop, stdout);
+    // if (result == 0)
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
-  uv_run(loop, UV_RUN_NOWAIT);
 }
 
 AsyncEventLoop::~AsyncEventLoop() {
