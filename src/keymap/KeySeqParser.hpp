@@ -20,8 +20,8 @@ enum KeyMatchType {
 
 class KeySeqParser {
 public:
-  static const KeyMatchType keySequenceMatch(const KeySequence target,
-                                             const KeySequence current) {
+  static KeyMatchType keySequenceMatch(const KeySequence target,
+                                       const KeySequence current) {
     for (int i = 0; i < target.length(); i++) {
       if (current.length() <= i)
         return KeyMatchType::Pending;

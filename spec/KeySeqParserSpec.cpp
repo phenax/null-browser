@@ -29,10 +29,6 @@ private slots:
 
       QList<KeyChord> keys = parser.parse("ab<c><s><sPace><tab><esC>z");
 
-      for (auto &k : keys) {
-        qDebug() << k.key << k.mod;
-      }
-
       QList<KeyChord> expectedKeys = {
           {.mod = Qt::NoModifier, .key = Qt::Key_A},
           {.mod = Qt::NoModifier, .key = Qt::Key_B},

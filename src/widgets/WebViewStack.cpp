@@ -1,11 +1,13 @@
 #include <QStackedLayout>
 #include <QWebEngineNewWindowRequest>
+#include <algorithm>
+#include <vector>
 
 #include "widgets/WebViewStack.hpp"
 
 WebViewStack::WebViewStack(const Configuration *configuration,
                            QWebEngineProfile *profile, QWidget *parent)
-    : QWidget(parent), profile(profile), configuration(configuration) {
+    : QWidget(parent), configuration(configuration), profile(profile) {
   layout = new QStackedLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setStackingMode(QStackedLayout::StackOne);
@@ -48,11 +50,12 @@ WebView *WebViewStack::createNewWebView(QUrl url, bool focus) {
 QList<Tab> WebViewStack::getTabList() {
   QList<Tab> urls;
   for (auto &view : webViewList)
-    urls.append((Tab){.url = view->url().toString(), .title = view->title()});
+    urls.append(Tab{.url = view->url().toString(), .title = view->title()});
   return urls;
 }
 
-void WebViewStack::onNewWebViewRequest(QWebEngineNewWindowRequest &request) {
+void WebViewStack::onNewWebViewRequest(
+    const QWebEngineNewWindowRequest &request) {
   switch (request.destination()) {
   case QWebEngineNewWindowRequest::InNewTab:
     createNewWebView(request.requestedUrl(), true);
@@ -83,15 +86,15 @@ void WebViewStack::next() {
 void WebViewStack::previous() {
   if (webViewList.isEmpty())
     return;
-  auto index = currentWebViewIndex() - 1;
-  auto total = webViewList.length();
+  int index = ((int)currentWebViewIndex()) - 1;
+  qsizetype total = webViewList.length();
   index = index < 0 ? total + index : index;
   focusWebView(index);
 }
 
 void WebViewStack::closeCurrent() { close(currentWebViewIndex()); }
 
-void WebViewStack::close(long index) {
+void WebViewStack::close(int32_t index) {
   if (index < 0 || index >= webViewList.length())
     return;
 
@@ -119,11 +122,12 @@ u_int32_t WebViewStack::currentWebViewIndex() { return layout->currentIndex(); }
 
 u_int32_t WebViewStack::count() { return webViewList.length(); }
 
-void WebViewStack::focusWebView(long index) {
+void WebViewStack::focusWebView(int32_t index) {
   if (webViewList.isEmpty())
     return;
 
-  index = std::max((long)0, std::min(index, (long)webViewList.length() - 1));
+  index = std::max((long long)0,
+                   std::min((long long)index, webViewList.length() - 1));
   layout->setCurrentIndex(index);
 }
 

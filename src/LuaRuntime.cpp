@@ -18,7 +18,7 @@ LuaRuntime::LuaRuntime() {
   luaL_Reg weblib[] = {
       {"open", &LuaRuntime::lua_onUrlOpen},
       {"tabopen", &LuaRuntime::lua_onUrlTabOpen},
-      {NULL, NULL},
+      {nullptr, nullptr},
   };
   luaL_newlib(state, weblib);
   lua_setglobal(state, web_global_name);
@@ -60,13 +60,13 @@ void LuaRuntime::stopEventLoop() {
 void LuaRuntime::evaluate(QString code) {
   eventLoop->queueTask([this, code]() {
     if (luaL_dostring(state, code.toStdString().c_str()) != LUA_OK) {
-      auto value = lua_tostring(state, -1);
+      const char *value = lua_tostring(state, -1);
       lua_pop(state, 1);
 
       qDebug() << "Lua Error: " << value;
       emit evaluationFailed(value);
     } else {
-      auto value = getValue(-1);
+      QVariant value = getValue(-1);
       lua_pop(state, 1);
 
       qDebug() << "result: " << value;
@@ -76,7 +76,7 @@ void LuaRuntime::evaluate(QString code) {
 }
 
 QVariant LuaRuntime::evaluateSync(QString code) {
-  auto result = luaL_dostring(state, code.toStdString().c_str());
+  luaL_dostring(state, code.toStdString().c_str());
   return getValue(-1); // TODO: error handling
 }
 
@@ -113,25 +113,21 @@ int LuaRuntime::lua_onUrlTabOpen(lua_State *state) {
 int LuaRuntime::lua_addKeymap(lua_State *state) {
   const char *mode = lua_tostring(state, 1);
   const char *keyseq = lua_tostring(state, 2);
-  qDebug() << "Adduing" << mode << keyseq;
-
-  qDebug() << "---" << lua_isfunction(state, 3);
 
   lua_pushvalue(state, 3);
   int functionRef = luaL_ref(state, LUA_REGISTRYINDEX);
   auto action = [state, functionRef]() {
-    qDebug() << "Hello";
+    qDebug() << "key action";
 
     lua_rawgeti(state, LUA_REGISTRYINDEX, functionRef);
     if (lua_pcall(state, 0, 0, 0) != LUA_OK) {
       const char *error = lua_tostring(state, -1);
       qDebug() << "Error calling Lua function:" << error;
       lua_pop(state, 1);
-    } else {
-      qDebug() << "Done";
     }
     lua_pop(state, 1);
   };
+  // TODO: Cleanup function ref on after keymap clear
 
   auto runtime = LuaRuntime::instance();
   emit runtime->keymapAddRequested(mode, keyseq, action);

@@ -5,6 +5,7 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <utility>
 #include <uv.h>
 
 #include "utils.hpp"

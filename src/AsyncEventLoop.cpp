@@ -1,7 +1,9 @@
 #include <QtCore>
 #include <functional>
 #include <mutex>
+#include <queue>
 #include <thread>
+#include <utility>
 #include <uv.h>
 
 #include "AsyncEventLoop.hpp"
@@ -63,7 +65,7 @@ AsyncEventLoop::~AsyncEventLoop() {
   uv_stop(loop);
 
   // Close all handles
-  AsyncEventLoop::closeHandle((uv_handle_t *)&asyncHandle);
+  AsyncEventLoop::closeHandle(reinterpret_cast<uv_handle_t *>(&asyncHandle));
   uv_walk(loop, AsyncEventLoop::closeHandle, nullptr);
   while (uv_run(loop, UV_RUN_ONCE) != 0)
     ;
@@ -87,7 +89,7 @@ void AsyncEventLoop::asyncHandleCallback(uv_async_t *handle) {
   runtime->processTasks();
 }
 
-void AsyncEventLoop::closeHandle(uv_handle_t *handle, void *arg) {
+void AsyncEventLoop::closeHandle(uv_handle_t *handle, void *) {
   if (!uv_is_closing(handle)) {
     uv_close(handle, [](uv_handle_t *h) { h->data = nullptr; });
   }

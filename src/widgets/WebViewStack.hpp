@@ -2,7 +2,7 @@
 
 #include <QStackedLayout>
 #include <QWebEngineProfile>
-#include <sys/types.h>
+#include <vector>
 
 #include "Configuration.hpp"
 #include "widgets/WebView.hpp"
@@ -33,11 +33,11 @@ public:
   u_int32_t count();
   QUrl currentUrl();
 
-  void focusWebView(long index);
+  void focusWebView(int32_t index);
   void next();
   void previous();
 
-  void close(long index);
+  void close(int32_t index);
   void closeCurrent();
 
 private:
@@ -45,7 +45,7 @@ private:
   WebView *createNewWebView(QUrl url, bool focus = false);
 
 private slots:
-  void onNewWebViewRequest(QWebEngineNewWindowRequest &request);
+  void onNewWebViewRequest(const QWebEngineNewWindowRequest &request);
 
 private:
   const Configuration *configuration;

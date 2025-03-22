@@ -19,7 +19,7 @@ public:
   void evaluate(QString code);
   QVariant evaluateSync(QString code);
 
-  void loadFile(QString code);
+  void loadFile(QString path);
 
   void stopEventLoop();
   void startEventLoop();

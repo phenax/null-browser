@@ -18,3 +18,15 @@ clean:
 
 run: build
 	./build/null-browser
+
+debug:
+	DEBUG=1 make build
+	gdb ./build/null-browser
+
+build-release:
+	RELEASE=1 make build
+
+check:
+	clang-format -i ./src/**/*.{hpp,cpp}
+	clang-tidy ./src/**/*.{hpp,cpp}
+

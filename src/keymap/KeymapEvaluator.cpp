@@ -14,7 +14,7 @@ void KeymapEvaluator::addKeymap(KeyMode mode, QString key, KeyAction action) {
   qDebug() << "    " << mode << key;
 
   auto keySeq = keySeqParser.parse(key);
-  modalKeys[mode].append((KeyMap){.keySequence = keySeq, .action = action});
+  modalKeys[mode].append(KeyMap{.keySequence = keySeq, .action = action});
 }
 
 bool KeymapEvaluator::evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key) {
@@ -25,7 +25,7 @@ bool KeymapEvaluator::evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key) {
   auto keymaps = currentModeKeys();
   auto foundPendingMatches = false;
 
-  activeKeySequence.append((KeyChord){.mod = modifiers, .key = key});
+  activeKeySequence.append(KeyChord{.mod = modifiers, .key = key});
 
   for (auto &keymap : *keymaps) {
     auto matchType =

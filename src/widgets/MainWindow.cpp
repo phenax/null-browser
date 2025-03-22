@@ -73,7 +73,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   }
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *event) {
+bool MainWindow::eventFilter(QObject *, QEvent *event) {
   if (event->type() != QEvent::KeyPress)
     return false;
 

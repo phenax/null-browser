@@ -1,6 +1,8 @@
 ** Current
 - [X] Process spawning lua (+ stdio)
 - [X] Keybindings (lua api)
+- [X] Modal keys
+- [X] event loop for async work
 - [ ] example: trigger dmenu for simple selection
 - [ ] Config loading and runtime path
 - [ ] Tab history navigation
@@ -8,12 +10,11 @@
 - [ ] Get tab list api
 - [ ] Assign ID to each tab (reference in lua api)
 - [ ] Tab select by id
-- [X] event loop for async work
 - [ ] Fix segfault on quit
 - [ ] Multi-window
 
 ** Next
-- [ ] Modal keys
+- [ ] Conflict in keymap (keymap already exists)
 - [ ] History persistance
 - [ ] History completion
 - [ ] Open url parsing (add protocol if missing, remove quotes, etc)
