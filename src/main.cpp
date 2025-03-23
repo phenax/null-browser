@@ -5,14 +5,14 @@
 #include "widgets/MainWindow.hpp"
 
 int main(int argc, char *argv[]) {
-  QApplication app(argc, argv);
+  const QApplication app(argc, argv);
 
-  auto lua = LuaRuntime::instance();
-  lua->startEventLoop();
+  auto *lua = LuaRuntime::instance();
+  lua->start_event_loop();
 
-  MainWindow mainWindow;
-  mainWindow.setWindowTitle("null-browser");
-  mainWindow.show();
+  MainWindow main_window;
+  main_window.setWindowTitle("null-browser");
+  main_window.show();
 
-  return app.exec();
+  return QApplication::exec();
 }

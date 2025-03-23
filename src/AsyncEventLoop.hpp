@@ -16,30 +16,28 @@ public:
   ~AsyncEventLoop();
 
   void wake();
-  DEFINE_GETTER(getUVLoop, loop)
+  DEFINE_GETTER(get_uv_loop, loop)
 
-  template <typename F> void queueTask(F &&task) {
+  template <typename F> void queue_task(F &&task) {
     {
-      std::lock_guard<std::mutex> lock(tasksQueueMutex);
-      tasksQueue.push(std::forward<F>(task));
+      const std::lock_guard<std::mutex> lock(tasks_queue_mutex);
+      tasks_queue.push(std::forward<F>(task));
     }
     wake();
   }
 
 protected:
-  void runLoop();
-  void processTasks();
-  static void asyncHandleCallback(uv_async_t *handle);
-  static void closeHandle(uv_handle_t *handle, void *arg = nullptr);
-
-private:
-  void flushTasks();
+  void run_loop();
+  void process_tasks();
+  void flush_tasks();
+  static void async_handle_callback(uv_async_t *handle);
+  static void close_handle(uv_handle_t *handle, void *arg = nullptr);
 
 private:
   uv_loop_t *loop;
-  std::thread loopThread;
-  uv_async_t asyncHandle;
-  std::atomic<bool> isLoopRunning = false;
-  std::queue<std::function<void()>> tasksQueue;
-  std::mutex tasksQueueMutex;
+  std::thread loop_thread;
+  uv_async_t async_handle;
+  std::atomic<bool> is_loop_running = false;
+  std::queue<std::function<void()>> tasks_queue;
+  std::mutex tasks_queue_mutex;
 };

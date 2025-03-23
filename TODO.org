@@ -3,14 +3,14 @@
 - [X] Keybindings (lua api)
 - [X] Modal keys
 - [X] event loop for async work
-- [ ] example: trigger dmenu for simple selection
-- [ ] Config loading and runtime path
+- [X] example: trigger dmenu for simple selection
+- [X] Fix segfault on quit
 - [ ] Tab history navigation
 - [ ] Tab next/prev
 - [ ] Get tab list api
 - [ ] Assign ID to each tab (reference in lua api)
 - [ ] Tab select by id
-- [ ] Fix segfault on quit
+- [ ] Config loading and runtime path
 - [ ] Multi-window
 
 ** Next

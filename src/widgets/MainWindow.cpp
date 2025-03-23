@@ -1,10 +1,9 @@
 #include <QKeyEvent>
 #include <QStackedLayout>
 #include <QVBoxLayout>
-#include <QtCore/qcoreevent.h>
-#include <QtCore/qnamespace.h>
-#include <QtWidgets/qapplication.h>
+#include <QtCore>
 
+#include "Configuration.hpp"
 #include "InputMediator.hpp"
 #include "keymap/KeymapEvaluator.hpp"
 #include "widgets/MainWindow.hpp"
@@ -18,50 +17,51 @@ MainWindow::MainWindow() {
   qApp->installEventFilter(this);
 
   // Root stacked layout
-  auto layout = new QStackedLayout();
+  auto *layout = new QStackedLayout();
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
   layout->setStackingMode(QStackedLayout::StackAll);
   centralWidget()->setLayout(layout);
 
   // Web engine
-  auto webViewStack = new WebViewStack((const Configuration *)&configuration,
-                                       new QWebEngineProfile("null-browser"));
-  layout->addWidget(webViewStack);
+  auto *web_view_stack =
+      new WebViewStack((const Configuration *)&configuration,
+                       new QWebEngineProfile("null-browser"));
+  layout->addWidget(web_view_stack);
 
   // TODO: remoev
-  webViewStack->openUrl(QUrl("https://duckduckgo.com"), OpenType::OpenUrl);
-  webViewStack->openUrl(QUrl("https://ediblemonad.dev"),
-                        OpenType::OpenUrlInBgTab);
-  webViewStack->openUrl(QUrl("https://github.com/trending"),
-                        OpenType::OpenUrlInBgTab);
+  web_view_stack->open_url(QUrl("https://duckduckgo.com"), OpenType::OpenUrl);
+  web_view_stack->open_url(QUrl("https://ediblemonad.dev"),
+                           OpenType::OpenUrlInBgTab);
+  web_view_stack->open_url(QUrl("https://github.com/trending"),
+                           OpenType::OpenUrlInBgTab);
 
-  auto keymapEvaluator = new KeymapEvaluator;
+  auto *keymap_evaluator = new KeymapEvaluator;
 
-  inputMediator =
-      new InputMediator(webViewStack, LuaRuntime::instance(), keymapEvaluator);
+  input_mediator = new InputMediator(web_view_stack, LuaRuntime::instance(),
+                                     keymap_evaluator);
 
   // NOTE: TMP
-  LuaRuntime::instance()->loadFile("./config.lua");
+  LuaRuntime::instance()->load_file("./config.lua");
 
   // TODO: remove
-  keymapEvaluator->addKeymap(KeyMode::Normal, "i", [keymapEvaluator]() {
-    keymapEvaluator->setCurrentMode(KeyMode::Insert);
+  keymap_evaluator->add_keymap(KeyMode::Normal, "i", [keymap_evaluator]() {
+    keymap_evaluator->set_current_mode(KeyMode::Insert);
   });
-  keymapEvaluator->addKeymap(KeyMode::Insert, "<esc>", [keymapEvaluator]() {
-    keymapEvaluator->setCurrentMode(KeyMode::Normal);
+  keymap_evaluator->add_keymap(KeyMode::Insert, "<esc>", [keymap_evaluator]() {
+    keymap_evaluator->set_current_mode(KeyMode::Normal);
   });
-  keymapEvaluator->addKeymap(KeyMode::Normal, "<c-t>a",
-                             []() { qDebug() << "Stuff"; });
+  keymap_evaluator->add_keymap(KeyMode::Normal, "<c-t>a",
+                               []() { qDebug() << "Stuff"; });
 }
 
-bool MainWindow::eventFilter(QObject *, QEvent *event) {
+bool MainWindow::eventFilter(QObject * /*watched*/, QEvent *event) {
   if (event->type() != QEvent::KeyPress)
     return false;
 
-  auto keyEvent = static_cast<QKeyEvent *>(event);
-  bool shouldSkip = inputMediator->evaluateKeymap(keyEvent->modifiers(),
-                                                  (Qt::Key)keyEvent->key());
+  auto *key_event = static_cast<QKeyEvent *>(event);
+  const bool should_skip = input_mediator->evaluate_keymap(
+      key_event->modifiers(), (Qt::Key)key_event->key());
 
-  return shouldSkip;
+  return should_skip;
 }

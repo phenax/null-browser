@@ -26,16 +26,16 @@
 
 #define STRINGIFY(x) #x
 
-std::vector<std::function<QObject *()>> &getQTestRegistry();
-int runAllTests();
+std::vector<std::function<QObject *()>> &get_qtest_registry();
+int run_all_tests();
 
 #define QTEST_REGISTER(klass)                                                  \
   namespace {                                                                  \
   const bool registered__##klass = []() {                                      \
-    getQTestRegistry().push_back([]() {                                        \
-      auto t = new klass;                                                      \
-      t->setObjectName(#klass);                                                \
-      return t;                                                                \
+    get_qtest_registry().push_back([]() {                                      \
+      auto test = new (klass);                                                 \
+      test->setObjectName(#klass);                                             \
+      return test;                                                             \
     });                                                                        \
     return true;                                                               \
   }();                                                                         \

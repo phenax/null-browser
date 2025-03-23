@@ -9,10 +9,10 @@ class MainWindow : public QMainWindow {
 public:
   MainWindow();
 
-private:
+protected:
   bool eventFilter(QObject *object, QEvent *event) override;
 
 private:
-  InputMediator *inputMediator;
+  InputMediator *input_mediator;
   Configuration configuration;
 };

@@ -28,5 +28,5 @@ build-release:
 
 check:
 	clang-format -i ./src/**/*.{hpp,cpp}
-	clang-tidy ./src/**/*.{hpp,cpp}
+	clang-tidy --config-file=.clang-tidy ./src/**/*.{hpp,cpp}
 

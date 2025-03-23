@@ -1,24 +1,33 @@
 ---
+UseColor: true
+
 Checks: >
-  bugprone-*
-  clang-analyzer-*
-  cppcoreguidelines-*
-  modernize-*
-  performance-*
-  readability-*
-  misc-*
-  -modernize-use-trailing-return-type
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic
-  -cppcoreguidelines-avoid-magic-numbers
+  -*
+  , readability-*
+  , bugprone-*
+  , clang-analyzer-*
+  , performance-*
+  , modernize-*
+  , misc-const-correctness
+  , -modernize-use-trailing-return-type
+  , -readability-magic-numbers
+  , -readability-braces-around-statements
+  , -readability-convert-member-functions-to-static
+  , -readability-implicit-bool-conversion
+  , -bugprone-easily-swappable-parameters
+
+# , cppcoreguidelines-owning-memory
+# , cppcoreguidelines-*
+# , misc-*
 
 WarningsAsErrors: >
   bugprone-*
-  clang-analyzer-*
-  cppcoreguidelines-*
-  modernize-*
-  performance-*
+  , clang-analyzer-*
+  , modernize-*
+  , performance-*
 
-HeaderFilterRegex: ''
+HeaderFilterRegex: '^src/.*$'
+
 HeaderFileExtensions:
   - h
   - hpp
@@ -27,10 +36,15 @@ ImplementationFileExtensions:
   - cpp
 
 CheckOptions:
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.MethodCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
   modernize-use-nullptr.CheckSmartPointers: true
   modernize-use-nullptr.IgnoreMacros: false
   # Use 'auto' when it improves readability
-  modernize-use-auto.MinTypeNameLength: 5
+  modernize-use-auto.MinTypeNameLength: 8
   readability-container-size-empty.IgnoreQtContainers: true
   # Performance optimizations
   performance-noexcept-move-constructor.StrictMode: true

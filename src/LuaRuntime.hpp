@@ -7,13 +7,16 @@
 #include "AsyncEventLoop.hpp"
 #include "widgets/WebViewStack.hpp"
 
-#define preserveTop(STATE, BODY)                                               \
-  int __top = lua_gettop(STATE);                                               \
+#define preserve_top(STATE, BODY)                                              \
+  const int __top = lua_gettop(STATE);                                         \
   BODY;                                                                        \
   lua_settop(STATE, __top);
 
 class LuaRuntime : public QObject {
   Q_OBJECT
+
+  const char *uv_global_name = "uv";
+  const char *web_global_name = "web";
 
 public:
   static LuaRuntime *instance() {
@@ -21,33 +24,34 @@ public:
     return &inst;
   }
 
-  void evaluate(QString code);
-  void loadFile(QString path);
-  QVariant evaluateSync(QString code);
+  void evaluate(const QString &code);
+  void load_file(const QString &path);
+  QVariant evaluate_sync(const QString &code);
 
-  void stopEventLoop();
-  void startEventLoop();
-  DELEGATE(eventLoop, queueTask, queueTask)
+  void stop_event_loop();
+  void start_event_loop();
+  DELEGATE(event_loop, queue_task, queue_task)
 
-  QVariant getLuaValue(int idx);
-  DEFINE_GETTER(getState, state)
+  QVariant get_lua_value(int idx);
+  DEFINE_GETTER(get_state, state)
 
 signals:
-  void urlOpened(QString url, OpenType openType);
-  void evaluationCompleted(QVariant value);
-  void evaluationFailed(QString value);
-  void keymapAddRequested(QString mode, QString keyseq, std::function<void()>);
-  // void outputProduced(QVariant value);
+  void url_opened(QString url, OpenType open_type);
+  void evaluation_completed(QVariant value);
+  void evaluation_failed(QString value);
+  void keymap_add_requested(QString mode, QString keyseq,
+                            std::function<void()>);
+  // void output_produced(QVariant value);
 
 protected:
   LuaRuntime();
-  ~LuaRuntime();
-  void initWebLib();
-  static int lua_onUrlOpen(lua_State *state);
-  static int lua_onUrlTabOpen(lua_State *state);
-  static int lua_addKeymap(lua_State *state);
+  ~LuaRuntime() override;
+  void init_web_lib();
+  static int lua_on_url_open(lua_State *state);
+  static int lua_on_url_tab_open(lua_State *state);
+  static int lua_add_keymap(lua_State *state);
 
 private:
   lua_State *state;
-  AsyncEventLoop *eventLoop = nullptr;
+  AsyncEventLoop *event_loop = nullptr;
 };

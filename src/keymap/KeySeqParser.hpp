@@ -1,18 +1,17 @@
 #pragma once
 
-#include <QtCore/qnamespace.h>
 #include <QtCore>
-#include <cmath>
+#include <cstdint>
 
 struct KeyChord {
   Qt::KeyboardModifiers mod;
   Qt::Key key;
 };
-bool operator==(const KeyChord a, const KeyChord b);
+bool operator==(KeyChord chord1, KeyChord chord2);
 
-typedef QList<KeyChord> KeySequence;
+using KeySequence = QList<KeyChord>;
 
-enum KeyMatchType {
+enum KeyMatchType : uint8_t {
   NoMatch,
   Match,
   Pending,
@@ -20,8 +19,8 @@ enum KeyMatchType {
 
 class KeySeqParser {
 public:
-  static KeyMatchType keySequenceMatch(const KeySequence target,
-                                       const KeySequence current) {
+  static KeyMatchType key_sequence_match(const KeySequence &target,
+                                         const KeySequence &current) {
     for (int i = 0; i < target.length(); i++) {
       if (current.length() <= i)
         return KeyMatchType::Pending;
@@ -34,11 +33,9 @@ public:
     return KeyMatchType::Match;
   }
 
-public:
-  KeySeqParser();
-
-  KeySequence parse(QString keySequence);
+  KeySeqParser() = default;
+  KeySequence parse(QString key_sequence);
 
 private:
-  Qt::Key parseKey(QString keyName);
+  Qt::Key parse_key(const QString &key_name);
 };

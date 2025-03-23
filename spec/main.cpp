@@ -4,5 +4,5 @@
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
 
-  return runAllTests();
+  return run_all_tests();
 }

@@ -2,12 +2,18 @@
 
 #include <QStackedLayout>
 #include <QWebEngineProfile>
+#include <cstdint>
 #include <vector>
 
 #include "Configuration.hpp"
 #include "widgets/WebView.hpp"
 
-enum OpenType { OpenUrl, OpenUrlInTab, OpenUrlInBgTab, OpenUrlInWindow };
+enum OpenType : uint8_t {
+  OpenUrl,
+  OpenUrlInTab,
+  OpenUrlInBgTab,
+  OpenUrlInWindow
+};
 
 struct Tab {
   QString url;
@@ -18,38 +24,35 @@ class WebViewStack : public QWidget {
   Q_OBJECT
 
 public:
-  inline static const QUrl NewtabURL = QUrl("about:blank");
-
-public:
   WebViewStack(const Configuration *configuration,
                QWebEngineProfile *profile = new QWebEngineProfile,
                QWidget *parent = nullptr);
 
-  void openUrl(QUrl url, OpenType openType = OpenType::OpenUrl);
+  void open_url(const QUrl &url, OpenType open_type = OpenType::OpenUrl);
 
   std::vector<QUrl> urls();
-  QList<Tab> getTabList();
-  u_int32_t currentWebViewIndex();
-  u_int32_t count();
-  QUrl currentUrl();
+  QList<Tab> get_tab_list();
+  uint32_t current_web_view_index();
+  uint32_t count();
+  QUrl current_url();
 
-  void focusWebView(int32_t index);
+  void focus_web_view(qsizetype index);
   void next();
   void previous();
 
-  void close(int32_t index);
-  void closeCurrent();
-
-private:
-  void setCurrentUrl(QUrl url);
-  WebView *createNewWebView(QUrl url, bool focus = false);
+  void close(qsizetype index);
+  void close_current();
 
 private slots:
-  void onNewWebViewRequest(const QWebEngineNewWindowRequest &request);
+  void on_new_web_view_request(const QWebEngineNewWindowRequest &request);
+
+protected:
+  void set_current_url(const QUrl &url);
+  WebView *create_new_web_view(const QUrl &url, bool focus = false);
 
 private:
   const Configuration *configuration;
   QWebEngineProfile *profile;
   QStackedLayout *layout;
-  QList<WebView *> webViewList;
+  QList<WebView *> web_view_list;
 };

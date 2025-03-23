@@ -1,78 +1,78 @@
 #include <QWidget>
 #include <QtCore>
 #include <algorithm>
+#include <cstdint>
 
 #include "keymap/KeySeqParser.hpp"
 
-bool operator==(const KeyChord a, const KeyChord b) {
-  return a.mod == b.mod && a.key == b.key;
+bool operator==(const KeyChord chord1, const KeyChord chord2) {
+  return chord1.mod == chord2.mod && chord1.key == chord2.key;
 }
 
-KeySeqParser::KeySeqParser() {}
-
-QList<KeyChord> KeySeqParser::parse(QString keySequence) {
-  QList<KeyChord> keyChords;
-  KeyChord lastKey;
+QList<KeyChord> KeySeqParser::parse(QString key_sequence) {
+  QList<KeyChord> key_chords;
+  KeyChord last_key;
 
   // TODO: Refactor
   // TODO: Support <C-S-t>
-  keySequence = keySequence.toLower();
-  while (!keySequence.isEmpty()) {
-    int skipCount = 1;
-    if (keySequence.startsWith("<c-")) {
-      int nextClosing = keySequence.indexOf('>');
-      auto keyName = keySequence.sliced(3, nextClosing - 3);
-      lastKey.mod = lastKey.mod | Qt::KeyboardModifier::ControlModifier;
-      lastKey.key = parseKey(keyName);
-      skipCount = nextClosing + 1;
-    } else if (keySequence.startsWith("<s-")) {
-      int nextClosing = keySequence.indexOf('>');
-      auto keyName = keySequence.sliced(3, nextClosing - 3);
-      lastKey.mod = lastKey.mod | Qt::KeyboardModifier::ShiftModifier;
-      lastKey.key = parseKey(keyName);
-      skipCount = nextClosing + 1;
-    } else if (keySequence.startsWith("<")) {
-      int nextClosing = keySequence.indexOf('>');
-      auto keyName = keySequence.sliced(1, nextClosing - 1);
-      lastKey.mod = Qt::KeyboardModifier::NoModifier;
-      lastKey.key = parseKey(keyName);
-      skipCount = nextClosing + 1;
+  key_sequence = key_sequence.toLower();
+  while (!key_sequence.isEmpty()) {
+    int skip_count = 1;
+    uint16_t next_closing;
+    if (key_sequence.startsWith("<c-")) {
+      next_closing = key_sequence.indexOf('>');
+      auto key_name = key_sequence.sliced(3, next_closing - 3);
+      last_key.mod = last_key.mod | Qt::KeyboardModifier::ControlModifier;
+      last_key.key = parse_key(key_name);
+      skip_count = next_closing + 1;
+    } else if (key_sequence.startsWith("<s-")) {
+      next_closing = key_sequence.indexOf('>');
+      auto key_name = key_sequence.sliced(3, next_closing - 3);
+      last_key.mod = last_key.mod | Qt::KeyboardModifier::ShiftModifier;
+      last_key.key = parse_key(key_name);
+      skip_count = next_closing + 1;
+    } else if (key_sequence.startsWith("<")) {
+      next_closing = key_sequence.indexOf('>');
+      auto key_name = key_sequence.sliced(1, next_closing - 1);
+      last_key.mod = Qt::KeyboardModifier::NoModifier;
+      last_key.key = parse_key(key_name);
+      skip_count = next_closing + 1;
     } else {
-      auto keyName = keySequence.first(1);
-      lastKey.mod = Qt::KeyboardModifier::NoModifier;
-      lastKey.key = parseKey(keyName);
+      auto key_name = key_sequence.first(1);
+      last_key.mod = Qt::KeyboardModifier::NoModifier;
+      last_key.key = parse_key(key_name);
     }
 
-    keySequence.slice(std::max(1, skipCount));
-    keyChords.push_back(lastKey);
-    lastKey = KeyChord();
+    key_sequence.slice(std::max(1, skip_count));
+    key_chords.push_back(last_key);
+    last_key = KeyChord();
   }
 
-  return keyChords;
+  return key_chords;
 }
 
-Qt::Key KeySeqParser::parseKey(QString keyName) {
-  if (keyName.length() == 0)
+Qt::Key KeySeqParser::parse_key(const QString &key_name) {
+  if (key_name.length() == 0)
     return Qt::Key_T; // TODO: tmp
 
-  if (keyName.length() == 1) {
-    char c = keyName.toStdString().at(0);
-    return Qt::Key(Qt::Key_A + (c - 'a'));
+  if (key_name.length() == 1) {
+    const char key_char = key_name.toStdString().at(0);
+    return Qt::Key(Qt::Key_A + (key_char - 'a'));
   }
 
-  if (keyName == "space")
+  if (key_name == "space")
     return Qt::Key_Space;
 
-  if (keyName == "cr")
+  if (key_name == "cr")
     return Qt::Key_Return;
 
-  if (keyName == "esc")
+  if (key_name == "esc")
     return Qt::Key_Escape;
 
-  if (keyName == "bs")
+  if (key_name == "bs")
     return Qt::Key_Backspace;
 
-  if (keyName == "tab")
+  if (key_name == "tab")
     return Qt::Key_Tab;
 
   return Qt::Key_T;

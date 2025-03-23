@@ -10,6 +10,7 @@ echo "#include <QtCore>
 
 #include \"$class_name.hpp\"
 
+// NOLINTBEGIN
 class ${class_name}Spec : public QObject {
   Q_OBJECT
 
@@ -26,5 +27,6 @@ private slots:
 
 QTEST_REGISTER(${class_name}Spec)
 #include \"${class_name}Spec.moc\"
+// NOLINTEND
 " > "./spec/${class_name}Spec.cpp"
 

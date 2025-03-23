@@ -4,6 +4,7 @@
 
 #include "keymap/KeySeqParser.hpp"
 
+// NOLINTBEGIN
 class KeySeqParserSpec : public QObject {
   Q_OBJECT
 
@@ -15,12 +16,12 @@ private slots:
 
       QList<KeyChord> keys = parser.parse("<C-tab><c-tAb><c-Tab>");
 
-      QList<KeyChord> expectedKeys = {
+      QList<KeyChord> expected_keys = {
           {.mod = Qt::ControlModifier, .key = Qt::Key_Tab},
           {.mod = Qt::ControlModifier, .key = Qt::Key_Tab},
           {.mod = Qt::ControlModifier, .key = Qt::Key_Tab},
       };
-      QCOMPARE(keys, expectedKeys);
+      QCOMPARE(keys, expected_keys);
     }
 
     context("when input contains individual keys");
@@ -29,7 +30,7 @@ private slots:
 
       QList<KeyChord> keys = parser.parse("ab<c><s><sPace><tab><esC>z");
 
-      QList<KeyChord> expectedKeys = {
+      QList<KeyChord> expected_keys = {
           {.mod = Qt::NoModifier, .key = Qt::Key_A},
           {.mod = Qt::NoModifier, .key = Qt::Key_B},
           {.mod = Qt::NoModifier, .key = Qt::Key_C},
@@ -39,10 +40,11 @@ private slots:
           {.mod = Qt::NoModifier, .key = Qt::Key_Escape},
           {.mod = Qt::NoModifier, .key = Qt::Key_Z},
       };
-      QCOMPARE(keys, expectedKeys);
+      QCOMPARE(keys, expected_keys);
     }
   }
 };
 
 QTEST_REGISTER(KeySeqParserSpec)
 #include "KeySeqParserSpec.moc"
+// NOLINTEND
