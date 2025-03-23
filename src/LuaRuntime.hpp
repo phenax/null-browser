@@ -7,6 +7,11 @@
 #include "AsyncEventLoop.hpp"
 #include "widgets/WebViewStack.hpp"
 
+#define preserveTop(STATE, BODY)                                               \
+  int __top = lua_gettop(STATE);                                               \
+  BODY;                                                                        \
+  lua_settop(STATE, __top);
+
 class LuaRuntime : public QObject {
   Q_OBJECT
 
@@ -17,16 +22,14 @@ public:
   }
 
   void evaluate(QString code);
-  QVariant evaluateSync(QString code);
-
   void loadFile(QString path);
+  QVariant evaluateSync(QString code);
 
   void stopEventLoop();
   void startEventLoop();
-
-  QVariant getValue(int idx);
-
   DELEGATE(eventLoop, queueTask, queueTask)
+
+  QVariant getLuaValue(int idx);
   DEFINE_GETTER(getState, state)
 
 signals:
@@ -39,6 +42,7 @@ signals:
 protected:
   LuaRuntime();
   ~LuaRuntime();
+  void initWebLib();
   static int lua_onUrlOpen(lua_State *state);
   static int lua_onUrlTabOpen(lua_State *state);
   static int lua_addKeymap(lua_State *state);

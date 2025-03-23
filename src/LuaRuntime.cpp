@@ -13,23 +13,7 @@ const char *web_global_name = "web";
 LuaRuntime::LuaRuntime() {
   state = luaL_newstate();
   luaL_openlibs(state);
-
-  // Load `web`
-  luaL_Reg weblib[] = {
-      {"open", &LuaRuntime::lua_onUrlOpen},
-      {"tabopen", &LuaRuntime::lua_onUrlTabOpen},
-      {nullptr, nullptr},
-  };
-  luaL_newlib(state, weblib);
-  lua_setglobal(state, web_global_name);
-
-  lua_getglobal(state, web_global_name);
-  luaL_Reg keymaplib[] = {
-      {"set", &LuaRuntime::lua_addKeymap},
-  };
-  luaL_newlib(state, keymaplib);
-  lua_setfield(state, -2, "keymap");
-  lua_pop(state, 1);
+  preserveTop(state, { initWebLib(); })
 }
 
 void LuaRuntime::startEventLoop() {
@@ -46,10 +30,10 @@ void LuaRuntime::startEventLoop() {
 }
 
 void LuaRuntime::stopEventLoop() {
-  if (eventLoop == nullptr)
-    return;
-  delete eventLoop;
-  eventLoop = nullptr;
+  if (eventLoop != nullptr) {
+    delete eventLoop;
+    eventLoop = nullptr;
+  }
 
   // Clear the uv global
   lua_pushnil(state);
@@ -59,28 +43,26 @@ void LuaRuntime::stopEventLoop() {
 
 void LuaRuntime::evaluate(QString code) {
   eventLoop->queueTask([this, code]() {
-    if (luaL_dostring(state, code.toStdString().c_str()) != LUA_OK) {
-      const char *value = lua_tostring(state, -1);
-      lua_pop(state, 1);
-
-      qDebug() << "Lua Error: " << value;
-      emit evaluationFailed(value);
-    } else {
-      QVariant value = getValue(-1);
-      lua_pop(state, 1);
-
-      qDebug() << "result: " << value;
-      emit evaluationCompleted(value);
-    }
+    preserveTop(state, {
+      if (luaL_dostring(state, code.toStdString().c_str()) != LUA_OK) {
+        const char *value = lua_tostring(state, -1);
+        qDebug() << "Lua Error: " << value;
+        emit evaluationFailed(value);
+      } else {
+        QVariant value = getLuaValue(-1);
+        qDebug() << "result: " << value;
+        emit evaluationCompleted(value);
+      }
+    })
   });
 }
 
 QVariant LuaRuntime::evaluateSync(QString code) {
   luaL_dostring(state, code.toStdString().c_str());
-  return getValue(-1); // TODO: error handling
+  return getLuaValue(-1); // TODO: error handling
 }
 
-QVariant LuaRuntime::getValue(int idx) {
+QVariant LuaRuntime::getLuaValue(int idx) {
   if (lua_isstring(state, idx))
     return lua_tostring(state, idx);
 
@@ -117,15 +99,13 @@ int LuaRuntime::lua_addKeymap(lua_State *state) {
   lua_pushvalue(state, 3);
   int functionRef = luaL_ref(state, LUA_REGISTRYINDEX);
   auto action = [state, functionRef]() {
-    qDebug() << "key action";
-
-    lua_rawgeti(state, LUA_REGISTRYINDEX, functionRef);
-    if (lua_pcall(state, 0, 0, 0) != LUA_OK) {
-      const char *error = lua_tostring(state, -1);
-      qDebug() << "Error calling Lua function:" << error;
-      lua_pop(state, 1);
-    }
-    lua_pop(state, 1);
+    preserveTop(state, {
+      lua_rawgeti(state, LUA_REGISTRYINDEX, functionRef);
+      if (lua_pcall(state, 0, 0, 0) != LUA_OK) {
+        const char *error = lua_tostring(state, -1);
+        qDebug() << "Error calling Lua function:" << error;
+      }
+    })
   };
   // TODO: Cleanup function ref on after keymap clear
 
@@ -136,11 +116,34 @@ int LuaRuntime::lua_addKeymap(lua_State *state) {
 }
 
 void LuaRuntime::loadFile(QString path) {
-  qDebug() << "Loading: " << path;
-  if (luaL_dofile(state, path.toStdString().c_str()) != LUA_OK) {
-    qDebug() << "Load file error:" << lua_tostring(state, -1);
-    lua_pop(state, 1);
-  }
+  queueTask([this, path]() {
+    preserveTop(state, {
+      qDebug() << "Loading: " << path;
+      if (luaL_dofile(state, path.toStdString().c_str()) != LUA_OK) {
+        qDebug() << "Load file error:" << lua_tostring(state, -1);
+      }
+    })
+  });
+}
+
+void LuaRuntime::initWebLib() {
+  // web
+  luaL_Reg weblib[] = {
+      {"open", &LuaRuntime::lua_onUrlOpen},
+      {"tabopen", &LuaRuntime::lua_onUrlTabOpen},
+      {nullptr, nullptr},
+  };
+  luaL_newlib(state, weblib);
+  lua_setglobal(state, web_global_name);
+
+  // web.keymap
+  lua_getglobal(state, web_global_name);
+  luaL_Reg keymaplib[] = {
+      {"set", &LuaRuntime::lua_addKeymap},
+  };
+  luaL_newlib(state, keymaplib);
+  lua_setfield(state, -2, "keymap");
+  // lua_pop(state, 1);
 }
 
 LuaRuntime::~LuaRuntime() {

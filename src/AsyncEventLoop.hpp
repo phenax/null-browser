@@ -15,6 +15,7 @@ public:
   AsyncEventLoop();
   ~AsyncEventLoop();
 
+  void wake();
   DEFINE_GETTER(getUVLoop, loop)
 
   template <typename F> void queueTask(F &&task) {
@@ -22,7 +23,7 @@ public:
       std::lock_guard<std::mutex> lock(tasksQueueMutex);
       tasksQueue.push(std::forward<F>(task));
     }
-    uv_async_send(&asyncHandle);
+    wake();
   }
 
 protected:

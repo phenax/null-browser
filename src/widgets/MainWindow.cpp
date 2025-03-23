@@ -51,26 +51,8 @@ MainWindow::MainWindow() {
   keymapEvaluator->addKeymap(KeyMode::Insert, "<esc>", [keymapEvaluator]() {
     keymapEvaluator->setCurrentMode(KeyMode::Normal);
   });
-
   keymapEvaluator->addKeymap(KeyMode::Normal, "<c-t>a",
                              []() { qDebug() << "Stuff"; });
-  keymapEvaluator->addKeymap(KeyMode::Normal, "<c-t>b",
-                             []() { qDebug() << "Else"; });
-}
-
-void MainWindow::keyPressEvent(QKeyEvent *event) {
-  auto combo = event->keyCombination();
-
-  if (combo.key() == Qt::Key_J &&
-      combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    inputMediator->nextWebView();
-  } else if (combo.key() == Qt::Key_K &&
-             combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    inputMediator->previousWebView();
-  } else if (combo.key() == Qt::Key_W &&
-             combo.keyboardModifiers().testFlag(Qt::ControlModifier)) {
-    inputMediator->closeCurrentWebView();
-  }
 }
 
 bool MainWindow::eventFilter(QObject *, QEvent *event) {
