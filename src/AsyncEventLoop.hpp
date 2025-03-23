@@ -33,6 +33,9 @@ protected:
   static void closeHandle(uv_handle_t *handle, void *arg = nullptr);
 
 private:
+  void flushTasks();
+
+private:
   uv_loop_t *loop;
   std::thread loopThread;
   uv_async_t asyncHandle;

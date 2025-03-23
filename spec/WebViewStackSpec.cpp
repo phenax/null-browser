@@ -18,7 +18,7 @@ class WebViewStackSpec : public QObject {
   };
 
 private slots:
-  void testInitialState() {
+  void test_initial_state() {
     context("when initialized");
     it("opens a single tab") {
       Configuration configuration;
@@ -30,7 +30,7 @@ private slots:
     }
   }
 
-  void testOpenUrl() {
+  void test_open_url() {
     context("when openUrl is called without an open type");
     it("replaces current tab url with newtab url") {
       Configuration configuration;
@@ -79,7 +79,7 @@ private slots:
     }
   }
 
-  void testNextNavigation() {
+  void test_next_navigation() {
     context("when nextWebView is called");
     context("- and there is only 1 tab");
     it("does nothing") {
@@ -122,7 +122,7 @@ private slots:
     }
   }
 
-  void testPreviousNavigation() {
+  void test_previous_navigation() {
     context("when previousWebView is called");
     context("- and there is only 1 tab");
     it("does nothing") {
@@ -165,7 +165,7 @@ private slots:
     }
   }
 
-  void testCloseWebView() {
+  void test_close_web_view() {
     context("when closeWebView is called");
     context("- with out of bounds index");
     it("does nothing") {
@@ -241,7 +241,7 @@ private slots:
     }
   }
 
-  void testNewWindowRequestSignal() {
+  void test_new_window_request_signal() {
     context("when webview emits a newWindowRequested signal");
     context("- of type new tab");
     it("opens a new web view and focusses it") {

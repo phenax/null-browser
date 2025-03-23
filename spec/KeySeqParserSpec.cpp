@@ -8,7 +8,7 @@ class KeySeqParserSpec : public QObject {
   Q_OBJECT
 
 private slots:
-  void testThings() {
+  void test_parse() {
     context("when mix of upper/lower cases");
     it("parses keys ignoring the casing") {
       KeySeqParser parser;

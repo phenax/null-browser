@@ -7,7 +7,7 @@ class KeymapEvaluatorSpec : public QObject {
   Q_OBJECT
 
 private slots:
-  void testEvaluateSingleKeyChord() {
+  void test_evaluate_single_key_chord() {
     context("when the key sequence is mapped");
     it("calls mapping") {
       int keymapWasCalled = false;
@@ -33,7 +33,7 @@ private slots:
     }
   }
 
-  void testEvaluateMultiKeySequence() {
+  void test_evaluate_multi_key_sequence() {
     context("when the full key sequence is mapped");
     it("calls mapping") {
       int keymapWasCalled = false;

@@ -1,6 +1,4 @@
 #include <QtCore>
-#include <chrono>
-#include <thread>
 #include <uv.h>
 
 #include "LuaRuntime.hpp"
@@ -17,9 +15,9 @@ private slots:
     uv_library_shutdown();
   }
 
-  void testEvaluate() {
+  void test_evaluate() {
     context("when given an expression returning a number");
-    xit("emits evaluationCompleted with the result") {
+    it("emits evaluationCompleted with the result") {
       auto lua = LuaRuntime::instance();
       QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
 
@@ -32,7 +30,7 @@ private slots:
     }
 
     context("when given an expression returning a string");
-    xit("emits evaluationCompleted with the result") {
+    it("emits evaluationCompleted with the result") {
       auto lua = LuaRuntime::instance();
       QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
 
@@ -45,7 +43,7 @@ private slots:
     }
 
     context("when given an expression returning a boolean");
-    xit("emits evaluationCompleted with the result") {
+    it("emits evaluationCompleted with the result") {
       auto lua = LuaRuntime::instance();
       QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
 
@@ -58,7 +56,7 @@ private slots:
     }
 
     context("when given an expression returning nil");
-    xit("emits evaluationCompleted with the result") {
+    it("emits evaluationCompleted with the result") {
       auto lua = LuaRuntime::instance();
       QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
 
@@ -71,9 +69,9 @@ private slots:
     }
   }
 
-  void testQueueTask() {
+  void test_queue_task() {
     context("when task is queued");
-    xit("evaluates task asynchronously") {
+    it("evaluates task asynchronously") {
       auto lua = LuaRuntime::instance();
       bool wasTaskCalled = false;
 
@@ -85,44 +83,46 @@ private slots:
     }
   }
 
-  void testSanityCheckUV() {
+  void test_sanity_check_uv_timer() {
     context("when a 1 second timer is set");
-    xit("calls callback after 1 second") {
+    it("calls callback after 1 second") {
       auto lua = LuaRuntime::instance();
       QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
 
       lua->evaluate(R"(
-        _G.wasTimerCalled = false;
+        _G.was_timer_called = false;
         local timer = uv.new_timer();
         timer:start(1000, 0, function()
-          _G.wasTimerCalled = true;
+          _G.was_timer_called = true;
           timer:close()
         end)
       )");
       QVERIFY(evaluationCompletedSpy.wait());
-      QVERIFY(NOT lua->evaluateSync("return _G.wasTimerCalled").toBool());
+      QVERIFY(NOT lua->evaluateSync("return _G.was_timer_called").toBool());
 
       QVERIFY(QTest::qWaitFor([&lua]() {
-        return lua->evaluateSync("return _G.wasTimerCalled").toBool();
+        return lua->evaluateSync("return _G.was_timer_called").toBool();
       }));
     }
   }
 
-  void testSanityCheckUVSpawn() {
-    it("emits evaluationCompleted with the result") {
+  void test_sanity_check_uv_spawn() {
+    it("calls exit callback when process exists") {
       auto lua = LuaRuntime::instance();
       QSignalSpy evaluationCompletedSpy(lua, &LuaRuntime::evaluationCompleted);
 
       lua->evaluate(R"(
-        _G.wasTimerCalled = false;
-        print('--------------- called')
-        local handle, pid = uv.spawn('ls', { args = {} }, function(code)
-          print('--------------- called')
-          print('DONE', code)
+        _G.spawn_exit_code = -1;
+        local handle, pid = uv.spawn('ls', {}, function(code)
+          _G.spawn_exit_code = code;
         end)
       )");
       QVERIFY(evaluationCompletedSpy.wait());
-      std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+      QCOMPARE(lua->evaluateSync("return _G.spawn_exit_code").toInt(), -1);
+
+      QVERIFY(QTest::qWaitFor([&lua]() {
+        return 0 == lua->evaluateSync("return _G.spawn_exit_code").toInt();
+      }));
     }
   }
 };

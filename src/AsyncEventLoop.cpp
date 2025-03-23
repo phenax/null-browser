@@ -3,6 +3,7 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <uv.h>
 
 #include "AsyncEventLoop.hpp"
 
@@ -53,30 +54,34 @@ AsyncEventLoop::~AsyncEventLoop() {
     return;
   isLoopRunning = false;
 
-  // Wake it up. Stab it to death. (clear async queue)
-  wake();
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  {
-    std::lock_guard<std::mutex> lock(tasksQueueMutex);
-    std::queue<std::function<void()>>().swap(tasksQueue);
-  }
+  flushTasks();
+  std::this_thread::sleep_for(std::chrono::milliseconds(50));
   uv_stop(loop);
 
   // Close all handles
   AsyncEventLoop::closeHandle(reinterpret_cast<uv_handle_t *>(&asyncHandle));
   uv_walk(loop, AsyncEventLoop::closeHandle, nullptr);
-  while (uv_run(loop, UV_RUN_NOWAIT) != 0)
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  // TODO: Fix pending handler case (setTimeout(100) wait(20) close() -> error)
 
   if (loopThread.joinable())
     loopThread.join();
 
-  while (uv_loop_close(loop))
-    uv_run(loop, UV_RUN_DEFAULT);
+  // Close loop
+  while (uv_loop_close(loop) == EBUSY)
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+  uv_run(loop, UV_RUN_DEFAULT);
+
+  if (uv_loop_alive(loop))
+    qDebug() << "WARNING: Loop still has active handles!";
 
   free(loop);
   loop = nullptr;
+}
+
+void AsyncEventLoop::flushTasks() {
+  std::lock_guard<std::mutex> lock(tasksQueueMutex);
+  std::queue<std::function<void()>>().swap(tasksQueue);
+  wake();
 }
 
 void AsyncEventLoop::asyncHandleCallback(uv_async_t *handle) {
