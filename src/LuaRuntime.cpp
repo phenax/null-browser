@@ -39,7 +39,7 @@ void LuaRuntime::stop_event_loop() {
 }
 
 void LuaRuntime::evaluate(const QString &code) {
-  event_loop->queue_task([this, code]() {
+  queue_task([this, code]() {
     preserve_top(state, {
       if (luaL_dostring(state, code.toStdString().c_str()) != LUA_OK) {
         const char *value = lua_tostring(state, -1);
@@ -59,7 +59,10 @@ QVariant LuaRuntime::evaluate_sync(const QString &code) {
   return get_lua_value(-1); // TODO: error handling
 }
 
-QVariant LuaRuntime::get_lua_value(int idx) {
+QVariant LuaRuntime::get_lua_value(int idx, QVariant default_value) {
+  if (lua_isnoneornil(state, idx))
+    return default_value;
+
   if (lua_isstring(state, idx))
     return lua_tostring(state, idx);
 
@@ -68,9 +71,6 @@ QVariant LuaRuntime::get_lua_value(int idx) {
 
   if (lua_isboolean(state, idx))
     return lua_toboolean(state, idx);
-
-  if (lua_isnil(state, idx))
-    return 0; // TODO: nil representation
 
   return lua_tostring(state, idx);
 }
@@ -144,7 +144,61 @@ void LuaRuntime::init_web_lib() {
   lua_setfield(state, -2, "keymap");
   // lua_pop(state, 1);
 
+  luaL_Reg tabslib[] = {
+      {"current", &LuaRuntime::lua_get_current_tab_id},
+  };
+  luaL_newlib(state, tabslib); // NOLINT(readability-math-missing-parentheses)
+  lua_setfield(state, -2, "tabs");
+
+  luaL_Reg historylib[] = {
+      {"back", &LuaRuntime::lua_history_back},
+      {"forward", &LuaRuntime::lua_history_forward},
+  };
+  luaL_newlib(state, // NOLINT(readability-math-missing-parentheses)
+              historylib);
+  lua_setfield(state, -2, "history");
   // NOLINTEND(modernize-avoid-c-arrays)
+}
+
+int LuaRuntime::lua_get_current_tab_id(lua_State *state) {
+  auto *runtime = LuaRuntime::instance();
+  auto tab_id = runtime->fetch_current_tab_id();
+  lua_pushinteger(state, tab_id);
+  return 1;
+}
+
+int LuaRuntime::lua_history_back(lua_State *state) {
+  auto *runtime = LuaRuntime::instance();
+
+  qsizetype history_index =
+      lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
+
+  qsizetype tab_id;
+  if (lua_isnoneornil(state, 2)) {
+    tab_id = runtime->fetch_current_tab_id();
+  } else {
+    tab_id = lua_tointeger(state, 2);
+  }
+
+  emit runtime->history_back_requested(tab_id, history_index);
+  return 1;
+}
+
+int LuaRuntime::lua_history_forward(lua_State *state) {
+  auto *runtime = LuaRuntime::instance();
+
+  qsizetype history_index =
+      lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
+
+  qsizetype tab_id;
+  if (lua_isnoneornil(state, 2)) {
+    tab_id = runtime->fetch_current_tab_id();
+  } else {
+    tab_id = lua_tointeger(state, 2);
+  }
+
+  emit runtime->history_forward_requested(tab_id, history_index);
+  return 1;
 }
 
 LuaRuntime::~LuaRuntime() {

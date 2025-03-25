@@ -10,3 +10,9 @@
 
 #define DEFINE_GETTER(METHOD, EXPR)                                            \
   decltype(auto) METHOD() { return EXPR; }
+
+#define DEFINE_FETCHER(TYPE, NAME)                                             \
+  void set_##NAME##_fetcher(const std::function<TYPE> &fetcher) {              \
+    fetch_##NAME = fetcher;                                                    \
+  }                                                                            \
+  std::function<qsizetype()> fetch_##NAME = []() { return -1; };

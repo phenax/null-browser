@@ -12,15 +12,15 @@ class InputMediator : public QObject {
   Q_OBJECT
 
 public:
-  InputMediator(WebViewStack *web_view_stack, LuaRuntime *lua_runtime,
+  InputMediator(WebViewStack *webview_stack, LuaRuntime *lua_runtime,
                 KeymapEvaluator *keymap_evaluator);
   ~InputMediator() override;
 
-  DELEGATE(web_view_stack, open_url, open_url)
-  DELEGATE(web_view_stack, current_url, current_url)
-  DELEGATE(web_view_stack, next, next_web_view)
-  DELEGATE(web_view_stack, previous, previous_web_view)
-  DELEGATE(web_view_stack, close_current, close_current_web_view)
+  DELEGATE(webview_stack, open_url, open_url)
+  DELEGATE(webview_stack, current_url, current_url)
+  DELEGATE(webview_stack, next, next_webview)
+  DELEGATE(webview_stack, previous, previous_webview)
+  DELEGATE(webview_stack, close_current, close_current_webview)
   DELEGATE(keymap_evaluator, evaluate, evaluate_keymap)
 
 protected:
@@ -28,7 +28,7 @@ protected:
                   std::function<void()> action);
 
 private:
-  WebViewStack *web_view_stack;
+  WebViewStack *webview_stack;
   LuaRuntime *lua_runtime;
   KeymapEvaluator *keymap_evaluator;
 };

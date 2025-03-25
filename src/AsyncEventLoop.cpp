@@ -31,6 +31,9 @@ void AsyncEventLoop::process_tasks() {
 
   {
     const std::lock_guard<std::mutex> lock(tasks_queue_mutex);
+    if (tasks_queue.empty())
+      return;
+
     tasks_queue.swap(tasks);
   }
 

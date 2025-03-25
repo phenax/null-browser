@@ -8,15 +8,23 @@
 #include "widgets/WebViewStack.hpp"
 
 // TODO: Rename this
-InputMediator::InputMediator(WebViewStack *web_view_stack,
+InputMediator::InputMediator(WebViewStack *webview_stack,
                              LuaRuntime *lua_runtime,
                              KeymapEvaluator *keymap_evaluator)
-    : web_view_stack(web_view_stack), lua_runtime(lua_runtime),
+    : webview_stack(webview_stack), lua_runtime(lua_runtime),
       keymap_evaluator(keymap_evaluator) {
-  connect(lua_runtime, &LuaRuntime::url_opened, web_view_stack,
+  connect(lua_runtime, &LuaRuntime::url_opened, webview_stack,
           &WebViewStack::open_url);
   connect(lua_runtime, &LuaRuntime::keymap_add_requested, this,
           &InputMediator::add_keymap);
+  connect(lua_runtime, &LuaRuntime::history_back_requested, webview_stack,
+          &WebViewStack::webview_history_back);
+  connect(lua_runtime, &LuaRuntime::history_forward_requested, webview_stack,
+          &WebViewStack::webview_history_forward);
+
+  lua_runtime->set_current_tab_id_fetcher([this]() {
+    return this->webview_stack->current_webview_index();
+  });
 }
 
 void InputMediator::add_keymap(const QString &mode_string,
@@ -26,32 +34,4 @@ void InputMediator::add_keymap(const QString &mode_string,
   keymap_evaluator->add_keymap(mode, keyseq, std::move(action));
 }
 
-// void InputMediator::evaluate_command(QString command) {
-// CommandParser parser;
-// auto cmd = parser.parse(command);
-//
-// switch (cmd.command) {
-// case CommandType::LuaEval:
-//   lua_runtime->evaluate(cmd.argsString);
-//   break;
-// case CommandType::Open:
-//   open_url(cmd.argsString, OpenType::OpenUrl);
-//   break;
-// case CommandType::TabOpen:
-//   open_url(cmd.argsString, OpenType::OpenUrlInTab);
-//   break;
-// case CommandType::TabNext:
-//   next_web_view();
-//   break;
-// case CommandType::TabPrev:
-//   previous_web_view();
-//   break;
-// case CommandType::TabSelect:
-//   web_view_stack->focus_web_view(cmd.argsString.toLong());
-//   break;
-// case CommandType::Noop:
-//   break;
-// }
-// }
-
-InputMediator::~InputMediator() { delete web_view_stack; }
+InputMediator::~InputMediator() { delete webview_stack; }

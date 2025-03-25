@@ -1,6 +1,8 @@
 #include <QStackedLayout>
+#include <QWebEngineHistory>
 #include <QWebEngineNewWindowRequest>
 #include <QWebEngineProfile>
+#include <cstdlib>
 #include <vector>
 
 #include "widgets/WebViewStack.hpp"
@@ -12,7 +14,7 @@ WebViewStack::WebViewStack(const Configuration *configuration,
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setStackingMode(QStackedLayout::StackOne);
 
-  create_new_web_view(configuration->new_tab_url, true);
+  create_new_webview(configuration->new_tab_url, true);
 }
 
 void WebViewStack::open_url(const QUrl &url, OpenType open_type) {
@@ -21,125 +23,152 @@ void WebViewStack::open_url(const QUrl &url, OpenType open_type) {
     set_current_url(url);
     break;
   case OpenType::OpenUrlInTab:
-    create_new_web_view(url, true);
+    create_new_webview(url, true);
     break;
   case OpenType::OpenUrlInBgTab:
-    create_new_web_view(url, false);
+    create_new_webview(url, false);
     break;
   case OpenType::OpenUrlInWindow:
-    create_new_web_view(url, true);
+    create_new_webview(url, true);
     break;
   }
 }
 
-WebView *WebViewStack::create_new_web_view(const QUrl &url, bool focus) {
+WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
   auto *webview = new WebView(profile);
   webview->setUrl(url);
   layout->addWidget(webview);
-  web_view_list.append(webview);
+  webview_list.append(webview);
 
   connect(webview->page(), &QWebEnginePage::newWindowRequested, this,
-          &WebViewStack::on_new_web_view_request);
+          &WebViewStack::on_new_webview_request);
 
   if (focus)
-    focus_web_view(web_view_list.length() - 1);
+    focus_webview(webview_list.length() - 1);
 
   return webview;
 }
 
-QList<Tab> WebViewStack::get_tab_list() {
+QList<Tab> WebViewStack::get_webview_list() {
   QList<Tab> urls;
-  for (auto &view : web_view_list)
+  for (auto &view : webview_list)
     urls.append(Tab{.url = view->url().toString(), .title = view->title()});
   return urls;
 }
 
-void WebViewStack::on_new_web_view_request(
+void WebViewStack::on_new_webview_request(
     const QWebEngineNewWindowRequest &request) {
   switch (request.destination()) {
   case QWebEngineNewWindowRequest::InNewTab:
-    create_new_web_view(request.requestedUrl(), true);
+    create_new_webview(request.requestedUrl(), true);
     break;
   case QWebEngineNewWindowRequest::InNewBackgroundTab:
-    create_new_web_view(request.requestedUrl(), false);
+    create_new_webview(request.requestedUrl(), false);
     break;
   case QWebEngineNewWindowRequest::InNewWindow:
   case QWebEngineNewWindowRequest::InNewDialog:
     // TODO: Impl
-    create_new_web_view(request.requestedUrl(), true);
+    create_new_webview(request.requestedUrl(), true);
     break;
   }
 }
 
 void WebViewStack::next() {
-  if (web_view_list.isEmpty())
+  if (webview_list.isEmpty())
     return;
-  auto index = current_web_view_index() + 1;
-  auto total = web_view_list.length();
+  auto index = current_webview_index() + 1;
+  auto total = webview_list.length();
   index = index >= total ? index % total : index;
-  focus_web_view(index);
+  focus_webview(index);
 }
 
 void WebViewStack::previous() {
-  if (web_view_list.isEmpty())
+  if (webview_list.isEmpty())
     return;
-  auto index = current_web_view_index() - 1;
-  auto total = web_view_list.length();
+  auto index = current_webview_index() - 1;
+  auto total = webview_list.length();
   index = index < 0 ? total + index : index;
-  focus_web_view(index);
+  focus_webview(index);
 }
 
-void WebViewStack::close_current() { close(current_web_view_index()); }
+void WebViewStack::close_current() { close(current_webview_index()); }
 
-void WebViewStack::close(qsizetype index) {
-  if (index < 0 || index >= web_view_list.length())
+void WebViewStack::close(WebViewId index) {
+  if (index < 0 || index >= webview_list.length())
     return;
 
-  auto *webview = web_view_list.at(index);
+  auto *webview = webview_list.at(index);
   layout->removeWidget(webview);
-  web_view_list.removeAt(index);
+  webview_list.removeAt(index);
   disconnect(webview->page());
   webview->deleteLater();
 
-  focus_web_view(current_web_view_index());
+  focus_webview(current_webview_index());
 
-  if (web_view_list.isEmpty()) {
-    create_new_web_view(configuration->new_tab_url, true);
+  if (webview_list.isEmpty()) {
+    create_new_webview(configuration->new_tab_url, true);
   }
+}
+
+void WebViewStack::webview_history_back(WebViewId webview_id,
+                                        qsizetype history_index) {
+  if (webview_id < 0 || webview_id >= webview_list.length())
+    return;
+
+  // TODO: Change this
+  auto *webview = webview_list.at(webview_id);
+  auto *history = webview->history();
+  for (auto i = abs(history_index); i > 0; i--)
+    if (history->canGoBack())
+      history->back();
+}
+
+void WebViewStack::webview_history_forward(WebViewId webview_id,
+                                           qsizetype history_index) {
+  if (webview_id < 0 || webview_id >= webview_list.length())
+    return;
+
+  // TODO: Change this
+  auto *webview = webview_list.at(webview_id);
+  auto *history = webview->history();
+  for (auto i = abs(history_index); i > 0; i--)
+    if (history->canGoForward())
+      history->forward();
 }
 
 std::vector<QUrl> WebViewStack::urls() {
   std::vector<QUrl> urls;
-  for (auto &view : web_view_list)
+  for (auto &view : webview_list)
     urls.push_back(view->url());
   return urls;
 }
 
-uint32_t WebViewStack::current_web_view_index() {
+uint32_t WebViewStack::current_webview_index() {
+  qDebug() << "CIRR" << layout->currentIndex();
   return layout->currentIndex();
 }
 
-uint32_t WebViewStack::count() { return web_view_list.length(); }
+uint32_t WebViewStack::count() { return webview_list.length(); }
 
-void WebViewStack::focus_web_view(qsizetype index) {
-  if (web_view_list.isEmpty())
+void WebViewStack::focus_webview(WebViewId index) {
+  if (webview_list.isEmpty())
     return;
 
   index = std::max((long long)0,
-                   std::min((long long)index, web_view_list.length() - 1));
+                   std::min((long long)index, webview_list.length() - 1));
   layout->setCurrentIndex((int)index);
 }
 
 QUrl WebViewStack::current_url() {
-  if (current_web_view_index() >= web_view_list.length())
+  if (current_webview_index() >= webview_list.length())
     return QUrl{};
 
-  return web_view_list.at(current_web_view_index())->url();
+  return webview_list.at(current_webview_index())->url();
 }
 
 void WebViewStack::set_current_url(const QUrl &url) {
-  if (current_web_view_index() >= web_view_list.length())
+  if (current_webview_index() >= webview_list.length())
     return;
 
-  web_view_list.at(current_web_view_index())->setUrl(url);
+  webview_list.at(current_webview_index())->setUrl(url);
 }

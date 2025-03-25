@@ -68,6 +68,10 @@ web.keymap.set('n', 'q', function()
   end)
 end)
 
+-- History back/forward
+web.keymap.set('n', '<s-h>', function() web.history.back(); end)
+web.keymap.set('n', '<s-l>', function() web.history.forward(); end)
+
 -- Dummy test keymap
 web.keymap.set('n', 'm', function()
   print('Hello world. Keypress test')

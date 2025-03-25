@@ -5,6 +5,7 @@
 #include <lua.hpp>
 
 #include "AsyncEventLoop.hpp"
+#include "utils.hpp"
 #include "widgets/WebViewStack.hpp"
 
 #define preserve_top(STATE, BODY)                                              \
@@ -32,8 +33,10 @@ public:
   void start_event_loop();
   DELEGATE(event_loop, queue_task, queue_task)
 
-  QVariant get_lua_value(int idx);
+  QVariant get_lua_value(int idx, QVariant default_value = 0);
   DEFINE_GETTER(get_state, state)
+
+  DEFINE_FETCHER(qsizetype(), current_tab_id)
 
 signals:
   void url_opened(QString url, OpenType open_type);
@@ -41,6 +44,8 @@ signals:
   void evaluation_failed(QString value);
   void keymap_add_requested(QString mode, QString keyseq,
                             std::function<void()>);
+  void history_back_requested(WebViewId webview_id, qsizetype history_index);
+  void history_forward_requested(WebViewId webview_id, qsizetype history_index);
   // void output_produced(QVariant value);
 
 protected:
@@ -50,6 +55,9 @@ protected:
   static int lua_on_url_open(lua_State *state);
   static int lua_on_url_tab_open(lua_State *state);
   static int lua_add_keymap(lua_State *state);
+  static int lua_get_current_tab_id(lua_State *state);
+  static int lua_history_back(lua_State *state);
+  static int lua_history_forward(lua_State *state);
 
 private:
   lua_State *state;
