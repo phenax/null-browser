@@ -37,6 +37,7 @@ public:
   DEFINE_GETTER(get_state, state)
 
   DEFINE_FETCHER(qsizetype(), current_tab_id)
+  DEFINE_FETCHER(QList<WebViewData>(), webview_data_list)
 
 signals:
   void url_opened(QString url, OpenType open_type);
@@ -46,6 +47,7 @@ signals:
   void history_back_requested(WebViewId webview_id, qsizetype history_index);
   void history_forward_requested(WebViewId webview_id, qsizetype history_index);
   void webview_closed(WebViewId webview_id);
+  void webview_selected(WebViewId webview_id);
   // void output_produced(QVariant value);
 
 protected:
@@ -59,6 +61,8 @@ protected:
   static int lua_history_back(lua_State *state);
   static int lua_history_forward(lua_State *state);
   static int lua_tab_closed(lua_State *state);
+  static int lua_get_tab_list(lua_State *state);
+  static int lua_tab_selected(lua_State *state);
 
 private:
   lua_State *state;

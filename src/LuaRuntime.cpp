@@ -1,3 +1,4 @@
+#include "widgets/WebViewStack.hpp"
 #include <QtCore>
 #include <lua.hpp>
 extern "C" {
@@ -115,7 +116,6 @@ int LuaRuntime::lua_add_keymap(lua_State *state) {
 void LuaRuntime::load_file(const QString &path) {
   queue_task([this, path]() {
     preserve_top(state, {
-      qDebug() << "Loading: " << path;
       if (luaL_dofile(state, path.toStdString().c_str()) != LUA_OK) {
         qDebug() << "Load file error:" << lua_tostring(state, -1);
       }
@@ -148,6 +148,8 @@ void LuaRuntime::init_web_lib() {
       {"close", &LuaRuntime::lua_tab_closed},
       {"new", &LuaRuntime::lua_on_url_tab_open},
       {"current", &LuaRuntime::lua_get_current_tab_id},
+      {"list", &LuaRuntime::lua_get_tab_list},
+      {"select", &LuaRuntime::lua_tab_selected},
       {nullptr, nullptr},
   };
   luaL_newlib(state, webtabs);
@@ -172,13 +174,40 @@ int LuaRuntime::lua_get_current_tab_id(lua_State *state) {
   return 1;
 }
 
+int LuaRuntime::lua_get_tab_list(lua_State *state) {
+  auto *runtime = LuaRuntime::instance();
+  auto tabs = runtime->fetch_webview_data_list();
+  lua_newtable(state);
+
+  int index = 1; // 1-indexed
+  for (auto &tab : tabs) {
+    lua_newtable(state);
+
+    lua_pushstring(state, "id");
+    lua_pushinteger(state, tab.id);
+    lua_settable(state, -3);
+
+    lua_pushstring(state, "url");
+    lua_pushstring(state, tab.url.toStdString().c_str());
+    lua_settable(state, -3);
+
+    lua_pushstring(state, "title");
+    lua_pushstring(state, tab.title.toStdString().c_str());
+    lua_settable(state, -3);
+
+    lua_rawseti(state, -2, index++);
+  }
+
+  return 1;
+}
+
 int LuaRuntime::lua_history_back(lua_State *state) {
   auto *runtime = LuaRuntime::instance();
 
   qsizetype history_index =
       lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
 
-  qsizetype tab_id;
+  WebViewId tab_id;
   if (lua_isnoneornil(state, 2)) {
     tab_id = runtime->fetch_current_tab_id();
   } else {
@@ -195,7 +224,7 @@ int LuaRuntime::lua_history_forward(lua_State *state) {
   qsizetype history_index =
       lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
 
-  qsizetype tab_id;
+  WebViewId tab_id;
   if (lua_isnoneornil(state, 2)) {
     tab_id = runtime->fetch_current_tab_id();
   } else {
@@ -209,14 +238,24 @@ int LuaRuntime::lua_history_forward(lua_State *state) {
 int LuaRuntime::lua_tab_closed(lua_State *state) {
   auto *runtime = LuaRuntime::instance();
 
-  qsizetype tab_id;
-  if (lua_isnoneornil(state, 2)) {
+  WebViewId tab_id;
+  if (lua_isnoneornil(state, 1)) {
     tab_id = runtime->fetch_current_tab_id();
   } else {
-    tab_id = lua_tointeger(state, 2);
+    tab_id = lua_tointeger(state, 1);
   }
 
   emit runtime->webview_closed(tab_id);
+  return 1;
+}
+
+int LuaRuntime::lua_tab_selected(lua_State *state) {
+  if (lua_isnoneornil(state, 1))
+    return 1; // TODO: return nil (for others too)
+
+  auto *runtime = LuaRuntime::instance();
+  WebViewId tab_id = lua_tointeger(state, 1);
+  emit runtime->webview_selected(tab_id);
   return 1;
 }
 

@@ -15,4 +15,4 @@
   void set_##NAME##_fetcher(const std::function<TYPE> &fetcher) {              \
     fetch_##NAME = fetcher;                                                    \
   }                                                                            \
-  std::function<qsizetype()> fetch_##NAME = []() { return -1; };
+  std::function<TYPE> fetch_##NAME;

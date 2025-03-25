@@ -44,14 +44,14 @@ local urls = {
 }
 
 -- Open in new tab
-web.keymap.set('n', 't', function()
+web.keymap.set('n', 'o', function()
   Dmenu.select(urls, { prompt = 'Open tab:' }, function(err, result)
     if err or not result then return end
     web.tabs.new(trim(result))
   end)
 end)
 -- Open in current tab
-web.keymap.set('n', 'o', function()
+web.keymap.set('n', '<s-o>', function()
   Dmenu.select(urls, { prompt = 'Open:' }, function(err, result)
     if err or not result then return end
     web.open(trim(result))
@@ -73,9 +73,45 @@ web.keymap.set('n', '<s-h>', function() web.history.back(); end)
 web.keymap.set('n', '<s-l>', function() web.history.forward(); end)
 web.keymap.set('n', '<c-w>', function() web.tabs.close(); end)
 
--- Dummy test keymap
-web.keymap.set('n', 'm', function()
-  print('Hello world. Keypress test')
+-- Tab select
+web.keymap.set('n', 'b', function()
+  local tabsList = {}
+  for _, tab in ipairs(web.tabs.list()) do
+    table.insert(tabsList, tab.id .. ': ' .. tab.title .. ' (' .. tab.url)
+  end
+  Dmenu.select(tabsList, { prompt = 'Tab:' }, function(err, result)
+    if err or not result then return end
+    local id, _ = trim(result):gsub("%s*:.*$", "")
+    web.tabs.select(id)
+  end)
+end)
+
+local function get_current_tab_index()
+  local currentTab = web.tabs.current();
+  for index, tab in ipairs(web.tabs.list()) do
+    if tab.id == currentTab then
+      return index
+    end
+  end
+end
+
+-- Next tab
+web.keymap.set('n', 'tn', function()
+  local tabs = web.tabs.list()
+  if #tabs <= 1 then return end
+  local index = get_current_tab_index() + 1;
+  if index > #tabs then index = 1 end
+  web.tabs.select(tabs[index].id)
+end)
+
+-- Prev tab
+web.keymap.set('n', 'tp', function()
+  print('-----------')
+  local tabs = web.tabs.list()
+  if #tabs <= 1 then return end
+  local index = get_current_tab_index() - 1;
+  if index <= 0 then index = #tabs end
+  web.tabs.select(tabs[index].id)
 end)
 
 print('ending...')

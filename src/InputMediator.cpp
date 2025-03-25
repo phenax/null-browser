@@ -23,9 +23,13 @@ InputMediator::InputMediator(WebViewStack *webview_stack,
           &WebViewStack::webview_history_forward);
   connect(lua_runtime, &LuaRuntime::webview_closed, webview_stack,
           &WebViewStack::close);
+  connect(lua_runtime, &LuaRuntime::webview_selected, webview_stack,
+          &WebViewStack::focus_webview);
 
   lua_runtime->set_current_tab_id_fetcher(
       [this]() { return this->webview_stack->current_webview_id(); });
+  lua_runtime->set_webview_data_list_fetcher(
+      [this]() { return this->webview_stack->get_webview_list(); });
 }
 
 void InputMediator::add_keymap(const QString &mode_string,

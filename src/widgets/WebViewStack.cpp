@@ -50,10 +50,12 @@ WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
   return webview;
 }
 
-QList<Tab> WebViewStack::get_webview_list() {
-  QList<Tab> urls;
+QList<WebViewData> WebViewStack::get_webview_list() {
+  QList<WebViewData> urls;
   for (auto &view : webview_list)
-    urls.append(Tab{.url = view->url().toString(), .title = view->title()});
+    urls.append(WebViewData{.id = view->get_id(),
+                            .url = view->url().toString(),
+                            .title = view->title()});
   return urls;
 }
 
