@@ -47,7 +47,7 @@ local urls = {
 web.keymap.set('n', 't', function()
   Dmenu.select(urls, { prompt = 'Open tab:' }, function(err, result)
     if err or not result then return end
-    web.tabopen(trim(result))
+    web.tabs.new(trim(result))
   end)
 end)
 -- Open in current tab
@@ -71,6 +71,7 @@ end)
 -- History back/forward
 web.keymap.set('n', '<s-h>', function() web.history.back(); end)
 web.keymap.set('n', '<s-l>', function() web.history.forward(); end)
+web.keymap.set('n', '<c-w>', function() web.tabs.close(); end)
 
 -- Dummy test keymap
 web.keymap.set('n', 'm', function()

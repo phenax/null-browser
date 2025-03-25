@@ -107,7 +107,7 @@ int LuaRuntime::lua_add_keymap(lua_State *state) {
   // TODO: Cleanup function ref on after keymap clear
 
   auto *runtime = LuaRuntime::instance();
-  emit runtime->keymap_add_requested(mode, keyseq, action);
+  emit runtime->keymap_added(mode, keyseq, action);
 
   return 1;
 }
@@ -127,36 +127,41 @@ void LuaRuntime::init_web_lib() {
   // NOLINTBEGIN(modernize-avoid-c-arrays)
 
   // web
-  luaL_Reg weblib[] = {
+  luaL_Reg web[] = {
       {"open", &LuaRuntime::lua_on_url_open},
-      {"tabopen", &LuaRuntime::lua_on_url_tab_open},
       {nullptr, nullptr},
   };
-  luaL_newlib(state, weblib); // NOLINT(readability-math-missing-parentheses)
+  luaL_newlib(state, web);
   lua_setglobal(state, web_global_name);
-
-  // web.keymap
   lua_getglobal(state, web_global_name);
-  luaL_Reg keymaplib[] = {
-      {"set", &LuaRuntime::lua_add_keymap},
-  };
-  luaL_newlib(state, keymaplib); // NOLINT(readability-math-missing-parentheses)
-  lua_setfield(state, -2, "keymap");
-  // lua_pop(state, 1);
 
-  luaL_Reg tabslib[] = {
-      {"current", &LuaRuntime::lua_get_current_tab_id},
+  // Keymap api (web.keymap)
+  luaL_Reg webkeymap[] = {
+      {"set", &LuaRuntime::lua_add_keymap},
+      {nullptr, nullptr},
   };
-  luaL_newlib(state, tabslib); // NOLINT(readability-math-missing-parentheses)
+  luaL_newlib(state, webkeymap);
+  lua_setfield(state, -2, "keymap");
+
+  // Tab actions (web.tabs)
+  luaL_Reg webtabs[] = {
+      {"close", &LuaRuntime::lua_tab_closed},
+      {"new", &LuaRuntime::lua_on_url_tab_open},
+      {"current", &LuaRuntime::lua_get_current_tab_id},
+      {nullptr, nullptr},
+  };
+  luaL_newlib(state, webtabs);
   lua_setfield(state, -2, "tabs");
 
-  luaL_Reg historylib[] = {
+  // History navigation
+  luaL_Reg webhistory[] = {
       {"back", &LuaRuntime::lua_history_back},
       {"forward", &LuaRuntime::lua_history_forward},
+      {nullptr, nullptr},
   };
-  luaL_newlib(state, // NOLINT(readability-math-missing-parentheses)
-              historylib);
+  luaL_newlib(state, webhistory);
   lua_setfield(state, -2, "history");
+
   // NOLINTEND(modernize-avoid-c-arrays)
 }
 
@@ -198,6 +203,20 @@ int LuaRuntime::lua_history_forward(lua_State *state) {
   }
 
   emit runtime->history_forward_requested(tab_id, history_index);
+  return 1;
+}
+
+int LuaRuntime::lua_tab_closed(lua_State *state) {
+  auto *runtime = LuaRuntime::instance();
+
+  qsizetype tab_id;
+  if (lua_isnoneornil(state, 2)) {
+    tab_id = runtime->fetch_current_tab_id();
+  } else {
+    tab_id = lua_tointeger(state, 2);
+  }
+
+  emit runtime->webview_closed(tab_id);
   return 1;
 }
 

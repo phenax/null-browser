@@ -80,91 +80,97 @@ private slots:
     }
   }
 
-  void test_next_navigation() {
-    context("when nextWebView is called");
-    context("- and there is only 1 tab");
-    it("does nothing") {
-      Configuration configuration;
-      WebViewStack webview_stack(&configuration);
-
-      webview_stack.next();
-
-      QCOMPARE(webview_stack.current_webview_index(), 0);
-      QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
-    }
-
-    context("when nextWebView is called");
-    context("- and there are tabs after the current tab");
-    it("goes to the next tab") {
-      Configuration configuration;
-      WebViewStack webview_stack(&configuration);
-      webview_stack.open_url(QUrl("http://a1.com"), OpenType::OpenUrlInBgTab);
-      webview_stack.open_url(QUrl("http://a2.com"), OpenType::OpenUrlInBgTab);
-
-      webview_stack.next();
-
-      QCOMPARE(webview_stack.current_webview_index(), 1);
-      QCOMPARE(webview_stack.current_url(), QUrl("http://a1.com"));
-    }
-
-    context("when nextWebView is called");
-    context("- and current tab is the last tab");
-    it("jumps to the first tab") {
-      Configuration configuration;
-      WebViewStack webview_stack(&configuration);
-      webview_stack.open_url(QUrl("http://a1.com"), OpenType::OpenUrlInBgTab);
-      webview_stack.open_url(QUrl("http://a2.com"), OpenType::OpenUrlInTab);
-      QCOMPARE(webview_stack.current_webview_index(), 2);
-
-      webview_stack.next();
-
-      QCOMPARE(webview_stack.current_webview_index(), 0);
-      QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
-    }
-  }
-
-  void test_previous_navigation() {
-    context("when previousWebView is called");
-    context("- and there is only 1 tab");
-    it("does nothing") {
-      Configuration configuration;
-      WebViewStack webview_stack(&configuration);
-
-      webview_stack.previous();
-
-      QCOMPARE(webview_stack.current_webview_index(), 0);
-      QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
-    }
-
-    context("when previousWebView is called");
-    context("- and there are tabs before the current tab");
-    it("goes to the next tab") {
-      Configuration configuration;
-      WebViewStack webview_stack(&configuration);
-      webview_stack.open_url(QUrl("http://a1.com"), OpenType::OpenUrlInBgTab);
-      webview_stack.open_url(QUrl("http://a2.com"), OpenType::OpenUrlInTab);
-      QCOMPARE(webview_stack.current_webview_index(), 2);
-
-      webview_stack.previous();
-
-      QCOMPARE(webview_stack.current_webview_index(), 1);
-      QCOMPARE(webview_stack.current_url(), QUrl("http://a1.com"));
-    }
-
-    context("when previousWebView is called");
-    context("- and current tab is the last tab");
-    it("jumps to the last tab") {
-      Configuration configuration;
-      WebViewStack webview_stack(&configuration);
-      webview_stack.open_url(QUrl("http://a1.com"), OpenType::OpenUrlInBgTab);
-      webview_stack.open_url(QUrl("http://a2.com"), OpenType::OpenUrlInBgTab);
-
-      webview_stack.previous();
-
-      QCOMPARE(webview_stack.current_webview_index(), 2);
-      QCOMPARE(webview_stack.current_url(), QUrl("http://a2.com"));
-    }
-  }
+  // void test_next_navigation() {
+  //   context("when nextWebView is called");
+  //   context("- and there is only 1 tab");
+  //   it("does nothing") {
+  //     Configuration configuration;
+  //     WebViewStack webview_stack(&configuration);
+  //
+  //     webview_stack.next();
+  //
+  //     QCOMPARE(webview_stack.current_webview_index(), 0);
+  //     QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
+  //   }
+  //
+  //   context("when nextWebView is called");
+  //   context("- and there are tabs after the current tab");
+  //   it("goes to the next tab") {
+  //     Configuration configuration;
+  //     WebViewStack webview_stack(&configuration);
+  //     webview_stack.open_url(QUrl("http://a1.com"),
+  //     OpenType::OpenUrlInBgTab);
+  //     webview_stack.open_url(QUrl("http://a2.com"),
+  //     OpenType::OpenUrlInBgTab);
+  //
+  //     webview_stack.next();
+  //
+  //     QCOMPARE(webview_stack.current_webview_index(), 1);
+  //     QCOMPARE(webview_stack.current_url(), QUrl("http://a1.com"));
+  //   }
+  //
+  //   context("when nextWebView is called");
+  //   context("- and current tab is the last tab");
+  //   it("jumps to the first tab") {
+  //     Configuration configuration;
+  //     WebViewStack webview_stack(&configuration);
+  //     webview_stack.open_url(QUrl("http://a1.com"),
+  //     OpenType::OpenUrlInBgTab);
+  //     webview_stack.open_url(QUrl("http://a2.com"), OpenType::OpenUrlInTab);
+  //     QCOMPARE(webview_stack.current_webview_index(), 2);
+  //
+  //     webview_stack.next();
+  //
+  //     QCOMPARE(webview_stack.current_webview_index(), 0);
+  //     QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
+  //   }
+  // }
+  //
+  // void test_previous_navigation() {
+  //   context("when previousWebView is called");
+  //   context("- and there is only 1 tab");
+  //   it("does nothing") {
+  //     Configuration configuration;
+  //     WebViewStack webview_stack(&configuration);
+  //
+  //     webview_stack.previous();
+  //
+  //     QCOMPARE(webview_stack.current_webview_index(), 0);
+  //     QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
+  //   }
+  //
+  //   context("when previousWebView is called");
+  //   context("- and there are tabs before the current tab");
+  //   it("goes to the next tab") {
+  //     Configuration configuration;
+  //     WebViewStack webview_stack(&configuration);
+  //     webview_stack.open_url(QUrl("http://a1.com"),
+  //     OpenType::OpenUrlInBgTab);
+  //     webview_stack.open_url(QUrl("http://a2.com"), OpenType::OpenUrlInTab);
+  //     QCOMPARE(webview_stack.current_webview_index(), 2);
+  //
+  //     webview_stack.previous();
+  //
+  //     QCOMPARE(webview_stack.current_webview_index(), 1);
+  //     QCOMPARE(webview_stack.current_url(), QUrl("http://a1.com"));
+  //   }
+  //
+  //   context("when previousWebView is called");
+  //   context("- and current tab is the last tab");
+  //   it("jumps to the last tab") {
+  //     Configuration configuration;
+  //     WebViewStack webview_stack(&configuration);
+  //     webview_stack.open_url(QUrl("http://a1.com"),
+  //     OpenType::OpenUrlInBgTab);
+  //     webview_stack.open_url(QUrl("http://a2.com"),
+  //     OpenType::OpenUrlInBgTab);
+  //
+  //     webview_stack.previous();
+  //
+  //     QCOMPARE(webview_stack.current_webview_index(), 2);
+  //     QCOMPARE(webview_stack.current_url(), QUrl("http://a2.com"));
+  //   }
+  // }
 
   void test_close_webview() {
     context("when closeWebView is called");

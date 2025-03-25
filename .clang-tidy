@@ -15,6 +15,7 @@ Checks: >
   , -readability-convert-member-functions-to-static
   , -readability-implicit-bool-conversion
   , -bugprone-easily-swappable-parameters
+  , -readability-math-missing-parentheses
 
 # , cppcoreguidelines-owning-memory
 # , cppcoreguidelines-*

@@ -15,16 +15,17 @@ InputMediator::InputMediator(WebViewStack *webview_stack,
       keymap_evaluator(keymap_evaluator) {
   connect(lua_runtime, &LuaRuntime::url_opened, webview_stack,
           &WebViewStack::open_url);
-  connect(lua_runtime, &LuaRuntime::keymap_add_requested, this,
+  connect(lua_runtime, &LuaRuntime::keymap_added, this,
           &InputMediator::add_keymap);
   connect(lua_runtime, &LuaRuntime::history_back_requested, webview_stack,
           &WebViewStack::webview_history_back);
   connect(lua_runtime, &LuaRuntime::history_forward_requested, webview_stack,
           &WebViewStack::webview_history_forward);
+  connect(lua_runtime, &LuaRuntime::webview_closed, webview_stack,
+          &WebViewStack::close);
 
-  lua_runtime->set_current_tab_id_fetcher([this]() {
-    return this->webview_stack->current_webview_index();
-  });
+  lua_runtime->set_current_tab_id_fetcher(
+      [this]() { return this->webview_stack->current_webview_id(); });
 }
 
 void InputMediator::add_keymap(const QString &mode_string,

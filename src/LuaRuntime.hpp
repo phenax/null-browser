@@ -42,10 +42,10 @@ signals:
   void url_opened(QString url, OpenType open_type);
   void evaluation_completed(QVariant value);
   void evaluation_failed(QString value);
-  void keymap_add_requested(QString mode, QString keyseq,
-                            std::function<void()>);
+  void keymap_added(QString mode, QString keyseq, std::function<void()>);
   void history_back_requested(WebViewId webview_id, qsizetype history_index);
   void history_forward_requested(WebViewId webview_id, qsizetype history_index);
+  void webview_closed(WebViewId webview_id);
   // void output_produced(QVariant value);
 
 protected:
@@ -58,6 +58,7 @@ protected:
   static int lua_get_current_tab_id(lua_State *state);
   static int lua_history_back(lua_State *state);
   static int lua_history_forward(lua_State *state);
+  static int lua_tab_closed(lua_State *state);
 
 private:
   lua_State *state;
