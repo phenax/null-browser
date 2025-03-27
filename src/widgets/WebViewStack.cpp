@@ -103,6 +103,7 @@ void WebViewStack::close(WebViewId webview_id) {
   // TODO: Focus on different webview
   // focus_webview();
 
+  // TODO: Close window on empty
   if (webview_list.isEmpty()) {
     create_new_webview(configuration->new_tab_url, true);
   }

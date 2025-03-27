@@ -5,12 +5,23 @@ web = web
 --- @type table
 uv = uv
 
+local function trim(s) return s:gsub("^%s*(.-)%s*$", "%1") end
+
+local function get_current_tab_index()
+  local currentTab = web.tabs.current();
+  for index, tab in ipairs(web.tabs.list()) do
+    if tab.id == currentTab then
+      return index
+    end
+  end
+end
+
 local Dmenu = {}
 function Dmenu.select(list, opts, callback)
   local selection = nil
   local stdin = uv.new_pipe();
   local stdout = uv.new_pipe();
-  local args = { '-p', opts.prompt or '>' }
+  local args = { '-p', opts.prompt or '>', '-it', opts.input or '' }
   uv.spawn('dmenu', { args = args, stdio = { stdin, stdout, nil } }, function(code)
     uv.close(stdout)
     uv.close(stdin)
@@ -29,10 +40,6 @@ function Dmenu.select(list, opts, callback)
     uv.write(stdin, value .. '\n')
   end
   uv.shutdown(stdin)
-end
-
-local function trim(s)
-  return s:gsub("^%s*(.-)%s*$", "%1")
 end
 
 local urls = {
@@ -57,10 +64,20 @@ web.keymap.set('n', '<s-o>', function()
     web.open(trim(result))
   end)
 end)
+-- Update current url
+web.keymap.set('n', '<c-l>', function()
+  local tabs = web.tabs.list()
+  local tab = tabs[get_current_tab_index()];
+  if tab == nil then return end
+  Dmenu.select(urls, { prompt = 'Set url:', input = tab.url }, function(err, result)
+    if err or not result then return end
+    web.open(trim(result))
+  end)
+end)
 
 -- Run lua code
 web.keymap.set('n', 'q', function()
-  Dmenu.select({}, { prompt = 'Lua >' }, function(err, result)
+  Dmenu.select({}, { prompt = 'Lua:' }, function(err, result)
     if err or not result then return end
     local run, run_err = load(result)
     if run_err then print(run_err) end
@@ -71,29 +88,26 @@ end)
 -- History back/forward
 web.keymap.set('n', '<s-h>', function() web.history.back(); end)
 web.keymap.set('n', '<s-l>', function() web.history.forward(); end)
+
+-- Close tab
 web.keymap.set('n', '<c-w>', function() web.tabs.close(); end)
 
 -- Tab select
 web.keymap.set('n', 'b', function()
-  local tabsList = {}
-  for _, tab in ipairs(web.tabs.list()) do
-    table.insert(tabsList, tab.id .. ': ' .. tab.title .. ' (' .. tab.url)
+  local tabs_list = {}
+  local tabs = web.tabs.list()
+  for index, tab in ipairs(web.tabs.list()) do
+    table.insert(tabs_list, index .. ': ' .. tab.title .. ' (' .. tab.url .. ')')
   end
-  Dmenu.select(tabsList, { prompt = 'Tab:' }, function(err, result)
+  Dmenu.select(tabs_list, { prompt = 'Tab:' }, function(err, result)
     if err or not result then return end
-    local id, _ = trim(result):gsub("%s*:.*$", "")
-    web.tabs.select(id)
+    local index_str, _ = trim(result):gsub("%s*:.*$", "")
+    local index = tonumber(index_str)
+    if tabs[index] then
+      web.tabs.select(tabs[index].id)
+    end
   end)
 end)
-
-local function get_current_tab_index()
-  local currentTab = web.tabs.current();
-  for index, tab in ipairs(web.tabs.list()) do
-    if tab.id == currentTab then
-      return index
-    end
-  end
-end
 
 -- Next tab
 web.keymap.set('n', 'tn', function()
@@ -106,7 +120,6 @@ end)
 
 -- Prev tab
 web.keymap.set('n', 'tp', function()
-  print('-----------')
   local tabs = web.tabs.list()
   if #tabs <= 1 then return end
   local index = get_current_tab_index() - 1;

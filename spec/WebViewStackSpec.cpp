@@ -172,15 +172,15 @@ private slots:
   //   }
   // }
 
-  void test_close_webview() {
-    context("when closeWebView is called");
-    context("- with out of bounds index");
+  void test_close() {
+    context("when close is called");
+    context("- with invalid id");
     it("does nothing") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
       webview_stack.open_url(QUrl("https://a.com"), OpenType::OpenUrl);
 
-      webview_stack.close(1);
+      webview_stack.close(99);
 
       QCOMPARE(webview_stack.count(), 1);
       QCOMPARE(webview_stack.urls(),
@@ -189,7 +189,7 @@ private slots:
       QCOMPARE(webview_stack.current_url(), QUrl("https://a.com"));
     }
 
-    context("when closeWebView is called");
+    context("when close is called on current webview");
     context("- and there is only 1 tab");
     it("closes the tab and opens empty tab in its place") {
       Configuration configuration;
@@ -197,7 +197,7 @@ private slots:
       webview_stack.open_url(QUrl("https://a.com"), OpenType::OpenUrl);
       QCOMPARE(webview_stack.count(), 1);
 
-      webview_stack.close(0);
+      webview_stack.close(webview_stack.current_webview_id());
 
       QCOMPARE(webview_stack.count(), 1);
       QCOMPARE(webview_stack.urls(),
@@ -206,8 +206,8 @@ private slots:
       QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
     }
 
-    context("when closeWebView is called");
-    context("- with the current tab index");
+    context("when close is called");
+    context("- with the current tab id");
     context("- and there are some tabs after");
     it("closes the tab and focuses the next tab") {
       Configuration configuration;
@@ -217,7 +217,7 @@ private slots:
       QCOMPARE(webview_stack.count(), 3);
       QCOMPARE(webview_stack.current_webview_index(), 1);
 
-      webview_stack.close(1);
+      webview_stack.close(webview_stack.current_webview_id());
 
       QCOMPARE(webview_stack.count(), 2);
       QCOMPARE(webview_stack.urls(),
@@ -227,10 +227,10 @@ private slots:
       QCOMPARE(webview_stack.current_url(), QUrl("https://a2.com"));
     }
 
-    context("when closeWebView is called");
-    context("- with the current tab index");
+    context("when close is called");
+    context("- with the current tab id");
     context("- which is the last tab");
-    it("closes the tab and focusses previous tab") {
+    it("closes the tab and focuses previous tab") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
       webview_stack.open_url(QUrl("https://a1.com"), OpenType::OpenUrlInBgTab);
@@ -238,7 +238,7 @@ private slots:
       QCOMPARE(webview_stack.count(), 3);
       QCOMPARE(webview_stack.current_webview_index(), 2);
 
-      webview_stack.close(2);
+      webview_stack.close(webview_stack.current_webview_id());
 
       QCOMPARE(webview_stack.count(), 2);
       QCOMPARE(webview_stack.urls(),

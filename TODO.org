@@ -5,35 +5,75 @@
 - [X] event loop for async work
 - [X] example: trigger dmenu for simple selection
 - [X] Fix segfault on quit
-- [ ] Tab history navigation
-- [ ] Tab next/prev
-- [ ] Get tab list api
-- [ ] Assign ID to each tab (reference in lua api)
-- [ ] Tab select by id
-- [ ] Config loading and runtime path
+- [X] Tab history navigation
+- [X] Tab next/prev
+- [X] Get tab list api
+- [X] Assign ID to each tab (reference in lua api)
+- [X] Tab select by id
 - [ ] Multi-window
+- [ ] Handle resource cleanup + signal disconnecting
+- [ ] Socket for opening window in current session (lua eval)
+- [ ] Log stdout, errors and results from lua somewhere
+- [ ] Events/autocommands
+- [ ] History storage
+- [ ] History completion
 
 ** Next
+- [ ] Config loading and runtime path
 - [ ] Conflict in keymap (keymap already exists)
-- [ ] History persistance
-- [ ] History completion
-- [ ] Open url parsing (add protocol if missing, remove quotes, etc)
-- [ ] Destructor for completer instance
+- [ ] Open url sanitize/humanize (add protocol if missing, remove quotes, etc)
 - [ ] Bookmarking
+- [ ] Downloading
 
 ** Later
 - [ ] Support multiple modes for keymap.set: `web.keymap.set({'n','i'}, ...)`
-- [ ] Search aliasing (lua api)
-- [ ] downloading
 - [ ] Search text in page
 - [ ] Notifications
 - [ ] Dev tools
-- [ ] Search engine search if its not a url / aliases
+- [ ] Permission requests handling
+- [ ] Pipe page contents to external program
+- [ ] `web.inspect`
 
 ** Later later
 - [ ] Fullscreen
+- [ ] Custom file picker
 - [ ] remote debugging with cdp (spider-repl)
-- [ ] Pipe page contents to external program
 
 ** Maybe
-- [ ] Custom file picker
+- [ ] Floating webviews?
+- [ ] Move modal keymap management into lua?
+
+** Notes
+- Tab = 0, nil, none: Current tab
+- Win = 0: Current window
+- Win = nil, none: All windows or current window based on operation
+- Keep track of last focused window (current window is last focused)
+#+begin_src lua
+web.tab.set_url(url) -- Set url for current tab
+web.tab.set_url(url, { tab = 1 }) -- Set url for tab 1
+web.tab.set_url(url, { tab = 1, win = 1 }) -- Set url for tab 1 in win 1
+web.tab.set_url(url, { win = 1 }) -- Set url for current tab in win 1
+
+web.tab.new(url, { win = 1 }) -- New tab in win 1
+web.tab.new(url) -- New tab in current window
+
+web.tab.close({ tab = 1 }) -- Close tab 1
+web.tab.close() -- Close current tab in current window
+
+web.tab.list({ win = nil }) -- List all tabs
+web.tab.list({ win = 1 }) -- List win 1 tabs
+
+web.tab.select({ tab = 1, win = 1 }) -- Select win 1 tab
+web.tab.select({ tab = 1, win = 0 }) -- Select tab 1 in current window
+web.tab.select({ tab = 1 }) -- Select tab 1
+
+web.tab.current({ win = 1 }) -- Current tab in win 1
+web.tab.current() -- Current tab in current win
+
+web.history.back(1) -- Back for current tab in current window
+web.history.back(1, { tab = 1 }) -- Back for tab 1
+web.history.back(1, { win = 1 }) -- Back for current tab in win 1
+
+web.keymap.set('n', '<c-r>', ..., { tab = 1 }) -- Set keymap for tab 1
+web.keymap.set('n', '<c-r>', ..., { win = 1 }) -- Set keymap for win 1
+#+end_src

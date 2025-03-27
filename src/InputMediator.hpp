@@ -16,12 +16,9 @@ public:
                 KeymapEvaluator *keymap_evaluator);
   ~InputMediator() override;
 
-  // DELEGATE(webview_stack, open_url, open_url)
-  // DELEGATE(webview_stack, current_url, current_url)
-  // DELEGATE(webview_stack, close_current, close_current_webview)
   DELEGATE(keymap_evaluator, evaluate, evaluate_keymap)
 
-protected:
+protected slots:
   void add_keymap(const QString &mode_string, const QString &keyseq,
                   std::function<void()> action);
 

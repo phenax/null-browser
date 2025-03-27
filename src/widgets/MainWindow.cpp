@@ -45,10 +45,10 @@ MainWindow::MainWindow() {
   LuaRuntime::instance()->load_file("./config.lua");
 
   // TODO: remove
-  keymap_evaluator->add_keymap(KeyMode::Normal, "i", [keymap_evaluator]() {
+  keymap_evaluator->add_keymap(KeyMode::Normal, "i", [&keymap_evaluator]() {
     keymap_evaluator->set_current_mode(KeyMode::Insert);
   });
-  keymap_evaluator->add_keymap(KeyMode::Insert, "<esc>", [keymap_evaluator]() {
+  keymap_evaluator->add_keymap(KeyMode::Insert, "<esc>", [&keymap_evaluator]() {
     keymap_evaluator->set_current_mode(KeyMode::Normal);
   });
   keymap_evaluator->add_keymap(KeyMode::Normal, "<c-t>a",

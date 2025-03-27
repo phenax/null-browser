@@ -60,6 +60,60 @@ QVariant LuaRuntime::evaluate_sync(const QString &code) {
   return get_lua_value(-1); // TODO: error handling
 }
 
+void LuaRuntime::load_file(const QString &path) {
+  queue_task([this, path]() {
+    preserve_top(state, {
+      if (luaL_dofile(state, path.toStdString().c_str()) != LUA_OK) {
+        qDebug() << "Load file error:" << lua_tostring(state, -1);
+      }
+    })
+  });
+}
+
+void LuaRuntime::init_web_lib() {
+  // NOLINTBEGIN(modernize-avoid-c-arrays)
+
+  // web
+  luaL_Reg web[] = {
+      {"open", &LuaRuntime::lua_open_url},
+      {nullptr, nullptr},
+  };
+  luaL_newlib(state, web);
+  lua_setglobal(state, web_global_name);
+  lua_getglobal(state, web_global_name);
+
+  // Keymap api (web.keymap)
+  luaL_Reg webkeymap[] = {
+      {"set", &LuaRuntime::lua_keymap_set},
+      {nullptr, nullptr},
+  };
+  luaL_newlib(state, webkeymap);
+  lua_setfield(state, -2, "keymap");
+
+  // Tab actions (web.tabs)
+  luaL_Reg webtabs[] = {
+      {"close", &LuaRuntime::lua_tab_close},
+      {"new", &LuaRuntime::lua_tab_create},
+      {"current", &LuaRuntime::lua_tab_current},
+      {"list", &LuaRuntime::lua_tab_list},
+      {"select", &LuaRuntime::lua_tab_select},
+      {nullptr, nullptr},
+  };
+  luaL_newlib(state, webtabs);
+  lua_setfield(state, -2, "tabs");
+
+  // History navigation
+  luaL_Reg webhistory[] = {
+      {"back", &LuaRuntime::lua_history_back},
+      {"forward", &LuaRuntime::lua_history_forward},
+      {nullptr, nullptr},
+  };
+  luaL_newlib(state, webhistory);
+  lua_setfield(state, -2, "history");
+
+  // NOLINTEND(modernize-avoid-c-arrays)
+}
+
 QVariant LuaRuntime::get_lua_value(int idx, QVariant default_value) {
   if (lua_isnoneornil(state, idx))
     return default_value;
@@ -76,21 +130,21 @@ QVariant LuaRuntime::get_lua_value(int idx, QVariant default_value) {
   return lua_tostring(state, idx);
 }
 
-int LuaRuntime::lua_on_url_open(lua_State *state) {
+int LuaRuntime::lua_open_url(lua_State *state) {
   const char *url = luaL_optstring(state, 1, "");
   auto *runtime = LuaRuntime::instance();
   emit runtime->url_opened(url, OpenType::OpenUrl);
   return 1;
 }
 
-int LuaRuntime::lua_on_url_tab_open(lua_State *state) {
+int LuaRuntime::lua_tab_create(lua_State *state) {
   const char *url = luaL_optstring(state, 1, "");
   auto *runtime = LuaRuntime::instance();
   emit runtime->url_opened(url, OpenType::OpenUrlInTab);
   return 1;
 }
 
-int LuaRuntime::lua_add_keymap(lua_State *state) {
+int LuaRuntime::lua_keymap_set(lua_State *state) {
   const char *mode = lua_tostring(state, 1);
   const char *keyseq = lua_tostring(state, 2);
 
@@ -113,68 +167,14 @@ int LuaRuntime::lua_add_keymap(lua_State *state) {
   return 1;
 }
 
-void LuaRuntime::load_file(const QString &path) {
-  queue_task([this, path]() {
-    preserve_top(state, {
-      if (luaL_dofile(state, path.toStdString().c_str()) != LUA_OK) {
-        qDebug() << "Load file error:" << lua_tostring(state, -1);
-      }
-    })
-  });
-}
-
-void LuaRuntime::init_web_lib() {
-  // NOLINTBEGIN(modernize-avoid-c-arrays)
-
-  // web
-  luaL_Reg web[] = {
-      {"open", &LuaRuntime::lua_on_url_open},
-      {nullptr, nullptr},
-  };
-  luaL_newlib(state, web);
-  lua_setglobal(state, web_global_name);
-  lua_getglobal(state, web_global_name);
-
-  // Keymap api (web.keymap)
-  luaL_Reg webkeymap[] = {
-      {"set", &LuaRuntime::lua_add_keymap},
-      {nullptr, nullptr},
-  };
-  luaL_newlib(state, webkeymap);
-  lua_setfield(state, -2, "keymap");
-
-  // Tab actions (web.tabs)
-  luaL_Reg webtabs[] = {
-      {"close", &LuaRuntime::lua_tab_closed},
-      {"new", &LuaRuntime::lua_on_url_tab_open},
-      {"current", &LuaRuntime::lua_get_current_tab_id},
-      {"list", &LuaRuntime::lua_get_tab_list},
-      {"select", &LuaRuntime::lua_tab_selected},
-      {nullptr, nullptr},
-  };
-  luaL_newlib(state, webtabs);
-  lua_setfield(state, -2, "tabs");
-
-  // History navigation
-  luaL_Reg webhistory[] = {
-      {"back", &LuaRuntime::lua_history_back},
-      {"forward", &LuaRuntime::lua_history_forward},
-      {nullptr, nullptr},
-  };
-  luaL_newlib(state, webhistory);
-  lua_setfield(state, -2, "history");
-
-  // NOLINTEND(modernize-avoid-c-arrays)
-}
-
-int LuaRuntime::lua_get_current_tab_id(lua_State *state) {
+int LuaRuntime::lua_tab_current(lua_State *state) {
   auto *runtime = LuaRuntime::instance();
   auto tab_id = runtime->fetch_current_tab_id();
   lua_pushinteger(state, tab_id);
   return 1;
 }
 
-int LuaRuntime::lua_get_tab_list(lua_State *state) {
+int LuaRuntime::lua_tab_list(lua_State *state) {
   auto *runtime = LuaRuntime::instance();
   auto tabs = runtime->fetch_webview_data_list();
   lua_newtable(state);
@@ -235,7 +235,7 @@ int LuaRuntime::lua_history_forward(lua_State *state) {
   return 1;
 }
 
-int LuaRuntime::lua_tab_closed(lua_State *state) {
+int LuaRuntime::lua_tab_close(lua_State *state) {
   auto *runtime = LuaRuntime::instance();
 
   WebViewId tab_id;
@@ -249,7 +249,7 @@ int LuaRuntime::lua_tab_closed(lua_State *state) {
   return 1;
 }
 
-int LuaRuntime::lua_tab_selected(lua_State *state) {
+int LuaRuntime::lua_tab_select(lua_State *state) {
   if (lua_isnoneornil(state, 1))
     return 1; // TODO: return nil (for others too)
 

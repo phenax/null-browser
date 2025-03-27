@@ -31,12 +31,15 @@ public:
                QWebEngineProfile *profile = new QWebEngineProfile,
                QWidget *parent = nullptr);
 
-  std::vector<QUrl> urls(); // TODO: Remove
   QList<WebViewData> get_webview_list();
   WebView *current_webview();
   WebViewId current_webview_id();
   uint32_t count();
   QUrl current_url();
+
+  /// @deprecated TODO: Remove
+  std::vector<QUrl> urls();
+  /// @deprecated TODO: Remove
   uint32_t current_webview_index();
 
 protected:

@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QMainWindow>
 
 #include "LuaRuntime.hpp"
 #include "widgets/MainWindow.hpp"

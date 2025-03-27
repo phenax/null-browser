@@ -40,29 +40,30 @@ public:
   DEFINE_FETCHER(QList<WebViewData>(), webview_data_list)
 
 signals:
-  void url_opened(QString url, OpenType open_type);
   void evaluation_completed(QVariant value);
   void evaluation_failed(QString value);
-  void keymap_added(QString mode, QString keyseq, std::function<void()>);
   void history_back_requested(WebViewId webview_id, qsizetype history_index);
   void history_forward_requested(WebViewId webview_id, qsizetype history_index);
+  void keymap_added(QString mode, QString keyseq, std::function<void()>);
+  void url_opened(QString url, OpenType open_type);
   void webview_closed(WebViewId webview_id);
   void webview_selected(WebViewId webview_id);
-  // void output_produced(QVariant value);
 
 protected:
   LuaRuntime();
   ~LuaRuntime() override;
   void init_web_lib();
-  static int lua_on_url_open(lua_State *state);
-  static int lua_on_url_tab_open(lua_State *state);
-  static int lua_add_keymap(lua_State *state);
-  static int lua_get_current_tab_id(lua_State *state);
+
+  // Lua api
   static int lua_history_back(lua_State *state);
   static int lua_history_forward(lua_State *state);
-  static int lua_tab_closed(lua_State *state);
-  static int lua_get_tab_list(lua_State *state);
-  static int lua_tab_selected(lua_State *state);
+  static int lua_keymap_set(lua_State *state);
+  static int lua_open_url(lua_State *state);
+  static int lua_tab_close(lua_State *state);
+  static int lua_tab_create(lua_State *state);
+  static int lua_tab_current(lua_State *state);
+  static int lua_tab_list(lua_State *state);
+  static int lua_tab_select(lua_State *state);
 
 private:
   lua_State *state;

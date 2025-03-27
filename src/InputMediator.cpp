@@ -13,19 +13,22 @@ InputMediator::InputMediator(WebViewStack *webview_stack,
                              KeymapEvaluator *keymap_evaluator)
     : webview_stack(webview_stack), lua_runtime(lua_runtime),
       keymap_evaluator(keymap_evaluator) {
-  connect(lua_runtime, &LuaRuntime::url_opened, webview_stack,
-          &WebViewStack::open_url);
   connect(lua_runtime, &LuaRuntime::keymap_added, this,
           &InputMediator::add_keymap);
+
   connect(lua_runtime, &LuaRuntime::history_back_requested, webview_stack,
           &WebViewStack::webview_history_back);
   connect(lua_runtime, &LuaRuntime::history_forward_requested, webview_stack,
           &WebViewStack::webview_history_forward);
+
+  connect(lua_runtime, &LuaRuntime::url_opened, webview_stack,
+          &WebViewStack::open_url);
   connect(lua_runtime, &LuaRuntime::webview_closed, webview_stack,
           &WebViewStack::close);
   connect(lua_runtime, &LuaRuntime::webview_selected, webview_stack,
           &WebViewStack::focus_webview);
 
+  // TODO: Think of how to handle this for multi-window
   lua_runtime->set_current_tab_id_fetcher(
       [this]() { return this->webview_stack->current_webview_id(); });
   lua_runtime->set_webview_data_list_fetcher(
