@@ -7,12 +7,11 @@
 
 class MainWindow : public QMainWindow {
 public:
-  MainWindow();
+  MainWindow(const Configuration &configuration);
 
-protected:
-  bool eventFilter(QObject *object, QEvent *event) override;
+  bool on_window_key_event(QKeyEvent *event);
 
 private:
   InputMediator *input_mediator;
-  Configuration configuration;
+  const Configuration &configuration;
 };
