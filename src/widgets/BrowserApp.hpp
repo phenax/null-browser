@@ -1,8 +1,6 @@
 #pragma once
 
-#include <unordered_map>
-
-#include "widgets/MainWindow.hpp"
+#include "widgets/BrowserWindow.hpp"
 
 class BrowserApp : public QObject {
   Q_OBJECT
@@ -10,14 +8,11 @@ class BrowserApp : public QObject {
 public:
   BrowserApp();
 
-  MainWindow *create_window();
+  BrowserWindow *create_window();
 
 protected:
   bool eventFilter(QObject *target, QEvent *event) override;
 
 private:
-  std::unordered_map<uint64_t, MainWindow *> windows;
-  uint64_t last_id = 1;
-
   Configuration configuration;
 };

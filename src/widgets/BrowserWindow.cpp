@@ -4,15 +4,14 @@
 #include <QtCore>
 
 #include "Configuration.hpp"
-#include "InputMediator.hpp"
+#include "WindowMediator.hpp"
 #include "keymap/KeymapEvaluator.hpp"
-#include "widgets/MainWindow.hpp"
+#include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
-MainWindow::MainWindow(const Configuration &configuration)
+BrowserWindow::BrowserWindow(const Configuration &configuration)
     : configuration(configuration) {
-  setStyleSheet("background-color: #000; color: #fff;");
-  setCentralWidget(new QWidget()); // TODO: manage widget memory
+  setCentralWidget(new QWidget());
 
   // Root stacked layout
   auto *layout = new QStackedLayout();
@@ -26,10 +25,7 @@ MainWindow::MainWindow(const Configuration &configuration)
       new WebViewStack(&configuration, new QWebEngineProfile("null-browser"));
   layout->addWidget(web_view_stack);
 
-  auto *keymap_evaluator = new KeymapEvaluator;
-
-  input_mediator = new InputMediator(web_view_stack, LuaRuntime::instance(),
-                                     keymap_evaluator);
+  auto *keymap_evaluator = KeymapEvaluator::instance();
 
   // TODO: remoev
   web_view_stack->open_url(QUrl("https://duckduckgo.com"), OpenType::OpenUrl);
@@ -47,9 +43,12 @@ MainWindow::MainWindow(const Configuration &configuration)
   });
   keymap_evaluator->add_keymap(KeyMode::Normal, "<c-t>a",
                                []() { qDebug() << "Stuff"; });
+
+  input_mediator = new WindowMediator(web_view_stack, LuaRuntime::instance(),
+                                      keymap_evaluator);
 }
 
-bool MainWindow::on_window_key_event(QKeyEvent *event) {
+bool BrowserWindow::on_window_key_event(QKeyEvent *event) {
   const bool should_skip = input_mediator->evaluate_keymap(
       event->modifiers(), (Qt::Key)event->key());
 

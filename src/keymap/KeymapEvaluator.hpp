@@ -23,6 +23,11 @@ class KeymapEvaluator : public QObject {
 public:
   KeymapEvaluator() = default;
 
+  static KeymapEvaluator *instance() {
+    static auto *keymap_evaluator = new KeymapEvaluator;
+    return keymap_evaluator;
+  }
+
   void add_keymap(KeyMode mode, const QString &key, KeyAction action);
   bool evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key);
   KeyMode mode_from_string(const QString &mode_string);

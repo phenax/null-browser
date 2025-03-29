@@ -42,6 +42,7 @@ public:
 signals:
   void evaluation_completed(QVariant value);
   void evaluation_failed(QString value);
+
   void history_back_requested(WebViewId webview_id, qsizetype history_index);
   void history_forward_requested(WebViewId webview_id, qsizetype history_index);
   void keymap_added(QString mode, QString keyseq, std::function<void()>);

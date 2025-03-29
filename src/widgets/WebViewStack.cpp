@@ -36,7 +36,7 @@ void WebViewStack::open_url(const QUrl &url, OpenType open_type) {
 }
 
 WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
-  auto *webview = new WebView(next_id++, profile);
+  auto *webview = new WebView(next_webview_id++, profile);
   webview->setUrl(url);
   layout->addWidget(webview);
   webview_list.append(webview);
@@ -77,6 +77,9 @@ void WebViewStack::on_new_webview_request(
 }
 
 int32_t WebViewStack::get_webview_index(WebViewId webview_id) {
+  if (webview_id == 0 && window()->isActiveWindow())
+    webview_id = current_webview_id();
+
   int index = 0;
   for (auto &webview : webview_list) {
     if (webview->get_id() == webview_id)
@@ -175,6 +178,10 @@ WebView *WebViewStack::get_webview(WebViewId webview_id) {
   if (webview_index < 0)
     return nullptr;
   return webview_list.at(webview_index);
+}
+
+bool WebViewStack::has_webview(WebViewId webview_id) {
+  return get_webview(webview_id) != nullptr;
 }
 
 QUrl WebViewStack::current_url() {

@@ -18,6 +18,7 @@ end
 
 local Dmenu = {}
 function Dmenu.select(list, opts, callback)
+  print('DEMNU CLALED')
   local selection = nil
   local stdin = uv.new_pipe();
   local stdout = uv.new_pipe();

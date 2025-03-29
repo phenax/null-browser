@@ -34,6 +34,7 @@ bool KeymapEvaluator::evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key) {
                                                        active_key_sequence);
 
     if (match_type == KeyMatchType::Match) {
+      qDebug() << "CALLED" << key;
       keymap.action();
       active_key_sequence.clear();
       return true;

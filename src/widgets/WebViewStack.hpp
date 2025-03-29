@@ -23,6 +23,8 @@ struct WebViewData {
   QString title;
 };
 
+static WebViewId next_webview_id = 1;
+
 class WebViewStack : public QWidget {
   Q_OBJECT
 
@@ -36,6 +38,8 @@ public:
   WebViewId current_webview_id();
   uint32_t count();
   QUrl current_url();
+
+  bool has_webview(WebViewId webview_id);
 
   /// @deprecated TODO: Remove
   std::vector<QUrl> urls();
@@ -63,5 +67,4 @@ private:
   QWebEngineProfile *profile;
   QStackedLayout *layout;
   QList<WebView *> webview_list;
-  WebViewId next_id = 1;
 };

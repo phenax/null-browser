@@ -1,4 +1,3 @@
-#include "widgets/WebViewStack.hpp"
 #include <QtCore>
 #include <lua.hpp>
 extern "C" {
@@ -207,12 +206,7 @@ int LuaRuntime::lua_history_back(lua_State *state) {
   qsizetype history_index =
       lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
 
-  WebViewId tab_id;
-  if (lua_isnoneornil(state, 2)) {
-    tab_id = runtime->fetch_current_tab_id();
-  } else {
-    tab_id = lua_tointeger(state, 2);
-  }
+  WebViewId tab_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
 
   emit runtime->history_back_requested(tab_id, history_index);
   return 1;
@@ -224,12 +218,7 @@ int LuaRuntime::lua_history_forward(lua_State *state) {
   qsizetype history_index =
       lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
 
-  WebViewId tab_id;
-  if (lua_isnoneornil(state, 2)) {
-    tab_id = runtime->fetch_current_tab_id();
-  } else {
-    tab_id = lua_tointeger(state, 2);
-  }
+  WebViewId tab_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
 
   emit runtime->history_forward_requested(tab_id, history_index);
   return 1;
@@ -238,12 +227,7 @@ int LuaRuntime::lua_history_forward(lua_State *state) {
 int LuaRuntime::lua_tab_close(lua_State *state) {
   auto *runtime = LuaRuntime::instance();
 
-  WebViewId tab_id;
-  if (lua_isnoneornil(state, 1)) {
-    tab_id = runtime->fetch_current_tab_id();
-  } else {
-    tab_id = lua_tointeger(state, 1);
-  }
+  WebViewId tab_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
 
   emit runtime->webview_closed(tab_id);
   return 1;
