@@ -8,6 +8,8 @@
 
 #include "widgets/WebViewStack.hpp"
 
+static WebViewId next_webview_id = 1;
+
 WebViewStack::WebViewStack(const Configuration *configuration,
                            QWebEngineProfile *profile, QWidget *parent)
     : QWidget(parent), configuration(configuration), profile(profile) {

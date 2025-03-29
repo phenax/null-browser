@@ -69,7 +69,33 @@ WindowActionRouter::WindowActionRouter() {
 
 void WindowActionRouter::add_window(BrowserWindow *window) {
   window_map.insert({last_id, window});
+  window->set_id(last_id);
   last_id++;
 }
 
 const WindowMap &WindowActionRouter::windows() { return window_map; }
+
+WebViewId WindowActionRouter::fetch_current_tab_id(WindowId win_id) {
+  for (auto &pair : window_map) {
+    auto *win = pair.second;
+    auto is_current_window =
+        win_id == win->get_id() || (win_id == 0 && win->isActiveWindow());
+    if (is_current_window) {
+      return win->mediator()->current_webview_id();
+    }
+  }
+  return 0;
+}
+
+QList<WebViewData>
+WindowActionRouter::fetch_webview_data_list(WindowId win_id) {
+  for (auto &pair : window_map) {
+    auto *win = pair.second;
+    auto is_current_window =
+        win_id == win->get_id() || (win_id == 0 && win->isActiveWindow());
+    if (is_current_window) {
+      return win->mediator()->get_webview_list();
+    }
+  }
+  return {};
+}

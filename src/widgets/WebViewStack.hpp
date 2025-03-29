@@ -23,8 +23,6 @@ struct WebViewData {
   QString title;
 };
 
-static WebViewId next_webview_id = 1;
-
 class WebViewStack : public QWidget {
   Q_OBJECT
 

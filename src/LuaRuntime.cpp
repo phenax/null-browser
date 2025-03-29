@@ -1,3 +1,4 @@
+#include "WindowActionRouter.hpp"
 #include <QtCore>
 #include <lua.hpp>
 extern "C" {
@@ -74,6 +75,7 @@ void LuaRuntime::init_web_lib() {
 
   // web
   luaL_Reg web[] = {
+      /// @deprecated
       {"open", &LuaRuntime::lua_open_url},
       {nullptr, nullptr},
   };
@@ -169,15 +171,15 @@ int LuaRuntime::lua_keymap_set(lua_State *state) {
 }
 
 int LuaRuntime::lua_tab_current(lua_State *state) {
-  auto *runtime = LuaRuntime::instance();
-  auto tab_id = runtime->fetch_current_tab_id();
+  auto *router = WindowActionRouter::instance();
+  auto tab_id = router->fetch_current_tab_id();
   lua_pushinteger(state, tab_id);
   return 1;
 }
 
 int LuaRuntime::lua_tab_list(lua_State *state) {
-  auto *runtime = LuaRuntime::instance();
-  auto tabs = runtime->fetch_webview_data_list();
+  auto *router = WindowActionRouter::instance();
+  auto tabs = router->fetch_webview_data_list();
   lua_newtable(state);
 
   int index = 1; // 1-indexed
@@ -196,7 +198,8 @@ int LuaRuntime::lua_tab_list(lua_State *state) {
     lua_pushstring(state, tab.title.toStdString().c_str());
     lua_settable(state, -3);
 
-    lua_rawseti(state, -2, index++);
+    lua_rawseti(state, -2, index);
+    index++;
   }
 
   return 1;

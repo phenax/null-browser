@@ -36,9 +36,6 @@ public:
   QVariant get_lua_value(int idx, QVariant default_value = 0);
   DEFINE_GETTER(get_state, state)
 
-  DEFINE_FETCHER(qsizetype(), current_tab_id)
-  DEFINE_FETCHER(QList<WebViewData>(), webview_data_list)
-
 signals:
   void evaluation_completed(QVariant value);
   void evaluation_failed(QString value);

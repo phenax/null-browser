@@ -16,9 +16,8 @@ BrowserApp::BrowserApp() {
 
 BrowserWindow *BrowserApp::create_window() {
   auto *win = new BrowserWindow((const Configuration &)configuration);
+  WindowActionRouter::instance()->add_window(win);
   win->setWindowTitle("null-browser");
-  auto *router = WindowActionRouter::instance();
-  router->add_window(win);
   win->show();
   return win;
 }

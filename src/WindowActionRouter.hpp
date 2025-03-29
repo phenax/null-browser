@@ -1,13 +1,10 @@
 #pragma once
 
-#include "widgets/BrowserWindow.hpp"
 #include <QWidget>
 #include <QtCore>
 #include <cstdint>
-#include <unordered_map>
 
-using WindowId = uint64_t;
-using WindowMap = std::unordered_map<uint64_t, BrowserWindow *>;
+#include "widgets/BrowserWindow.hpp"
 
 class WindowActionRouter : public QWidget {
   Q_OBJECT
@@ -20,6 +17,9 @@ public:
 
   void add_window(BrowserWindow *window);
   const WindowMap &windows();
+
+  WebViewId fetch_current_tab_id(WindowId win_id = 0);
+  QList<WebViewData> fetch_webview_data_list(WindowId win_id = 0);
 
 protected:
   WindowActionRouter();

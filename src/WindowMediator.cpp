@@ -27,12 +27,6 @@ WindowMediator::WindowMediator(WebViewStack *webview_stack,
           &WebViewStack::close);
   connect(this, &WindowMediator::webview_selected, webview_stack,
           &WebViewStack::focus_webview);
-
-  // TODO: Think of how to handle this for multi-window
-  lua_runtime->set_current_tab_id_fetcher(
-      [this]() { return this->webview_stack->current_webview_id(); });
-  lua_runtime->set_webview_data_list_fetcher(
-      [this]() { return this->webview_stack->get_webview_list(); });
 }
 
 void WindowMediator::add_keymap(const QString &mode_string,

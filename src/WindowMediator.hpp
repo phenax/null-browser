@@ -18,6 +18,8 @@ public:
 
   DELEGATE(keymap_evaluator, evaluate, evaluate_keymap)
   DELEGATE(webview_stack, has_webview, has_webview)
+  DELEGATE(webview_stack, current_webview_id, current_webview_id)
+  DELEGATE(webview_stack, get_webview_list, get_webview_list)
 
 signals:
   void history_back_requested(WebViewId webview_id, qsizetype history_index);

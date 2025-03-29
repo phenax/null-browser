@@ -65,7 +65,7 @@ end)
 web.keymap.set('n', '<s-o>', function()
   Dmenu.select(urls, { prompt = 'Open:' }, function(err, result)
     if err or not result then return end
-    web.open(trim(result))
+    web.tabs.set_url(trim(result))
   end)
 end)
 -- Update current url
@@ -75,7 +75,7 @@ web.keymap.set('n', '<c-l>', function()
   if tab == nil then return end
   Dmenu.select(urls, { prompt = 'Set url:', input = tab.url }, function(err, result)
     if err or not result then return end
-    web.open(trim(result))
+    web.tabs.set_url(trim(result))
   end)
 end)
 
