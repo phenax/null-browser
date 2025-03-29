@@ -5,7 +5,10 @@ web = web
 --- @type table
 uv = uv
 
-local function trim(s) return s:gsub("^%s*(.-)%s*$", "%1") end
+local function trim(s)
+  local res, _ = string.gsub(s, "^%s*(.-)%s*$", "%1")
+  return res
+end
 
 local function get_current_tab_index()
   local currentTab = web.tabs.current();

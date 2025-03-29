@@ -96,6 +96,7 @@ void LuaRuntime::init_web_lib() {
       {"current", &LuaRuntime::lua_tab_current},
       {"list", &LuaRuntime::lua_tab_list},
       {"select", &LuaRuntime::lua_tab_select},
+      {"set_url", &LuaRuntime::lua_open_url},
       {nullptr, nullptr},
   };
   luaL_newlib(state, webtabs);
@@ -130,16 +131,17 @@ QVariant LuaRuntime::get_lua_value(int idx, QVariant default_value) {
 }
 
 int LuaRuntime::lua_open_url(lua_State *state) {
-  const char *url = luaL_optstring(state, 1, "");
+  const char *url = lua_tostring(state, 1);
+  WebViewId tab_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
   auto *runtime = LuaRuntime::instance();
-  emit runtime->url_opened(url, OpenType::OpenUrl);
+  emit runtime->url_opened(url, OpenType::OpenUrl, tab_id);
   return 1;
 }
 
 int LuaRuntime::lua_tab_create(lua_State *state) {
   const char *url = luaL_optstring(state, 1, "");
   auto *runtime = LuaRuntime::instance();
-  emit runtime->url_opened(url, OpenType::OpenUrlInTab);
+  emit runtime->url_opened(url, OpenType::OpenUrlInTab, 0);
   return 1;
 }
 

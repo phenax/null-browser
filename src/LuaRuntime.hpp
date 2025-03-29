@@ -46,7 +46,7 @@ signals:
   void history_back_requested(WebViewId webview_id, qsizetype history_index);
   void history_forward_requested(WebViewId webview_id, qsizetype history_index);
   void keymap_added(QString mode, QString keyseq, std::function<void()>);
-  void url_opened(QString url, OpenType open_type);
+  void url_opened(QString url, OpenType open_type, WebViewId webview_id);
   void webview_closed(WebViewId webview_id);
   void webview_selected(WebViewId webview_id);
 

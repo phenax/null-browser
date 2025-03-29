@@ -18,10 +18,11 @@ WebViewStack::WebViewStack(const Configuration *configuration,
   create_new_webview(configuration->new_tab_url, true);
 }
 
-void WebViewStack::open_url(const QUrl &url, OpenType open_type) {
+void WebViewStack::open_url(const QUrl &url, OpenType open_type,
+                            WebViewId webview_id) {
   switch (open_type) {
   case OpenType::OpenUrl:
-    set_current_url(url);
+    set_webview_url(url, webview_id);
     break;
   case OpenType::OpenUrlInTab:
     create_new_webview(url, true);
@@ -77,8 +78,12 @@ void WebViewStack::on_new_webview_request(
 }
 
 int32_t WebViewStack::get_webview_index(WebViewId webview_id) {
-  if (webview_id == 0 && window()->isActiveWindow())
-    webview_id = current_webview_id();
+  if (webview_id == 0) {
+    if (window()->isActiveWindow())
+      webview_id = current_webview_id();
+    else
+      return -1;
+  }
 
   int index = 0;
   for (auto &webview : webview_list) {
@@ -196,6 +201,15 @@ QUrl WebViewStack::current_url() {
 
 void WebViewStack::set_current_url(const QUrl &url) {
   auto *webview = current_webview();
+  if (webview == nullptr) {
+    qDebug() << "No current webview";
+    return;
+  }
+
+  webview->setUrl(url);
+}
+void WebViewStack::set_webview_url(const QUrl &url, WebViewId webview_id) {
+  auto *webview = get_webview(webview_id);
   if (webview == nullptr) {
     qDebug() << "No current webview";
     return;

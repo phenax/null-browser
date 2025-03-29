@@ -38,6 +38,7 @@ public:
   WebViewId current_webview_id();
   uint32_t count();
   QUrl current_url();
+  void set_webview_url(const QUrl &url, WebViewId webview_id);
 
   bool has_webview(WebViewId webview_id);
 
@@ -53,7 +54,8 @@ protected:
   WebView *get_webview(WebViewId webview_id);
 
 public slots:
-  void open_url(const QUrl &url, OpenType open_type = OpenType::OpenUrl);
+  void open_url(const QUrl &url, OpenType open_type = OpenType::OpenUrl,
+                WebViewId webview_id = 0);
   void webview_history_back(WebViewId webview_id, qsizetype history_index);
   void webview_history_forward(WebViewId webview_id, qsizetype history_index);
   void close(WebViewId webview_id);

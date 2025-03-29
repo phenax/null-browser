@@ -47,9 +47,7 @@ void AsyncEventLoop::process_tasks() {
 void AsyncEventLoop::run_loop() {
   is_loop_running = true;
   while (is_loop_running) {
-    // qDebug() << "loop iteration" << uv_loop_alive(loop);
     uv_run(loop, UV_RUN_NOWAIT);
-    // qDebug() << "uv_run() returned: " << result;
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }

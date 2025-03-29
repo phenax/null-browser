@@ -3,6 +3,7 @@
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
+#include "widgets/WebViewStack.hpp"
 
 WindowActionRouter::WindowActionRouter() {
   auto *runtime = LuaRuntime::instance();
@@ -20,7 +21,6 @@ WindowActionRouter::WindowActionRouter() {
           [this](WebViewId webview_id, qsizetype history_index) {
             for (auto &win : window_map) {
               auto *mediator = win.second->mediator();
-              qDebug() << "BACK" << webview_id;
               if (mediator->has_webview(webview_id)) {
                 emit mediator->history_back_requested(webview_id,
                                                       history_index);
@@ -39,10 +39,12 @@ WindowActionRouter::WindowActionRouter() {
           });
 
   connect(runtime, &LuaRuntime::url_opened, this,
-          [this](const QString &url, OpenType open_type) {
+          [this](const QString &url, OpenType open_type, WebViewId webview_id) {
             for (auto &win : window_map) {
               auto *mediator = win.second->mediator();
-              emit mediator->url_opened(url, open_type);
+              if (mediator->has_webview(webview_id)) {
+                emit mediator->url_opened(url, open_type, webview_id);
+              }
             }
           });
   connect(runtime, &LuaRuntime::webview_closed, this,
