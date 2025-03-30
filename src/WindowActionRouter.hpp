@@ -15,6 +15,8 @@ public:
     return router;
   }
 
+  void initialize();
+
   void add_window(BrowserWindow *window);
   const WindowMap &windows();
 
@@ -22,7 +24,10 @@ public:
   QList<WebViewData> fetch_webview_data_list(WindowId win_id = 0);
 
 protected:
-  WindowActionRouter();
+  WindowActionRouter() = default;
+
+  void add_keymap(const QString &mode_string, const QString &keyseq,
+                  std::function<void()> action);
 
 private:
   WindowMap window_map;

@@ -81,6 +81,7 @@ void WebViewStack::on_new_webview_request(
 
 int32_t WebViewStack::get_webview_index(WebViewId webview_id) {
   if (webview_id == 0) {
+    // TODO: Check how to detect "active" window before qapp start (lua init)?
     if (window()->isActiveWindow())
       webview_id = current_webview_id();
     else

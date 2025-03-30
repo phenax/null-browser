@@ -4,6 +4,8 @@
 #include <QtCore>
 
 #include "Configuration.hpp"
+#include "LuaRuntime.hpp"
+#include "WindowActionRouter.hpp"
 #include "WindowMediator.hpp"
 #include "keymap/KeymapEvaluator.hpp"
 #include "widgets/BrowserWindow.hpp"
@@ -27,13 +29,6 @@ BrowserWindow::BrowserWindow(const Configuration &configuration)
 
   auto *keymap_evaluator = KeymapEvaluator::instance();
 
-  // TODO: remoev
-  web_view_stack->open_url(QUrl("https://duckduckgo.com"), OpenType::OpenUrl);
-  web_view_stack->open_url(QUrl("https://ediblemonad.dev"),
-                           OpenType::OpenUrlInBgTab);
-  web_view_stack->open_url(QUrl("https://github.com/trending"),
-                           OpenType::OpenUrlInBgTab);
-
   // TODO: remove
   keymap_evaluator->add_keymap(KeyMode::Normal, "i", [keymap_evaluator]() {
     keymap_evaluator->set_current_mode(KeyMode::Insert);
@@ -44,13 +39,23 @@ BrowserWindow::BrowserWindow(const Configuration &configuration)
   keymap_evaluator->add_keymap(KeyMode::Normal, "<c-t>a",
                                []() { qDebug() << "Stuff"; });
 
-  input_mediator = new WindowMediator(web_view_stack, LuaRuntime::instance(),
-                                      keymap_evaluator);
+  input_mediator = new WindowMediator(web_view_stack);
+
+  auto *lua = LuaRuntime::instance();
+  lua->queue_task([this]() {
+    emit input_mediator->url_opened("https://github.com/phenax/null-browser",
+                                    OpenType::OpenUrl, 0);
+    emit input_mediator->url_opened("https://ediblemonad.dev",
+                                    OpenType::OpenUrlInBgTab, 0);
+    emit input_mediator->url_opened("https://github.com/trending",
+                                    OpenType::OpenUrlInBgTab, 0);
+  });
 }
 
 bool BrowserWindow::on_window_key_event(QKeyEvent *event) {
-  const bool should_skip = input_mediator->evaluate_keymap(
-      event->modifiers(), (Qt::Key)event->key());
+  auto *keymap_evaluator = KeymapEvaluator::instance();
+  const bool should_skip =
+      keymap_evaluator->evaluate(event->modifiers(), (Qt::Key)event->key());
 
   return should_skip;
 }

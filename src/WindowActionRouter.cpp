@@ -3,19 +3,14 @@
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
+#include "keymap/KeymapEvaluator.hpp"
 #include "widgets/WebViewStack.hpp"
 
-WindowActionRouter::WindowActionRouter() {
+void WindowActionRouter::initialize() {
   auto *runtime = LuaRuntime::instance();
 
   connect(runtime, &LuaRuntime::keymap_added, this,
-          [this](const QString &mode, const QString &keyseq,
-                 const std::function<void()> &callback) {
-            for (auto &win : window_map) {
-              auto *mediator = win.second->mediator();
-              emit mediator->keymap_added(mode, keyseq, callback);
-            }
-          });
+          &WindowActionRouter::add_keymap);
 
   connect(runtime, &LuaRuntime::history_back_requested, this,
           [this](WebViewId webview_id, qsizetype history_index) {
@@ -74,6 +69,15 @@ void WindowActionRouter::add_window(BrowserWindow *window) {
 }
 
 const WindowMap &WindowActionRouter::windows() { return window_map; }
+
+void WindowActionRouter::add_keymap(const QString &mode_string,
+                                    const QString &keyseq,
+                                    std::function<void()> action) {
+  qDebug() << "ADD KEY" << mode_string << keyseq;
+  auto *keymap_evaluator = KeymapEvaluator::instance();
+  const KeyMode mode = keymap_evaluator->mode_from_string(mode_string);
+  keymap_evaluator->add_keymap(mode, keyseq, std::move(action));
+}
 
 WebViewId WindowActionRouter::fetch_current_tab_id(WindowId win_id) {
   for (auto &pair : window_map) {

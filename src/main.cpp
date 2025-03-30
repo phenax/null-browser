@@ -9,8 +9,5 @@ int main(int argc, char *argv[]) {
   browser.create_window();
   browser.create_window();
 
-  // NOTE: TMP
-  LuaRuntime::instance()->load_file("./config.lua");
-
   return QApplication::exec();
 }

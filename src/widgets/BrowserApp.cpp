@@ -10,8 +10,15 @@ BrowserApp::BrowserApp() {
   auto *lua = LuaRuntime::instance();
   lua->start_event_loop();
 
+  // Router init
+  auto *router = WindowActionRouter::instance();
+  router->initialize();
+
   // Global event filter
   qApp->installEventFilter(this);
+
+  // NOTE: TMP
+  LuaRuntime::instance()->load_file("./config.lua");
 };
 
 BrowserWindow *BrowserApp::create_window() {

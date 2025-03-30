@@ -24,8 +24,8 @@ public:
   KeymapEvaluator() = default;
 
   static KeymapEvaluator *instance() {
-    static auto *keymap_evaluator = new KeymapEvaluator;
-    return keymap_evaluator;
+    static KeymapEvaluator keymap_evaluator;
+    return &keymap_evaluator;
   }
 
   void add_keymap(KeyMode mode, const QString &key, KeyAction action);
