@@ -5,7 +5,6 @@
 
 #include "Configuration.hpp"
 #include "LuaRuntime.hpp"
-#include "WindowActionRouter.hpp"
 #include "WindowMediator.hpp"
 #include "keymap/KeymapEvaluator.hpp"
 #include "widgets/BrowserWindow.hpp"

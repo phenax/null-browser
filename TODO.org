@@ -10,7 +10,7 @@
 - [X] Get tab list api
 - [X] Assign ID to each tab (reference in lua api)
 - [X] Tab select by id
-- [ ] Multi-window
+- [X] Multi-window
 - [ ] Handle resource cleanup + signal disconnecting
 - [ ] Socket for opening window in current session (lua eval)
 - [ ] Log stdout, errors and results from lua somewhere

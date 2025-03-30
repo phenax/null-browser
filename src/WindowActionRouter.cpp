@@ -63,9 +63,13 @@ void WindowActionRouter::initialize() {
 }
 
 void WindowActionRouter::add_window(BrowserWindow *window) {
-  window_map.insert({last_id, window});
-  window->set_id(last_id);
+  auto win_id = last_id;
   last_id++;
+
+  window_map.insert({win_id, window});
+  window->set_id(win_id);
+  connect(window, &BrowserWindow::closed, this,
+          [this, win_id]() { window_map.erase(win_id); });
 }
 
 const WindowMap &WindowActionRouter::windows() { return window_map; }

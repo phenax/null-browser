@@ -1,9 +1,9 @@
 print('hello starting up...')
 
 --- @type table
-web = web
+local web = web
 --- @type table
-uv = uv
+local uv = uv
 
 local function trim(s)
   local res, _ = string.gsub(s, "^%s*(.-)%s*$", "%1")
@@ -36,7 +36,7 @@ function Dmenu.select(list, opts, callback)
     end
   end)
 
-  uv.read_start(stdout, function(_err, data)
+  uv.read_start(stdout, function(_, data)
     if data then selection = data end
   end)
 
