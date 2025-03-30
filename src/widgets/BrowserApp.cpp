@@ -7,24 +7,24 @@
 #include "widgets/BrowserWindow.hpp"
 
 BrowserApp::BrowserApp() {
-  auto *lua = LuaRuntime::instance();
-  lua->start_event_loop();
+  auto &lua = LuaRuntime::instance();
+  lua.start_event_loop();
 
   // Router init
-  auto *router = WindowActionRouter::instance();
-  router->initialize();
+  auto &router = WindowActionRouter::instance();
+  router.initialize();
 
   // Global event filter
   qApp->installEventFilter(this);
 
   // NOTE: TMP
-  LuaRuntime::instance()->load_file("./config.lua");
+  lua.load_file("./config.lua");
 };
 
 BrowserWindow *BrowserApp::create_window() {
   auto *win = new BrowserWindow((const Configuration &)configuration);
-  WindowActionRouter::instance()->add_window(win);
   win->setWindowTitle("null-browser");
+  WindowActionRouter::instance().add_window(win);
   win->show();
   return win;
 }
@@ -33,7 +33,7 @@ bool BrowserApp::eventFilter(QObject *target, QEvent *event) {
   if (event->type() != QEvent::KeyPress)
     return false;
 
-  for (const auto &match : WindowActionRouter::instance()->windows()) {
+  for (const auto &match : WindowActionRouter::instance().windows()) {
     auto *win = match.second;
 
     if (auto *target_widget = dynamic_cast<QWidget *>(target);

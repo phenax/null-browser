@@ -20,9 +20,9 @@ class LuaRuntime : public QObject {
   const char *web_global_name = "web";
 
 public:
-  static LuaRuntime *instance() {
-    static LuaRuntime inst;
-    return &inst;
+  static LuaRuntime &instance() {
+    static LuaRuntime runtime;
+    return runtime;
   }
 
   void evaluate(const QString &code);

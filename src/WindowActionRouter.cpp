@@ -7,58 +7,42 @@
 #include "widgets/WebViewStack.hpp"
 
 void WindowActionRouter::initialize() {
-  auto *runtime = LuaRuntime::instance();
+  auto &runtime = LuaRuntime::instance();
 
-  connect(runtime, &LuaRuntime::keymap_added, this,
+  connect(&runtime, &LuaRuntime::keymap_added, this,
           &WindowActionRouter::add_keymap);
 
-  connect(runtime, &LuaRuntime::history_back_requested, this,
+  connect(&runtime, &LuaRuntime::history_back_requested, this,
           [this](WebViewId webview_id, qsizetype history_index) {
-            for (auto &win : window_map) {
-              auto *mediator = win.second->mediator();
-              if (mediator->has_webview(webview_id)) {
-                emit mediator->history_back_requested(webview_id,
-                                                      history_index);
-              }
-            }
+            WITH_WEBVIEW_WINDOW(webview_id, window, {
+              emit window->mediator()->history_back_requested(webview_id,
+                                                              history_index);
+            });
           });
-  connect(runtime, &LuaRuntime::history_forward_requested, this,
+  connect(&runtime, &LuaRuntime::history_forward_requested, this,
           [this](WebViewId webview_id, qsizetype history_index) {
-            for (auto &win : window_map) {
-              auto *mediator = win.second->mediator();
-              if (mediator->has_webview(webview_id)) {
-                emit mediator->history_forward_requested(webview_id,
-                                                         history_index);
-              }
-            }
+            WITH_WEBVIEW_WINDOW(webview_id, window, {
+              emit window->mediator()->history_forward_requested(webview_id,
+                                                                 history_index);
+            });
           });
-
-  connect(runtime, &LuaRuntime::url_opened, this,
+  connect(&runtime, &LuaRuntime::url_opened, this,
           [this](const QString &url, OpenType open_type, WebViewId webview_id) {
-            for (auto &win : window_map) {
-              auto *mediator = win.second->mediator();
-              if (mediator->has_webview(webview_id)) {
-                emit mediator->url_opened(url, open_type, webview_id);
-              }
-            }
+            WITH_WEBVIEW_WINDOW(webview_id, window, {
+              emit window->mediator()->url_opened(url, open_type, webview_id);
+            });
           });
-  connect(runtime, &LuaRuntime::webview_closed, this,
+  connect(&runtime, &LuaRuntime::webview_closed, this,
           [this](WebViewId webview_id) {
-            for (auto &win : window_map) {
-              auto *mediator = win.second->mediator();
-              if (mediator->has_webview(webview_id)) {
-                emit mediator->webview_closed(webview_id);
-              }
-            }
+            WITH_WEBVIEW_WINDOW(webview_id, window, {
+              emit window->mediator()->webview_closed(webview_id);
+            });
           });
-  connect(runtime, &LuaRuntime::webview_selected, this,
+  connect(&runtime, &LuaRuntime::webview_selected, this,
           [this](WebViewId webview_id) {
-            for (auto &win : window_map) {
-              auto *mediator = win.second->mediator();
-              if (mediator->has_webview(webview_id)) {
-                emit mediator->webview_selected(webview_id);
-              }
-            }
+            WITH_WEBVIEW_WINDOW(webview_id, window, {
+              emit window->mediator()->webview_selected(webview_id);
+            });
           });
 }
 
@@ -77,10 +61,9 @@ const WindowMap &WindowActionRouter::windows() { return window_map; }
 void WindowActionRouter::add_keymap(const QString &mode_string,
                                     const QString &keyseq,
                                     std::function<void()> action) {
-  qDebug() << "ADD KEY" << mode_string << keyseq;
-  auto *keymap_evaluator = KeymapEvaluator::instance();
-  const KeyMode mode = keymap_evaluator->mode_from_string(mode_string);
-  keymap_evaluator->add_keymap(mode, keyseq, std::move(action));
+  auto &keymap_evaluator = KeymapEvaluator::instance();
+  const KeyMode mode = keymap_evaluator.mode_from_string(mode_string);
+  keymap_evaluator.add_keymap(mode, keyseq, std::move(action));
 }
 
 WebViewId WindowActionRouter::fetch_current_tab_id(WindowId win_id) {

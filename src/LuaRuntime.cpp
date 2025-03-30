@@ -135,15 +135,15 @@ QVariant LuaRuntime::get_lua_value(int idx, QVariant default_value) {
 int LuaRuntime::lua_open_url(lua_State *state) {
   const char *url = lua_tostring(state, 1);
   WebViewId tab_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
-  auto *runtime = LuaRuntime::instance();
-  emit runtime->url_opened(url, OpenType::OpenUrl, tab_id);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.url_opened(url, OpenType::OpenUrl, tab_id);
   return 1;
 }
 
 int LuaRuntime::lua_tab_create(lua_State *state) {
   const char *url = luaL_optstring(state, 1, "");
-  auto *runtime = LuaRuntime::instance();
-  emit runtime->url_opened(url, OpenType::OpenUrlInTab, 0);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.url_opened(url, OpenType::OpenUrlInTab, 0);
   return 1;
 }
 
@@ -164,22 +164,22 @@ int LuaRuntime::lua_keymap_set(lua_State *state) {
   };
   // TODO: Cleanup function ref on after keymap clear
 
-  auto *runtime = LuaRuntime::instance();
-  emit runtime->keymap_added(mode, keyseq, action);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.keymap_added(mode, keyseq, action);
 
   return 1;
 }
 
 int LuaRuntime::lua_tab_current(lua_State *state) {
-  auto *router = WindowActionRouter::instance();
-  auto tab_id = router->fetch_current_tab_id();
+  auto &router = WindowActionRouter::instance();
+  auto tab_id = router.fetch_current_tab_id();
   lua_pushinteger(state, tab_id);
   return 1;
 }
 
 int LuaRuntime::lua_tab_list(lua_State *state) {
-  auto *router = WindowActionRouter::instance();
-  auto tabs = router->fetch_webview_data_list();
+  auto &router = WindowActionRouter::instance();
+  auto tabs = router.fetch_webview_data_list();
   lua_newtable(state);
 
   int index = 1; // 1-indexed
@@ -206,35 +206,35 @@ int LuaRuntime::lua_tab_list(lua_State *state) {
 }
 
 int LuaRuntime::lua_history_back(lua_State *state) {
-  auto *runtime = LuaRuntime::instance();
+  auto &runtime = LuaRuntime::instance();
 
   qsizetype history_index =
       lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
 
   WebViewId tab_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
 
-  emit runtime->history_back_requested(tab_id, history_index);
+  emit runtime.history_back_requested(tab_id, history_index);
   return 1;
 }
 
 int LuaRuntime::lua_history_forward(lua_State *state) {
-  auto *runtime = LuaRuntime::instance();
+  auto &runtime = LuaRuntime::instance();
 
   qsizetype history_index =
       lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
 
   WebViewId tab_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
 
-  emit runtime->history_forward_requested(tab_id, history_index);
+  emit runtime.history_forward_requested(tab_id, history_index);
   return 1;
 }
 
 int LuaRuntime::lua_tab_close(lua_State *state) {
-  auto *runtime = LuaRuntime::instance();
+  auto &runtime = LuaRuntime::instance();
 
   WebViewId tab_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
 
-  emit runtime->webview_closed(tab_id);
+  emit runtime.webview_closed(tab_id);
   return 1;
 }
 
@@ -242,9 +242,9 @@ int LuaRuntime::lua_tab_select(lua_State *state) {
   if (lua_isnoneornil(state, 1))
     return 1; // TODO: return nil (for others too)
 
-  auto *runtime = LuaRuntime::instance();
+  auto &runtime = LuaRuntime::instance();
   WebViewId tab_id = lua_tointeger(state, 1);
-  emit runtime->webview_selected(tab_id);
+  emit runtime.webview_selected(tab_id);
   return 1;
 }
 

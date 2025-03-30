@@ -20,4 +20,7 @@ WindowMediator::WindowMediator(WebViewStack *webview_stack)
           &WebViewStack::focus_webview);
 }
 
-WindowMediator::~WindowMediator() { delete webview_stack; }
+WindowMediator::~WindowMediator() {
+  disconnect(this);
+  delete webview_stack;
+}

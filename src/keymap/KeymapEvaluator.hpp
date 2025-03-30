@@ -23,9 +23,9 @@ class KeymapEvaluator : public QObject {
 public:
   KeymapEvaluator() = default;
 
-  static KeymapEvaluator *instance() {
+  static KeymapEvaluator &instance() {
     static KeymapEvaluator keymap_evaluator;
-    return &keymap_evaluator;
+    return keymap_evaluator;
   }
 
   void add_keymap(KeyMode mode, const QString &key, KeyAction action);

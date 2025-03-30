@@ -11,12 +11,12 @@
 - [X] Assign ID to each tab (reference in lua api)
 - [X] Tab select by id
 - [X] Multi-window
-- [ ] Handle resource cleanup + signal disconnecting
 - [ ] Socket for opening window in current session (lua eval)
-- [ ] Log stdout, errors and results from lua somewhere
 - [ ] Events/autocommands
 - [ ] History storage
 - [ ] History completion
+- [ ] Log stdout, errors and results from lua somewhere
+- [ ] Handle resource cleanup + signal disconnecting
 
 ** Next
 - [ ] Config loading and runtime path
@@ -33,6 +33,7 @@
 - [ ] Permission requests handling
 - [ ] Pipe page contents to external program
 - [ ] `web.inspect`
+- [ ] Update window title on current webview title change
 
 ** Later later
 - [ ] Fullscreen

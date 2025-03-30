@@ -14,19 +14,19 @@ class BrowserWindow : public QMainWindow {
 public:
   BrowserWindow(const Configuration &configuration);
 
-  DEFINE_GETTER(mediator, input_mediator)
+  DEFINE_GETTER(mediator, win_mediator)
   DEFINE_GETTER(get_id, win_id)
   DEFINE_SETTER(set_id, win_id)
 
   bool on_window_key_event(QKeyEvent *event);
 
-  void closeEvent(QCloseEvent * /*event*/) override { emit closed(); }
+  void closeEvent(QCloseEvent * /*event*/) override;
 
 signals:
   void closed();
 
 private:
-  WindowMediator *input_mediator;
+  WindowMediator *win_mediator;
   const Configuration &configuration;
 
   WindowId win_id = -1;

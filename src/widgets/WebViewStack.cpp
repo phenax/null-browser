@@ -17,6 +17,9 @@ WebViewStack::WebViewStack(const Configuration *configuration,
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setStackingMode(QStackedLayout::StackOne);
 
+  connect(layout, &QStackedLayout::currentChanged, this,
+          &WebViewStack::current_webview_changed);
+
   create_new_webview(configuration->new_tab_url, true);
 }
 
@@ -49,6 +52,8 @@ WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
 
   if (focus)
     focus_webview(webview->get_id());
+
+  emit current_webview_changed(layout->currentIndex());
 
   return webview;
 }
@@ -116,6 +121,7 @@ void WebViewStack::close(WebViewId webview_id) {
 
   // TODO: Close window on empty
   if (webview_list.isEmpty()) {
+    // window()->close();
     create_new_webview(configuration->new_tab_url, true);
   }
 }

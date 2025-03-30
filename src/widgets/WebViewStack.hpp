@@ -45,6 +45,9 @@ public:
   /// @deprecated TODO: Remove
   uint32_t current_webview_index();
 
+signals:
+  void current_webview_changed(int index);
+
 protected:
   void set_current_url(const QUrl &url);
   WebView *create_new_webview(const QUrl &url, bool focus = false);

@@ -3,15 +3,25 @@
 #include <QWidget>
 #include <QtCore>
 #include <cstdint>
+#include <functional>
 
 #include "widgets/BrowserWindow.hpp"
+#include "widgets/WebViewStack.hpp"
+
+#define WITH_WEBVIEW_WINDOW(WEBVIEW_ID, IDENT, BLOCK)                          \
+  for (auto &win_match : window_map) {                                         \
+    auto *IDENT = win_match.second;                                            \
+    if (IDENT->mediator()->has_webview(WEBVIEW_ID)) {                          \
+      BLOCK;                                                                   \
+    }                                                                          \
+  }
 
 class WindowActionRouter : public QWidget {
   Q_OBJECT
 
 public:
-  static WindowActionRouter *instance() {
-    static auto *router = new WindowActionRouter;
+  static WindowActionRouter &instance() {
+    static WindowActionRouter router;
     return router;
   }
 
