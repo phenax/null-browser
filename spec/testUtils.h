@@ -40,3 +40,5 @@ int run_all_tests();
     return true;                                                               \
   }();                                                                         \
   };
+
+bool wait_for_lua_to_be_true(QString lua_code);

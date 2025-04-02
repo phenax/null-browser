@@ -3,8 +3,10 @@
 #include <QtCore>
 #include <functional>
 #include <lua.hpp>
+#include <string>
 
 #include "AsyncEventLoop.hpp"
+#include "lua.h"
 #include "utils.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -18,6 +20,7 @@ class LuaRuntime : public QObject {
 
   const char *uv_global_name = "uv";
   const char *web_global_name = "web";
+  const char *internals_global_name = "__internals";
 
 public:
   static LuaRuntime &instance() {
@@ -27,7 +30,6 @@ public:
 
   void evaluate(const QString &code);
   void load_file(const QString &path);
-  QVariant evaluate_sync(const QString &code);
 
   void stop_event_loop();
   void start_event_loop();
@@ -55,6 +57,7 @@ protected:
   // Lua api
   static int lua_history_back(lua_State *state);
   static int lua_history_forward(lua_State *state);
+  static int lua_event_register(lua_State *state);
   static int lua_keymap_set(lua_State *state);
   static int lua_open_url(lua_State *state);
   static int lua_tab_close(lua_State *state);
@@ -66,4 +69,35 @@ protected:
 private:
   lua_State *state;
   AsyncEventLoop *event_loop = nullptr;
+
+  // TEMP
+public:
+  static void inspect_lua_stack(lua_State *state) {
+    int top = lua_gettop(state);
+    qDebug() << "Lua Stack (top: " << top << "):\n";
+
+    for (int i = 1; i <= top; i++) {
+      int type = lua_type(state, i);
+      qDebug() << i << ": " << lua_typename(state, type);
+    }
+
+    qDebug() << "---------------------------\n";
+    lua_settop(state, top);
+  }
+
+  static std::vector<std::string> lua_tostringlist(lua_State *state) {
+    std::vector<std::string> values;
+    if (!lua_istable(state, -1))
+      return values;
+
+    lua_pushnil(state); // First key for lua_next()
+    while (lua_next(state, -2) != 0) {
+      if (lua_isstring(state, -1))
+        values.emplace_back(lua_tostring(state, -1));
+      lua_pop(state, 1);
+    }
+    lua_pop(state, 1);
+
+    return values;
+  }
 };

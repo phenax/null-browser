@@ -6,7 +6,7 @@
 #include "WindowMediator.hpp"
 #include "utils.hpp"
 
-using WindowId = uint64_t;
+using WindowId = qsizetype;
 
 class BrowserWindow : public QMainWindow {
   Q_OBJECT
@@ -24,6 +24,7 @@ public:
 
 signals:
   void closed();
+  // void new_window_requested(const QUrl &url);
 
 private:
   WindowMediator *win_mediator;

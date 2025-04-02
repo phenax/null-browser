@@ -11,6 +11,7 @@
 - [X] Assign ID to each tab (reference in lua api)
 - [X] Tab select by id
 - [X] Multi-window
+- [ ] New window on new window request
 - [ ] Socket for opening window in current session (lua eval)
 - [ ] Events/autocommands
 - [ ] History storage

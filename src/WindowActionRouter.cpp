@@ -1,12 +1,49 @@
 #include <QWidget>
 #include <QtCore>
+#include <string>
+#include <unordered_map>
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
 #include "keymap/KeymapEvaluator.hpp"
+#include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
+void WindowActionRouter::dispatch_event(BrowserEvent &event) {
+  auto &runtime = LuaRuntime::instance();
+  runtime.queue_task([this, &event]() {
+    std::unordered_map<std::string, std::vector<EventHandlerRequest>> event_map;
+    {
+      const std::lock_guard<std::mutex> lock(events_mutex);
+      event_map = events;
+    }
+
+    if (!event_map.contains(event.kind))
+      return;
+
+    for (auto &event_handler : event_map.at(event.kind)) {
+      // TODO: Pattern filter
+      event_handler.handler(event);
+    }
+  });
+}
+
+void WindowActionRouter::register_event(const EventHandlerRequest &event) {
+  const std::lock_guard<std::mutex> lock(events_mutex);
+  for (const auto &event_name : event.event_names) {
+    if (!events.contains(event_name))
+      events.insert({event_name, {}});
+    events.at(event_name).emplace_back(event);
+  }
+}
+
 void WindowActionRouter::initialize() {
+  UrlChangedEvent url_changed_event("https://googa.com", 2, 1);
+  WindowActionRouter::instance().dispatch_event(url_changed_event);
+
+  UrlChangedEvent url_changed_event_1("https://duckduckgo.com", 5, 1);
+  WindowActionRouter::instance().dispatch_event(url_changed_event_1);
+
   auto &runtime = LuaRuntime::instance();
 
   connect(&runtime, &LuaRuntime::keymap_added, this,

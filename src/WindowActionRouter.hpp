@@ -4,7 +4,11 @@
 #include <QtCore>
 #include <cstdint>
 #include <functional>
+#include <mutex>
+#include <string>
+#include <unordered_map>
 
+#include "events.hpp"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -33,6 +37,9 @@ public:
   WebViewId fetch_current_tab_id(WindowId win_id = 0);
   QList<WebViewData> fetch_webview_data_list(WindowId win_id = 0);
 
+  void dispatch_event(BrowserEvent &event);
+  void register_event(const EventHandlerRequest &event);
+
 protected:
   WindowActionRouter() = default;
 
@@ -42,4 +49,7 @@ protected:
 private:
   WindowMap window_map;
   uint64_t last_id = 1;
+
+  std::mutex events_mutex;
+  std::unordered_map<std::string, std::vector<EventHandlerRequest>> events;
 };

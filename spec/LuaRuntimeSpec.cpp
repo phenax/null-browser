@@ -2,7 +2,19 @@
 #include <uv.h>
 
 #include "LuaRuntime.hpp"
+#include "WindowActionRouter.hpp"
+#include "events.hpp"
 #include "testUtils.h"
+
+class TestEvent1 : public BrowserEvent {
+public:
+  int num;
+  TestEvent1(int num) : num(num) { kind = "TestEvent1"; }
+  void lua_push(lua_State *state) override {
+    lua_newtable(state);
+    SET_FIELD("test_data", integer, num);
+  }
+};
 
 // NOLINTBEGIN
 class LuaRuntimeSpec : public QObject {
@@ -85,7 +97,6 @@ private slots:
 
       QVERIFY(
           QTest::qWaitFor([&was_task_called]() { return was_task_called; }));
-      QVERIFY(was_task_called);
     }
   }
 
@@ -105,11 +116,8 @@ private slots:
         end)
       )");
       QVERIFY(evaluation_completed_spy.wait());
-      QVERIFY(NOT lua.evaluate_sync("return _G.was_timer_called").toBool());
 
-      QVERIFY(QTest::qWaitFor([&lua]() {
-        return lua.evaluate_sync("return _G.was_timer_called").toBool();
-      }));
+      QVERIFY(wait_for_lua_to_be_true("return _G.was_timer_called"));
     }
   }
 
@@ -126,11 +134,121 @@ private slots:
         end)
       )");
       QVERIFY(evaluation_completed_spy.wait());
-      QCOMPARE(lua.evaluate_sync("return _G.spawn_exit_code").toInt(), -1);
 
-      QVERIFY(QTest::qWaitFor([&lua]() {
-        return 0 == lua.evaluate_sync("return _G.spawn_exit_code").toInt();
-      }));
+      QVERIFY(wait_for_lua_to_be_true("return _G.spawn_exit_code == 0"));
+    }
+  }
+
+  void test_internals_register_event() {
+    context("when events, patterns and callback are specified correctly");
+    it("returns true and registers event") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy evaluation_completed_spy(&lua,
+                                          &LuaRuntime::evaluation_completed);
+
+      lua.evaluate(R"(
+        return __internals.register_event({
+          events = { 'Hello', 'World' },
+          patterns = { 'p1', 'p2' },
+          callback = function() print("Called") end,
+        });
+      )");
+      evaluation_completed_spy.wait();
+
+      QCOMPARE(evaluation_completed_spy.count(), 1);
+      QVariant result = evaluation_completed_spy.takeFirst().at(0);
+      QCOMPARE(result, true);
+    }
+
+    context("when patterns is not passed");
+    it("returns true and registers event") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy evaluation_completed_spy(&lua,
+                                          &LuaRuntime::evaluation_completed);
+
+      lua.evaluate(R"(
+        return __internals.register_event({
+          events = { 'Hello', 'World' },
+          callback = function() print("Called") end,
+        });
+      )");
+      evaluation_completed_spy.wait();
+
+      QCOMPARE(evaluation_completed_spy.count(), 1);
+      QVariant result = evaluation_completed_spy.takeFirst().at(0);
+      QCOMPARE(result, true);
+    }
+
+    context("when events list is not passed");
+    it("returns false and doesnt register event") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy evaluation_completed_spy(&lua,
+                                          &LuaRuntime::evaluation_completed);
+
+      lua.evaluate(R"(
+        return __internals.register_event({
+          patterns = { 'p1', 'p2' },
+          callback = function() print("Called") end,
+        });
+      )");
+      evaluation_completed_spy.wait();
+
+      QCOMPARE(evaluation_completed_spy.count(), 1);
+      QVariant result = evaluation_completed_spy.first().first();
+      QCOMPARE(result, false);
+    }
+
+    context("when callback is not passed");
+    it("returns false and doesnt register event") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy evaluation_completed_spy(&lua,
+                                          &LuaRuntime::evaluation_completed);
+
+      lua.evaluate(R"(
+        return __internals.register_event({
+          events = {'Ev'},
+          patterns = { 'p1', 'p2' },
+        });
+      )");
+      evaluation_completed_spy.wait();
+
+      QCOMPARE(evaluation_completed_spy.count(), 1);
+      QVariant result = evaluation_completed_spy.first().first();
+      QCOMPARE(result, false);
+    }
+  }
+
+  void test_internals_register_event_handler() {
+    context("when dispatching a registered event (without pattern)");
+    it("calls the registered event handler") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy evaluation_completed_spy(&lua,
+                                          &LuaRuntime::evaluation_completed);
+      lua.evaluate(R"(
+        _G.event1_called = false;
+        _G.event1_called_with = nil;
+        __internals.register_event({
+          events = { 'TestEvent1' },
+          callback = function(opts)
+            _G.event1_called = true
+            _G.event1_called_with = opts
+          end,
+        });
+        _G.event2_called = false;
+        __internals.register_event({
+          events = { 'TestEvent2' },
+          callback = function(opts) _G.event2_called = true end,
+        });
+      )");
+      evaluation_completed_spy.wait();
+
+      TestEvent1 event(42);
+      WindowActionRouter::instance().dispatch_event(event);
+
+      QVERIFY(wait_for_lua_to_be_true("return _G.event1_called"));
+      QVERIFY(wait_for_lua_to_be_true(
+          "return _G.event1_called_with.test_data == 42"));
+      QVERIFY(wait_for_lua_to_be_true("return not _G.event2_called"));
     }
   }
 };

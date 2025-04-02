@@ -11,8 +11,7 @@ BrowserApp::BrowserApp() {
   lua.start_event_loop();
 
   // Router init
-  auto &router = WindowActionRouter::instance();
-  router.initialize();
+  WindowActionRouter::instance().initialize();
 
   // Global event filter
   qApp->installEventFilter(this);
@@ -22,14 +21,15 @@ BrowserApp::BrowserApp() {
 };
 
 BrowserWindow *BrowserApp::create_window() {
-  auto *win = new BrowserWindow((const Configuration &)configuration);
-  win->setWindowTitle("null-browser");
-  WindowActionRouter::instance().add_window(win);
-  win->show();
-  return win;
+  auto *window = new BrowserWindow((const Configuration &)configuration);
+  window->setWindowTitle("null-browser");
+  WindowActionRouter::instance().add_window(window);
+  window->show();
+  return window;
 }
 
 bool BrowserApp::eventFilter(QObject *target, QEvent *event) {
+  // TODO: Prevent key release and shortcut on mode too
   if (event->type() != QEvent::KeyPress)
     return false;
 

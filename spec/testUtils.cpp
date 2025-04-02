@@ -1,3 +1,4 @@
+#include "LuaRuntime.hpp"
 #include <QtTest/QtTest>
 #include <QtTest/qtestcase.h>
 #include <cstdio>
@@ -21,4 +22,15 @@ int run_all_tests() {
 
   get_qtest_registry().clear();
   return exit_code;
+}
+
+bool wait_for_lua_to_be_true(QString lua_code) {
+  return QTest::qWaitFor([&lua_code]() {
+    auto &lua = LuaRuntime::instance();
+    QSignalSpy evaluation_completed_spy(&lua,
+                                        &LuaRuntime::evaluation_completed);
+    lua.evaluate(lua_code);
+    evaluation_completed_spy.wait();
+    return evaluation_completed_spy.first().first().toBool();
+  });
 }

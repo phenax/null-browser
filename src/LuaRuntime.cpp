@@ -1,4 +1,5 @@
 #include "WindowActionRouter.hpp"
+#include "lua.h"
 #include <QtCore>
 #include <lua.hpp>
 extern "C" {
@@ -11,6 +12,7 @@ extern "C" {
 LuaRuntime::LuaRuntime() {
   state = luaL_newstate();
   luaL_openlibs(state);
+
   preserve_top(state, { init_web_lib(); })
 }
 
@@ -48,16 +50,10 @@ void LuaRuntime::evaluate(const QString &code) {
         emit evaluation_failed(value);
       } else {
         const QVariant value = get_lua_value(-1);
-        qDebug() << "result: " << value;
         emit evaluation_completed(value);
       }
     })
   });
-}
-
-QVariant LuaRuntime::evaluate_sync(const QString &code) {
-  luaL_dostring(state, code.toStdString().c_str());
-  return get_lua_value(-1); // TODO: error handling
 }
 
 void LuaRuntime::load_file(const QString &path) {
@@ -70,8 +66,58 @@ void LuaRuntime::load_file(const QString &path) {
   });
 }
 
+int LuaRuntime::lua_event_register(lua_State *state) {
+  EventHandlerRequest event;
+  auto top = lua_gettop(state);
+
+  lua_getfield(state, 1, "events");
+  auto event_names = LuaRuntime::lua_tostringlist(state);
+
+  event.event_names.swap(event_names);
+  if (event.event_names.size() == 0) {
+    lua_settop(state, top);
+    lua_pushboolean(state, false);
+    return 1;
+  }
+
+  lua_getfield(state, 1, "patterns");
+  auto patterns = LuaRuntime::lua_tostringlist(state);
+  event.patterns.swap(patterns);
+
+  lua_getfield(state, 1, "callback");
+  if (!lua_isfunction(state, -1)) {
+    lua_settop(state, top);
+    lua_pushboolean(state, false);
+    return 1;
+  }
+
+  const int function_ref = luaL_ref(state, LUA_REGISTRYINDEX);
+  event.function_ref = function_ref;
+  // TODO: Delete ref on clear callback
+  event.handler = [state, function_ref](BrowserEvent &event) {
+    preserve_top(state, {
+      lua_rawgeti(state, LUA_REGISTRYINDEX, function_ref);
+      event.lua_push(state);
+      lua_call(state, 1, 0);
+    })
+  };
+
+  WindowActionRouter::instance().register_event(event);
+
+  lua_settop(state, top);
+  lua_pushboolean(state, true);
+  return 1;
+}
+
 void LuaRuntime::init_web_lib() {
   // NOLINTBEGIN(modernize-avoid-c-arrays)
+
+  luaL_Reg internals[] = {
+      {"register_event", &LuaRuntime::lua_event_register},
+      {nullptr, nullptr},
+  };
+  luaL_newlib(state, internals);
+  lua_setglobal(state, internals_global_name);
 
   // web
   luaL_Reg web[] = {
