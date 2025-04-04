@@ -3,7 +3,7 @@
 #include <QtCore>
 #include <lua.hpp>
 extern "C" {
-#include <luv.h>
+#include <luv/luv.h>
 }
 
 #include "AsyncEventLoop.hpp"

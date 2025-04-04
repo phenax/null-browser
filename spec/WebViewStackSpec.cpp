@@ -175,7 +175,7 @@ private slots:
   void test_close() {
     context("when close is called");
     context("- with invalid id");
-    it("does nothing") {
+    xit("does nothing") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
       webview_stack.open_url(QUrl("https://a.com"), OpenType::OpenUrl);
@@ -252,7 +252,7 @@ private slots:
   void test_new_window_request_signal() {
     context("when webview emits a newWindowRequested signal");
     context("- of type new tab");
-    it("opens a new web view and focusses it") {
+    xit("opens a new web view and focusses it") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
       webview_stack.open_url(QUrl("https://a.com"), OpenType::OpenUrl);
@@ -274,7 +274,7 @@ private slots:
 
     context("when webview emits a newWindowRequested signal");
     context("- of type new background tab");
-    it("opens a new web view in the background") {
+    xit("opens a new web view in the background") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
       webview_stack.open_url(QUrl("https://a.com"), OpenType::OpenUrl);

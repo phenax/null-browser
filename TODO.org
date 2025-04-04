@@ -25,6 +25,7 @@
 - [ ] Open url sanitize/humanize (add protocol if missing, remove quotes, etc)
 - [ ] Bookmarking
 - [ ] Downloading
+- [ ] Get static linking for qt and libluv working
 
 ** Later
 - [ ] Support multiple modes for keymap.set: `web.keymap.set({'n','i'}, ...)`
