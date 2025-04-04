@@ -11,17 +11,21 @@ BrowserApp::BrowserApp() {
   lua.start_event_loop();
 
   // Router init
-  WindowActionRouter::instance().initialize();
+  auto &window_action_router = WindowActionRouter::instance();
+  window_action_router.initialize();
 
   // Global event filter
   qApp->installEventFilter(this);
 
   // NOTE: TMP
   lua.load_file("./config.lua");
+
+  connect(&window_action_router, &WindowActionRouter::new_window_requested,
+          this, [this](const QUrl &url) { create_window(url.toString()); });
 };
 
-BrowserWindow *BrowserApp::create_window() {
-  auto *window = new BrowserWindow((const Configuration &)configuration);
+BrowserWindow *BrowserApp::create_window(const QString &url) {
+  auto *window = new BrowserWindow((const Configuration &)configuration, url);
   window->setWindowTitle("null-browser");
   WindowActionRouter::instance().add_window(window);
   window->show();

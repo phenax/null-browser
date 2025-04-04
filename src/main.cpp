@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
 
   BrowserApp browser;
   browser.create_window();
-  browser.create_window();
+  // browser.create_window();
 
   return QApplication::exec();
 }

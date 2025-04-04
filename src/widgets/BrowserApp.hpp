@@ -8,7 +8,7 @@ class BrowserApp : public QObject {
 public:
   BrowserApp();
 
-  BrowserWindow *create_window();
+  BrowserWindow *create_window(const QString &url = "");
 
 protected:
   bool eventFilter(QObject *target, QEvent *event) override;

@@ -47,6 +47,7 @@ public:
 
 signals:
   void current_webview_changed(int index);
+  void new_window_requested(const QUrl &url);
 
 protected:
   void set_current_url(const QUrl &url);

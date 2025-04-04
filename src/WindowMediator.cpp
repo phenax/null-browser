@@ -18,6 +18,10 @@ WindowMediator::WindowMediator(WebViewStack *webview_stack)
           &WebViewStack::close);
   connect(this, &WindowMediator::webview_selected, webview_stack,
           &WebViewStack::focus_webview);
+
+  // Delegate signal
+  connect(webview_stack, &WebViewStack::new_window_requested, this,
+          &WindowMediator::new_window_requested);
 }
 
 WindowMediator::~WindowMediator() {

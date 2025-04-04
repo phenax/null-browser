@@ -69,6 +69,7 @@ QList<WebViewData> WebViewStack::get_webview_list() {
 
 void WebViewStack::on_new_webview_request(
     const QWebEngineNewWindowRequest &request) {
+  qDebug() << request.destination();
   switch (request.destination()) {
   case QWebEngineNewWindowRequest::InNewTab:
     create_new_webview(request.requestedUrl(), true);
@@ -78,8 +79,7 @@ void WebViewStack::on_new_webview_request(
     break;
   case QWebEngineNewWindowRequest::InNewWindow:
   case QWebEngineNewWindowRequest::InNewDialog:
-    // TODO: Impl
-    create_new_webview(request.requestedUrl(), true);
+    emit new_window_requested(request.requestedUrl());
     break;
   }
 }

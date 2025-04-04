@@ -5,6 +5,7 @@
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
+#include "WindowMediator.hpp"
 #include "keymap/KeymapEvaluator.hpp"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
@@ -91,6 +92,8 @@ void WindowActionRouter::add_window(BrowserWindow *window) {
   window->set_id(win_id);
   connect(window, &BrowserWindow::closed, this,
           [this, win_id]() { window_map.erase(win_id); });
+  connect(window->mediator(), &WindowMediator::new_window_requested, this,
+          &WindowActionRouter::new_window_requested);
 }
 
 const WindowMap &WindowActionRouter::windows() { return window_map; }

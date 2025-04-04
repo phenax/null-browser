@@ -23,6 +23,7 @@ signals:
   void url_opened(QString url, OpenType open_type, WebViewId webview_id);
   void webview_closed(WebViewId webview_id);
   void webview_selected(WebViewId webview_id);
+  void new_window_requested(const QUrl &url);
 
 private:
   WebViewStack *webview_stack;
