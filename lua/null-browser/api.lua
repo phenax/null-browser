@@ -1,4 +1,4 @@
-print("FOOOOOOOOOOBARRRRRR")
+print("api loaded")
 
 local function shallow_copy(t)
   local t2 = {}
@@ -6,6 +6,8 @@ local function shallow_copy(t)
   return t2
 end
 
+-- web.keymap = web.keymap or {}
+-- web.tab = web.tab or {}
 web.event = web.event or {}
 
 web.event.add_listener = function(events, opts)

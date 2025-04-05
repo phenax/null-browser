@@ -14,10 +14,10 @@
 - [X] New window on new window request
 - [X] Socket for opening window in current session (lua eval)
 - [X] Config loading and lua path
-- [ ] Events/autocommands
-- [ ] Url changed event
-- [ ] History storage
-- [ ] History completion
+- [X] Events/autocommands
+- [X] Url changed event
+- [X] History storage
+- [X] History completion
 - [ ] Log stdout, errors and results from lua somewhere
 - [ ] Downloading
 

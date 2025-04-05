@@ -115,7 +115,7 @@ int LuaRuntime::lua_event_register(lua_State *state) {
     preserve_top(state, {
       lua_rawgeti(state, LUA_REGISTRYINDEX, function_ref);
       event->lua_push(state);
-      lua_call(state, 1, 0);
+      lua_pcall(state, 1, 0, 0);
     })
   };
 

@@ -6,7 +6,7 @@ local web = web
 local uv = uv
 
 local function trim(s)
-  local res, _ = string.gsub(s, "^%s*(.-)%s*$", "%1")
+  local res, _ = string.gsub(s, '^%s*(.-)%s*$', '%1')
   return res
 end
 
@@ -19,58 +19,26 @@ local function get_current_tab_index()
   end
 end
 
-local Dmenu = {}
-function Dmenu.select(list, opts, callback)
-  print('DEMNU CLALED')
-  local selection = nil
-  local stdin = uv.new_pipe();
-  local stdout = uv.new_pipe();
-  local args = { '-p', opts.prompt or '>', '-it', opts.input or '' }
-  uv.spawn('dmenu', { args = args, stdio = { stdin, stdout, nil } }, function(code)
-    uv.close(stdout)
-    uv.close(stdin)
-    if code == 0 then
-      callback(nil, selection)
-    else
-      callback('Exit with status code: ' .. code, selection)
-    end
-  end)
-
-  uv.read_start(stdout, function(_, data)
-    if data then selection = data end
-  end)
-
-  for _, value in ipairs(list) do
-    uv.write(stdin, value .. '\n')
-  end
-  uv.shutdown(stdin)
-end
-
-local urls = {
-  'https://excalidraw.com',
-  'https://lite.duckduckgo.com',
-  'https://ediblemonad.dev',
-  'https://google.com',
-  'https://github.com/trending',
-}
+local dmenu = require 'null-browser.extras.dmenu'
+local history = require 'null-browser.extras.history'
 
 web.event.add_listener('UrlChanged', {
   callback = function(opts)
-    print("URL CHANGE YEAH");
-    print(opts.url);
+    print('url change', opts.url);
+    history.add(opts.url)
   end
 })
 
 -- Open in new tab
 web.keymap.set('n', 'o', function()
-  Dmenu.select(urls, { prompt = 'Open tab:' }, function(err, result)
+  dmenu.select(history.list(), { prompt = 'Open tab:' }, function(err, result)
     if err or not result then return end
     web.tabs.new(trim(result))
   end)
 end)
 -- Open in current tab
 web.keymap.set('n', '<s-o>', function()
-  Dmenu.select(urls, { prompt = 'Open:' }, function(err, result)
+  dmenu.select(history.list(), { prompt = 'Open:' }, function(err, result)
     if err or not result then return end
     web.tabs.set_url(trim(result))
   end)
@@ -80,7 +48,7 @@ web.keymap.set('n', '<c-l>', function()
   local tabs = web.tabs.list()
   local tab = tabs[get_current_tab_index()];
   if tab == nil then return end
-  Dmenu.select(urls, { prompt = 'Set url:', input = tab.url }, function(err, result)
+  dmenu.select(history.list(), { prompt = 'Set url:', input = tab.url }, function(err, result)
     if err or not result then return end
     web.tabs.set_url(trim(result))
   end)
@@ -88,7 +56,7 @@ end)
 
 -- Run lua code
 web.keymap.set('n', 'q', function()
-  Dmenu.select({}, { prompt = 'Lua:' }, function(err, result)
+  dmenu.input({ prompt = 'Lua:' }, function(err, result)
     if err or not result then return end
     local run, run_err = load(result)
     if run_err then print(run_err) end
@@ -110,9 +78,9 @@ web.keymap.set('n', 'b', function()
   for index, tab in ipairs(web.tabs.list()) do
     table.insert(tabs_list, index .. ': ' .. tab.title .. ' (' .. tab.url .. ')')
   end
-  Dmenu.select(tabs_list, { prompt = 'Tab:' }, function(err, result)
+  dmenu.select(tabs_list, { prompt = 'Tab:' }, function(err, result)
     if err or not result then return end
-    local index_str, _ = trim(result):gsub("%s*:.*$", "")
+    local index_str, _ = trim(result):gsub('%s*:.*$', '')
     local index = tonumber(index_str)
     if tabs[index] then
       web.tabs.select(tabs[index].id)
