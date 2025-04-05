@@ -54,6 +54,13 @@ local urls = {
   'https://github.com/trending',
 }
 
+web.event.add_listener('UrlChanged', {
+  callback = function(opts)
+    print("URL CHANGE YEAH");
+    print(opts.url);
+  end
+})
+
 -- Open in new tab
 web.keymap.set('n', 'o', function()
   Dmenu.select(urls, { prompt = 'Open tab:' }, function(err, result)

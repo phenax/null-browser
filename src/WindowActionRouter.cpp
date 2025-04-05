@@ -10,19 +10,20 @@
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
-void WindowActionRouter::dispatch_event(BrowserEvent &event) {
+void WindowActionRouter::dispatch_event(BrowserEvent *event) {
   auto &runtime = LuaRuntime::instance();
-  runtime.queue_task([this, &event]() {
-    std::unordered_map<std::string, std::vector<EventHandlerRequest>> event_map;
+
+  runtime.queue_task([this, event]() {
+    std::unordered_map<QString, std::vector<EventHandlerRequest>> event_map;
     {
       const std::lock_guard<std::mutex> lock(events_mutex);
       event_map = events;
     }
 
-    if (!event_map.contains(event.kind))
+    if (!event_map.contains(event->kind))
       return;
 
-    for (auto &event_handler : event_map.at(event.kind)) {
+    for (auto &event_handler : event_map.at(event->kind)) {
       // TODO: Pattern filter
       event_handler.handler(event);
     }
@@ -39,12 +40,6 @@ void WindowActionRouter::register_event(const EventHandlerRequest &event) {
 }
 
 void WindowActionRouter::initialize() {
-  UrlChangedEvent url_changed_event("https://googa.com", 2, 1);
-  WindowActionRouter::instance().dispatch_event(url_changed_event);
-
-  UrlChangedEvent url_changed_event_1("https://duckduckgo.com", 5, 1);
-  WindowActionRouter::instance().dispatch_event(url_changed_event_1);
-
   auto &runtime = LuaRuntime::instance();
 
   connect(&runtime, &LuaRuntime::keymap_added, this,

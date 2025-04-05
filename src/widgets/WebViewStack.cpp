@@ -4,8 +4,11 @@
 #include <QWebEngineProfile>
 #include <cstdint>
 #include <cstdlib>
+#include <memory>
 #include <vector>
 
+#include "WindowActionRouter.hpp"
+#include "events.hpp"
 #include "widgets/WebViewStack.hpp"
 
 static WebViewId next_webview_id = 1;
@@ -49,6 +52,12 @@ WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
 
   connect(webview->page(), &QWebEnginePage::newWindowRequested, this,
           &WebViewStack::on_new_webview_request);
+  connect(webview->page(), &QWebEnginePage::urlChanged, this,
+          [webview](const QUrl &url) {
+            // TODO: Add window id
+            WindowActionRouter::instance().dispatch_event(
+                new UrlChangedEvent(url.toString(), webview->get_id(), 0));
+          });
 
   if (focus)
     focus_webview(webview->get_id());

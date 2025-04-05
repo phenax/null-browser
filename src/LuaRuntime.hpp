@@ -91,8 +91,8 @@ public:
     lua_settop(state, top);
   }
 
-  static std::vector<std::string> lua_tostringlist(lua_State *state) {
-    std::vector<std::string> values;
+  static std::vector<QString> lua_tostringlist(lua_State *state) {
+    std::vector<QString> values;
     if (!lua_istable(state, -1))
       return values;
 

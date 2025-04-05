@@ -44,8 +44,6 @@ int main(int argc, char *argv[]) {
 
     auto urls = parser->positionalArguments();
     auto lua_expr = parser->value("expr");
-    qDebug() << urls;
-    qDebug() << lua_expr;
 
     if (!urls.isEmpty() || lua_expr.isEmpty())
       instance_manager.write_open_urls_to_socket(urls);

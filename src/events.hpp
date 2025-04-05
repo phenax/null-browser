@@ -14,10 +14,10 @@
 
 class BrowserEvent {
 public:
-  std::string kind = "-";
+  QString kind = "-";
   virtual ~BrowserEvent() = default;
 
-  virtual void lua_push(lua_State *state) { lua_newtable(state); };
+  virtual void lua_push(lua_State *state) const { lua_newtable(state); };
 };
 
 class UrlChangedEvent : public BrowserEvent {
@@ -31,7 +31,7 @@ public:
     kind = "UrlChanged";
   }
 
-  void lua_push(lua_State *state) override {
+  void lua_push(lua_State *state) const override {
     lua_newtable(state);
     SET_FIELD("tab", integer, webview_id)
     SET_FIELD("win", integer, win_id)
@@ -40,8 +40,8 @@ public:
 };
 
 struct EventHandlerRequest {
-  std::vector<std::string> event_names;
-  std::vector<std::string> patterns;
-  std::function<void(BrowserEvent &)> handler;
+  std::vector<QString> event_names;
+  std::vector<QString> patterns;
+  std::function<void(BrowserEvent *)> handler;
   int function_ref;
 };

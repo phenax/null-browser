@@ -111,10 +111,10 @@ int LuaRuntime::lua_event_register(lua_State *state) {
   const int function_ref = luaL_ref(state, LUA_REGISTRYINDEX);
   event.function_ref = function_ref;
   // TODO: Delete ref on clear callback
-  event.handler = [state, function_ref](BrowserEvent &event) {
+  event.handler = [state, function_ref](BrowserEvent *event) {
     preserve_top(state, {
       lua_rawgeti(state, LUA_REGISTRYINDEX, function_ref);
-      event.lua_push(state);
+      event->lua_push(state);
       lua_call(state, 1, 0);
     })
   };

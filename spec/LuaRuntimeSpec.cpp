@@ -10,7 +10,7 @@ class TestEvent1 : public BrowserEvent {
 public:
   int num;
   TestEvent1(int num) : num(num) { kind = "TestEvent1"; }
-  void lua_push(lua_State *state) override {
+  void lua_push(lua_State *state) const override {
     lua_newtable(state);
     SET_FIELD("test_data", integer, num);
   }
@@ -243,7 +243,7 @@ private slots:
       evaluation_completed_spy.wait();
 
       TestEvent1 event(42);
-      WindowActionRouter::instance().dispatch_event(event);
+      WindowActionRouter::instance().dispatch_event(&event);
 
       QVERIFY(wait_for_lua_to_be_true("return _G.event1_called"));
       QVERIFY(wait_for_lua_to_be_true(

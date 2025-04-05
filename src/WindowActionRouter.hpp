@@ -37,7 +37,7 @@ public:
   WebViewId fetch_current_tab_id(WindowId win_id = 0);
   QList<WebViewData> fetch_webview_data_list(WindowId win_id = 0);
 
-  void dispatch_event(BrowserEvent &event);
+  void dispatch_event(BrowserEvent *event);
   void register_event(const EventHandlerRequest &event);
 
 protected:
@@ -56,5 +56,5 @@ private:
 
   // TODO: Split event handling to its own class
   std::mutex events_mutex;
-  std::unordered_map<std::string, std::vector<EventHandlerRequest>> events;
+  std::unordered_map<QString, std::vector<EventHandlerRequest>> events;
 };
