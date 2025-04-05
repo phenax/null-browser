@@ -19,9 +19,8 @@ WebViewStack::WebViewStack(const Configuration *configuration, QWebEngineProfile
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setStackingMode(QStackedLayout::StackOne);
 
-  connect(layout, &QStackedLayout::currentChanged, this, &WebViewStack::current_webview_changed);
-
-  create_new_webview(configuration->new_tab_url, true);
+  connect(layout, &QStackedLayout::currentChanged, this,
+          &WebViewStack::current_webview_title_changed);
 }
 
 void WebViewStack::open_url(const QUrl &url, OpenType open_type, WebViewId webview_id) {
@@ -54,11 +53,15 @@ WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
     WindowActionRouter::instance().dispatch_event(
         new UrlChangedEvent(url.toString(), webview->get_id(), 0));
   });
+  connect(webview->page(), &QWebEnginePage::titleChanged, this,
+          [this](const QString & /* title */) {
+            emit current_webview_title_changed(layout->currentIndex());
+          });
 
   if (focus)
     focus_webview(webview->get_id());
 
-  emit current_webview_changed(layout->currentIndex());
+  emit current_webview_title_changed(layout->currentIndex());
 
   return webview;
 }

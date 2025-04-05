@@ -18,28 +18,36 @@
 - [X] Url changed event
 - [X] History storage
 - [X] History completion
+- [ ] Close window if last tab closed
+- [ ] Switch to __internals
+- [ ] Tests for api
 - [ ] Log stdout, errors and results from lua somewhere
 - [ ] Downloading
 
 ** Next
+- [ ] Search text in page
+- [ ] Dev tools
+- [ ] Fullscreen
+- [ ] Zoom in/out
+- [ ] Permission requests handling/persisting
+- [ ] window.opener controls
+- [ ] Notifications
 - [ ] Conflict in keymap (keymap already exists)
-- [ ] Open url sanitize/humanize (add protocol if missing, remove quotes, etc)
-- [ ] Bookmarking
-- [ ] Get static linking for qt and libluv working
+- [ ] Allow pattern filtering for event listeners
+- [ ] Allow tab_id, win_id filtering for event listeners
 - [ ] Handle resource cleanup + signal disconnecting
+- [ ] Open url sanitize/humanize (add protocol if missing, remove quotes, etc)
+- [ ] static linking for qt
+- [ ] static linking for libluv
+- [ ] Bookmarking
 
 ** Later
 - [ ] Support multiple modes for keymap.set: `web.keymap.set({'n','i'}, ...)`
-- [ ] Search text in page
-- [ ] Notifications
-- [ ] Dev tools
-- [ ] Permission requests handling
-- [ ] Pipe page contents to external program
-- [ ] `web.inspect`
-- [ ] Update window title on current webview title change
+- [ ] Read page contents via lua
+- [ ] `web.to_string`: like vim.inspect
+- [X] Update window title on current webview title change
 
 ** Later later
-- [ ] Fullscreen
 - [ ] Custom file picker
 - [ ] remote debugging with cdp (spider-repl)
 

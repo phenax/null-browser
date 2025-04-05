@@ -4,7 +4,6 @@
 #include <QtCore>
 
 #include "Configuration.hpp"
-#include "LuaRuntime.hpp"
 #include "WindowMediator.hpp"
 #include "keymap/KeymapEvaluator.hpp"
 #include "widgets/BrowserWindow.hpp"
@@ -22,9 +21,19 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringLi
   centralWidget()->setLayout(layout);
 
   // Web engine
-  auto *web_view_stack = new WebViewStack(&configuration, new QWebEngineProfile("null-browser"));
-  layout->addWidget(web_view_stack);
+  auto *webview_stack = new WebViewStack(&configuration, new QWebEngineProfile("null-browser"));
+  layout->addWidget(webview_stack);
 
+  // Open webviews for given urls
+  if (urls.isEmpty()) {
+    webview_stack->open_url(configuration.new_tab_url.toString(), OpenType::OpenUrlInTab);
+  } else {
+    for (const auto &url : urls) {
+      webview_stack->open_url(url, OpenType::OpenUrlInTab);
+    }
+  }
+
+  // Default keymaps
   auto &keymap_evaluator = KeymapEvaluator::instance();
 
   // TODO: remove
@@ -36,20 +45,14 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringLi
   });
   keymap_evaluator.add_keymap(KeyMode::Normal, "<c-t>a", []() { qDebug() << "Stuff"; });
 
-  win_mediator = new WindowMediator(web_view_stack);
+  win_mediator = new WindowMediator(webview_stack);
 
-  connect(web_view_stack, &WebViewStack::current_webview_changed, this, [this](int index) {
+  // Update window title when webview changes
+  connect(webview_stack, &WebViewStack::current_webview_title_changed, this, [this](int index) {
     auto webviews = win_mediator->get_webview_list();
     if (index >= 0 && index < webviews.count()) {
       const auto &webview = webviews.at(index);
       setWindowTitle(webview.title);
-    }
-  });
-
-  auto &lua = LuaRuntime::instance();
-  lua.queue_task([this, urls]() {
-    for (const auto &url : urls) {
-      emit win_mediator->url_opened(url, OpenType::OpenUrlInTab, 0);
     }
   });
 }

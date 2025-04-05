@@ -45,7 +45,7 @@ public:
   uint32_t current_webview_index();
 
 signals:
-  void current_webview_changed(int index);
+  void current_webview_title_changed(int index);
   void new_window_requested(const QUrl &url);
 
 protected:

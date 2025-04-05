@@ -24,7 +24,6 @@ public:
 
 signals:
   void closed();
-  // void new_window_requested(const QUrl &url);
 
 private:
   WindowMediator *win_mediator;
