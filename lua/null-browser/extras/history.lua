@@ -1,5 +1,5 @@
 local history = {
-  path = './history',
+  path = '/tmp/.null-browser-history', -- TODO: Use proper path
   max_entires = 200,
 }
 
