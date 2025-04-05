@@ -2,7 +2,6 @@
 
 #include "InstanceManager.hpp"
 #include "LuaRuntime.hpp"
-#include "WindowActionRouter.hpp"
 #include "widgets/BrowserApp.hpp"
 
 QCommandLineParser *create_cli_parser() {
@@ -35,13 +34,9 @@ int main(int argc, char *argv[]) {
     QObject::connect(&instance_manager, &InstanceManager::lua_eval_requested,
                      &lua, &LuaRuntime::evaluate);
     QObject::connect(&instance_manager, &InstanceManager::urls_open_requested,
-                     &lua, [browser](const QStringList &urls) {
-                       qDebug() << urls;
-                       browser->create_window(urls);
-                     });
+                     browser, &BrowserApp::create_window);
   } else {
     qInfo() << "Using current instance";
-
     auto urls = parser->positionalArguments();
     auto lua_expr = parser->value("expr");
 

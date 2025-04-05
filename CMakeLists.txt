@@ -17,7 +17,8 @@ set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 
 # TODO: Please fix this. This sucks
-add_compile_definitions(PROJECT_LUA_PATH="./lua/?.lua")
+# Path to installed lua/ directory
+add_compile_definitions(PROJECT_LUA_PATH="${CMAKE_CURRENT_LIST_DIR}/lua/?.lua")
 
 if(DEFINED ENV{RELEASE})
   set(CMAKE_BUILD_TYPE Release)

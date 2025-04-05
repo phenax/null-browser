@@ -4,11 +4,8 @@
 #include <QtCore>
 #include <cstdint>
 #include <functional>
-#include <mutex>
-#include <string>
-#include <unordered_map>
 
-#include "events.hpp"
+#include "EventQueue.hpp"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -37,8 +34,8 @@ public:
   WebViewId fetch_current_tab_id(WindowId win_id = 0);
   QList<WebViewData> fetch_webview_data_list(WindowId win_id = 0);
 
-  void dispatch_event(BrowserEvent *event);
-  void register_event(const EventHandlerRequest &event);
+  DELEGATE((&event_queue), dispatch_event, dispatch_event);
+  DELEGATE((&event_queue), register_event, register_event)
 
 protected:
   WindowActionRouter() = default;
@@ -54,7 +51,5 @@ private:
   uint64_t last_id = 1;
   Configuration *configuration;
 
-  // TODO: Split event handling to its own class
-  std::mutex events_mutex;
-  std::unordered_map<QString, std::vector<EventHandlerRequest>> events;
+  EventQueue event_queue;
 };

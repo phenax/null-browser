@@ -7,7 +7,9 @@ path="$2"
 
 [ -z "$class_name" ] && exit 1
 
-if ! [ -z "$path" ]; then
+if [ -z "$path" ]; then
+  path="$path/"
+else
   mkdir -p "./src/$path"
 fi
 
@@ -15,17 +17,15 @@ fi
 echo "#pragma once
 
 class $class_name {
-  Q_OBJECT
-
   public:
   $class_name();
 };
-" > "./src/$path/$class_name.hpp"
+" > "./src/$path$class_name.hpp"
 
 # Implementation
 echo "
 
-#include \"$path/$class_name.hpp\"
+#include \"$path$class_name.hpp\"
 
 $class_name::$class_name() {}
-" > "./src/$path/$class_name.cpp"
+" > "./src/$path$class_name.cpp"
