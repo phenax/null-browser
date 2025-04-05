@@ -32,8 +32,7 @@ private slots:
     context("when given an expression returning a number");
     it("emits evaluation_completed with the result") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate("return 20 + 1 * 5");
 
@@ -46,8 +45,7 @@ private slots:
     context("when given an expression returning a string");
     it("emits evaluation_completed with the result") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate("local name = 'world'; return 'hello ' .. name");
 
@@ -60,8 +58,7 @@ private slots:
     context("when given an expression returning a boolean");
     it("emits evaluation_completed with the result") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate("local num = 5; return 5 == num");
 
@@ -74,8 +71,7 @@ private slots:
     context("when given an expression returning nil");
     it("emits evaluation_completed with the result") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate("return nil");
 
@@ -95,8 +91,7 @@ private slots:
       lua.queue_task([&was_task_called]() { was_task_called = true; });
       QVERIFY(NOT was_task_called);
 
-      QVERIFY(
-          QTest::qWaitFor([&was_task_called]() { return was_task_called; }));
+      QVERIFY(QTest::qWaitFor([&was_task_called]() { return was_task_called; }));
     }
   }
 
@@ -104,8 +99,7 @@ private slots:
     context("when a 1 second timer is set");
     it("calls callback after 1 second") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate(R"(
         _G.was_timer_called = false;
@@ -124,8 +118,7 @@ private slots:
   void test_sanity_check_uv_spawn() {
     it("calls exit callback when process exists") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate(R"(
         _G.spawn_exit_code = -1;
@@ -143,8 +136,7 @@ private slots:
     context("when events, patterns and callback are specified correctly");
     it("returns true and registers event") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate(R"(
         return __internals.register_event({
@@ -163,8 +155,7 @@ private slots:
     context("when patterns is not passed");
     it("returns true and registers event") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate(R"(
         return __internals.register_event({
@@ -182,8 +173,7 @@ private slots:
     context("when events list is not passed");
     it("returns false and doesnt register event") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate(R"(
         return __internals.register_event({
@@ -201,8 +191,7 @@ private slots:
     context("when callback is not passed");
     it("returns false and doesnt register event") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate(R"(
         return __internals.register_event({
@@ -222,8 +211,7 @@ private slots:
     context("when dispatching a registered event (without pattern)");
     it("calls the registered event handler") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua,
-                                          &LuaRuntime::evaluation_completed);
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
       lua.evaluate(R"(
         _G.event1_called = false;
         _G.event1_called_with = nil;
@@ -246,8 +234,7 @@ private slots:
       WindowActionRouter::instance().dispatch_event(&event);
 
       QVERIFY(wait_for_lua_to_be_true("return _G.event1_called"));
-      QVERIFY(wait_for_lua_to_be_true(
-          "return _G.event1_called_with.test_data == 42"));
+      QVERIFY(wait_for_lua_to_be_true("return _G.event1_called_with.test_data == 42"));
       QVERIFY(wait_for_lua_to_be_true("return not _G.event2_called"));
     }
   }

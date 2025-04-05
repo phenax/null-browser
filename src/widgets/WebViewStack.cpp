@@ -4,7 +4,6 @@
 #include <QWebEngineProfile>
 #include <cstdint>
 #include <cstdlib>
-#include <memory>
 #include <vector>
 
 #include "WindowActionRouter.hpp"
@@ -13,21 +12,19 @@
 
 static WebViewId next_webview_id = 1;
 
-WebViewStack::WebViewStack(const Configuration *configuration,
-                           QWebEngineProfile *profile, QWidget *parent)
+WebViewStack::WebViewStack(const Configuration *configuration, QWebEngineProfile *profile,
+                           QWidget *parent)
     : QWidget(parent), configuration(configuration), profile(profile) {
   layout = new QStackedLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setStackingMode(QStackedLayout::StackOne);
 
-  connect(layout, &QStackedLayout::currentChanged, this,
-          &WebViewStack::current_webview_changed);
+  connect(layout, &QStackedLayout::currentChanged, this, &WebViewStack::current_webview_changed);
 
   create_new_webview(configuration->new_tab_url, true);
 }
 
-void WebViewStack::open_url(const QUrl &url, OpenType open_type,
-                            WebViewId webview_id) {
+void WebViewStack::open_url(const QUrl &url, OpenType open_type, WebViewId webview_id) {
   switch (open_type) {
   case OpenType::OpenUrl:
     set_webview_url(url, webview_id);
@@ -52,12 +49,11 @@ WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
 
   connect(webview->page(), &QWebEnginePage::newWindowRequested, this,
           &WebViewStack::on_new_webview_request);
-  connect(webview->page(), &QWebEnginePage::urlChanged, this,
-          [webview](const QUrl &url) {
-            // TODO: Add window id
-            WindowActionRouter::instance().dispatch_event(
-                new UrlChangedEvent(url.toString(), webview->get_id(), 0));
-          });
+  connect(webview->page(), &QWebEnginePage::urlChanged, this, [webview](const QUrl &url) {
+    // TODO: Add window id
+    WindowActionRouter::instance().dispatch_event(
+        new UrlChangedEvent(url.toString(), webview->get_id(), 0));
+  });
 
   if (focus)
     focus_webview(webview->get_id());
@@ -70,14 +66,12 @@ WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
 QList<WebViewData> WebViewStack::get_webview_list() {
   QList<WebViewData> urls;
   for (auto &view : webview_list)
-    urls.append(WebViewData{.id = view->get_id(),
-                            .url = view->url().toString(),
-                            .title = view->title()});
+    urls.append(
+        WebViewData{.id = view->get_id(), .url = view->url().toString(), .title = view->title()});
   return urls;
 }
 
-void WebViewStack::on_new_webview_request(
-    const QWebEngineNewWindowRequest &request) {
+void WebViewStack::on_new_webview_request(const QWebEngineNewWindowRequest &request) {
   qDebug() << request.destination();
   switch (request.destination()) {
   case QWebEngineNewWindowRequest::InNewTab:
@@ -135,8 +129,7 @@ void WebViewStack::close(WebViewId webview_id) {
   }
 }
 
-void WebViewStack::webview_history_back(WebViewId webview_id,
-                                        qsizetype history_index) {
+void WebViewStack::webview_history_back(WebViewId webview_id, qsizetype history_index) {
   auto *webview = get_webview(webview_id);
   if (webview == nullptr) {
     qDebug() << "Invalid webview id" << webview_id;
@@ -150,8 +143,7 @@ void WebViewStack::webview_history_back(WebViewId webview_id,
       history->back();
 }
 
-void WebViewStack::webview_history_forward(WebViewId webview_id,
-                                           qsizetype history_index) {
+void WebViewStack::webview_history_forward(WebViewId webview_id, qsizetype history_index) {
   auto *webview = get_webview(webview_id);
   if (webview == nullptr) {
     qDebug() << "Invalid webview id" << webview_id;
@@ -184,9 +176,7 @@ WebView *WebViewStack::current_webview() {
   return webview_list.at(current_webview_index());
 }
 
-uint32_t WebViewStack::current_webview_index() {
-  return layout->currentIndex();
-}
+uint32_t WebViewStack::current_webview_index() { return layout->currentIndex(); }
 
 uint32_t WebViewStack::count() { return webview_list.length(); }
 
@@ -203,9 +193,7 @@ WebView *WebViewStack::get_webview(WebViewId webview_id) {
   return webview_list.at(webview_index);
 }
 
-bool WebViewStack::has_webview(WebViewId webview_id) {
-  return get_webview(webview_id) != nullptr;
-}
+bool WebViewStack::has_webview(WebViewId webview_id) { return get_webview(webview_id) != nullptr; }
 
 QUrl WebViewStack::current_url() {
   auto *webview = current_webview();

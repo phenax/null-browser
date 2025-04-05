@@ -5,8 +5,8 @@
 
 #include "keymap/KeySeqParser.hpp"
 
-bool operator==(const KeyChord chord1, const KeyChord chord2) {
-  return chord1.mod == chord2.mod && chord1.key == chord2.key;
+bool KeyChord::operator==(const KeyChord &chord2) const {
+  return this->mod == chord2.mod && this->key == chord2.key;
 }
 
 QList<KeyChord> KeySeqParser::parse(QString key_sequence) {

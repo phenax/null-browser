@@ -10,8 +10,7 @@
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
-BrowserWindow::BrowserWindow(const Configuration &configuration,
-                             const QStringList &urls)
+BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringList &urls)
     : configuration(configuration) {
   setCentralWidget(new QWidget());
 
@@ -23,8 +22,7 @@ BrowserWindow::BrowserWindow(const Configuration &configuration,
   centralWidget()->setLayout(layout);
 
   // Web engine
-  auto *web_view_stack =
-      new WebViewStack(&configuration, new QWebEngineProfile("null-browser"));
+  auto *web_view_stack = new WebViewStack(&configuration, new QWebEngineProfile("null-browser"));
   layout->addWidget(web_view_stack);
 
   auto &keymap_evaluator = KeymapEvaluator::instance();
@@ -36,19 +34,17 @@ BrowserWindow::BrowserWindow(const Configuration &configuration,
   keymap_evaluator.add_keymap(KeyMode::Insert, "<esc>", [&keymap_evaluator]() {
     keymap_evaluator.set_current_mode(KeyMode::Normal);
   });
-  keymap_evaluator.add_keymap(KeyMode::Normal, "<c-t>a",
-                              []() { qDebug() << "Stuff"; });
+  keymap_evaluator.add_keymap(KeyMode::Normal, "<c-t>a", []() { qDebug() << "Stuff"; });
 
   win_mediator = new WindowMediator(web_view_stack);
 
-  connect(web_view_stack, &WebViewStack::current_webview_changed, this,
-          [this](int index) {
-            auto webviews = win_mediator->get_webview_list();
-            if (index >= 0 && index < webviews.count()) {
-              const auto &webview = webviews.at(index);
-              setWindowTitle(webview.title);
-            }
-          });
+  connect(web_view_stack, &WebViewStack::current_webview_changed, this, [this](int index) {
+    auto webviews = win_mediator->get_webview_list();
+    if (index >= 0 && index < webviews.count()) {
+      const auto &webview = webviews.at(index);
+      setWindowTitle(webview.title);
+    }
+  });
 
   auto &lua = LuaRuntime::instance();
   lua.queue_task([this, urls]() {
@@ -62,8 +58,7 @@ void BrowserWindow::closeEvent(QCloseEvent * /*event*/) { emit closed(); }
 
 bool BrowserWindow::on_window_key_event(QKeyEvent *event) {
   auto &keymap_evaluator = KeymapEvaluator::instance();
-  const bool should_skip =
-      keymap_evaluator.evaluate(event->modifiers(), (Qt::Key)event->key());
+  const bool should_skip = keymap_evaluator.evaluate(event->modifiers(), (Qt::Key)event->key());
 
   return should_skip;
 }

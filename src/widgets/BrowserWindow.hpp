@@ -12,8 +12,7 @@ class BrowserWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  BrowserWindow(const Configuration &configuration,
-                const QStringList &urls = {});
+  BrowserWindow(const Configuration &configuration, const QStringList &urls = {});
 
   DEFINE_GETTER(mediator, win_mediator)
   DEFINE_GETTER(get_id, win_id)

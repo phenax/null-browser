@@ -14,7 +14,7 @@ enum OpenType : uint8_t {
   OpenUrl,
   OpenUrlInTab,
   OpenUrlInBgTab,
-  OpenUrlInWindow
+  OpenUrlInWindow,
 };
 
 struct WebViewData {
@@ -28,8 +28,7 @@ class WebViewStack : public QWidget {
 
 public:
   WebViewStack(const Configuration *configuration,
-               QWebEngineProfile *profile = new QWebEngineProfile,
-               QWidget *parent = nullptr);
+               QWebEngineProfile *profile = new QWebEngineProfile, QWidget *parent = nullptr);
 
   QList<WebViewData> get_webview_list();
   WebView *current_webview();
@@ -56,8 +55,7 @@ protected:
   WebView *get_webview(WebViewId webview_id);
 
 public slots:
-  void open_url(const QUrl &url, OpenType open_type = OpenType::OpenUrl,
-                WebViewId webview_id = 0);
+  void open_url(const QUrl &url, OpenType open_type = OpenType::OpenUrl, WebViewId webview_id = 0);
   void webview_history_back(WebViewId webview_id, qsizetype history_index);
   void webview_history_forward(WebViewId webview_id, qsizetype history_index);
   void close(WebViewId webview_id);

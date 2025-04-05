@@ -7,21 +7,18 @@
 
 // TODO: Clear mapping after some time
 
-void KeymapEvaluator::add_keymap(KeyMode mode, const QString &key,
-                                 KeyAction action) {
+void KeymapEvaluator::add_keymap(KeyMode mode, const QString &key, KeyAction action) {
   if (!modal_keys.contains(mode))
     modal_keys.insert(mode, {});
 
   qDebug() << "    " << mode << key;
 
   auto key_seq = key_seq_parser.parse(key);
-  modal_keys[mode].append(
-      KeyMap{.key_sequence = key_seq, .action = std::move(action)});
+  modal_keys[mode].append(KeyMap{.key_sequence = key_seq, .action = std::move(action)});
 }
 
 bool KeymapEvaluator::evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key) {
-  if (key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Meta ||
-      key == Qt::Key_Alt)
+  if (key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Meta || key == Qt::Key_Alt)
     return true;
 
   const auto *keymaps = current_mode_keys();
@@ -30,8 +27,7 @@ bool KeymapEvaluator::evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key) {
   active_key_sequence.append(KeyChord{.mod = modifiers, .key = key});
 
   for (const auto &keymap : *keymaps) {
-    auto match_type = KeySeqParser::key_sequence_match(keymap.key_sequence,
-                                                       active_key_sequence);
+    auto match_type = KeySeqParser::key_sequence_match(keymap.key_sequence, active_key_sequence);
 
     if (match_type == KeyMatchType::Match) {
       qDebug() << "CALLED" << key;
@@ -53,9 +49,7 @@ bool KeymapEvaluator::evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key) {
   return true;
 }
 
-bool KeymapEvaluator::is_insertable_mode() {
-  return current_mode == KeyMode::Insert;
-}
+bool KeymapEvaluator::is_insertable_mode() { return current_mode == KeyMode::Insert; }
 
 const QList<KeyMap> *KeymapEvaluator::current_mode_keys() {
   if (!modal_keys.contains(current_mode))

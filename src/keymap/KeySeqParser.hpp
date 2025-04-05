@@ -6,8 +6,9 @@
 struct KeyChord {
   Qt::KeyboardModifiers mod;
   Qt::Key key;
+
+  bool operator==(const KeyChord &chord2) const;
 };
-bool operator==(KeyChord chord1, KeyChord chord2);
 
 using KeySequence = QList<KeyChord>;
 
@@ -19,14 +20,12 @@ enum KeyMatchType : uint8_t {
 
 class KeySeqParser {
 public:
-  static KeyMatchType key_sequence_match(const KeySequence &target,
-                                         const KeySequence &current) {
+  static KeyMatchType key_sequence_match(const KeySequence &target, const KeySequence &current) {
     for (int i = 0; i < target.length(); i++) {
       if (current.length() <= i)
         return KeyMatchType::Pending;
 
-      if (target[i].key != current[i].key ||
-          !target[i].mod.testFlags(current[i].mod))
+      if (target[i].key != current[i].key || !target[i].mod.testFlags(current[i].mod))
         return KeyMatchType::NoMatch;
     }
 
