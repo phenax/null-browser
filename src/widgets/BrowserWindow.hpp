@@ -13,7 +13,7 @@ class BrowserWindow : public QMainWindow {
 
 public:
   BrowserWindow(const Configuration &configuration,
-                const QString &start_url = "");
+                const QStringList &urls = {});
 
   DEFINE_GETTER(mediator, win_mediator)
   DEFINE_GETTER(get_id, win_id)

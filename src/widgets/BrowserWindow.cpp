@@ -11,7 +11,7 @@
 #include "widgets/WebViewStack.hpp"
 
 BrowserWindow::BrowserWindow(const Configuration &configuration,
-                             const QString &start_url)
+                             const QStringList &urls)
     : configuration(configuration) {
   setCentralWidget(new QWidget());
 
@@ -50,17 +50,11 @@ BrowserWindow::BrowserWindow(const Configuration &configuration,
             }
           });
 
-  // TODO: remove
   auto &lua = LuaRuntime::instance();
-  lua.queue_task([this, start_url]() {
-    auto def_url = start_url.isEmpty()
-                       ? "https://github.com/phenax/null-browser"
-                       : start_url;
-    emit win_mediator->url_opened(def_url, OpenType::OpenUrlInTab, 0);
-    emit win_mediator->url_opened("https://ediblemonad.dev",
-                                  OpenType::OpenUrlInBgTab, 0);
-    emit win_mediator->url_opened("https://github.com/trending",
-                                  OpenType::OpenUrlInBgTab, 0);
+  lua.queue_task([this, urls]() {
+    for (const auto &url : urls) {
+      emit win_mediator->url_opened(url, OpenType::OpenUrlInTab, 0);
+    }
   });
 }
 

@@ -11,21 +11,21 @@
 - [X] Assign ID to each tab (reference in lua api)
 - [X] Tab select by id
 - [X] Multi-window
-- [ ] New window on new window request
-- [ ] Socket for opening window in current session (lua eval)
+- [X] New window on new window request
+- [X] Socket for opening window in current session (lua eval)
+- [ ] Config loading and lua path
 - [ ] Events/autocommands
 - [ ] History storage
 - [ ] History completion
 - [ ] Log stdout, errors and results from lua somewhere
-- [ ] Handle resource cleanup + signal disconnecting
+- [ ] Downloading
 
 ** Next
-- [ ] Config loading and runtime path
 - [ ] Conflict in keymap (keymap already exists)
 - [ ] Open url sanitize/humanize (add protocol if missing, remove quotes, etc)
 - [ ] Bookmarking
-- [ ] Downloading
 - [ ] Get static linking for qt and libluv working
+- [ ] Handle resource cleanup + signal disconnecting
 
 ** Later
 - [ ] Support multiple modes for keymap.set: `web.keymap.set({'n','i'}, ...)`

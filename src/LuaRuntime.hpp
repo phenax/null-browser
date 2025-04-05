@@ -74,11 +74,11 @@ private:
 public:
   static void inspect_lua_stack(lua_State *state) {
     int top = lua_gettop(state);
-    qDebug() << "Lua Stack (top: " << top << "):\n";
+    qDebug() << "--- Lua Stack (top: " << top << ") ---\n";
 
     for (int i = 1; i <= top; i++) {
       int type = lua_type(state, i);
-      qDebug() << i << ": " << lua_typename(state, type);
+      qDebug() << "  " << i << ": " << lua_typename(state, type);
     }
 
     qDebug() << "---------------------------\n";

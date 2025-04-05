@@ -7,7 +7,7 @@ end
 web.event.add_listener = function(events, opts)
   opts = shallow_copy(opts or {})
   if type(events) ~= "table" then events = { events } end
-  opts.events = events
+  opts.events = events or {}
 
   __internals.register_event(opts)
 end

@@ -21,11 +21,11 @@ BrowserApp::BrowserApp() {
   lua.load_file("./config.lua");
 
   connect(&window_action_router, &WindowActionRouter::new_window_requested,
-          this, [this](const QUrl &url) { create_window(url.toString()); });
+          this, [this](const QUrl &url) { create_window({url.toString()}); });
 };
 
-BrowserWindow *BrowserApp::create_window(const QString &url) {
-  auto *window = new BrowserWindow((const Configuration &)configuration, url);
+BrowserWindow *BrowserApp::create_window(const QStringList &urls) {
+  auto *window = new BrowserWindow((const Configuration &)configuration, urls);
   window->setWindowTitle("null-browser");
   WindowActionRouter::instance().add_window(window);
   window->show();

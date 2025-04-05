@@ -54,6 +54,7 @@ private:
   uint64_t last_id = 1;
   Configuration *configuration;
 
+  // TODO: Split event handling to its own class
   std::mutex events_mutex;
   std::unordered_map<std::string, std::vector<EventHandlerRequest>> events;
 };
