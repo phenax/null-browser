@@ -125,13 +125,12 @@ void WebViewStack::close(WebViewId webview_id) {
   disconnect(webview->page());
   webview->deleteLater();
 
-  // TODO: Focus on different webview
-  // focus_webview();
-
-  // TODO: Close window on empty
   if (webview_list.isEmpty()) {
-    // window()->close();
-    create_new_webview(configuration->new_tab_url, true);
+    if (configuration->close_window_when_no_tabs) {
+      emit close_window_requested();
+    } else {
+      create_new_webview(configuration->new_tab_url, true);
+    }
   }
 }
 

@@ -46,9 +46,21 @@ void WindowActionRouter::add_window(BrowserWindow *window) {
   auto win_id = last_id;
   last_id++;
 
-  window_map.insert({win_id, window});
   window->set_id(win_id);
-  connect(window, &BrowserWindow::closed, this, [this, win_id]() { window_map.erase(win_id); });
+  {
+    const std::lock_guard<std::mutex> lock(window_map_mutex);
+    window_map.insert({win_id, window});
+  }
+
+  connect(window, &BrowserWindow::closed, this, [this, window]() {
+    window->disconnect();
+    LuaRuntime::instance().queue_task([this, window]() {
+      const std::lock_guard<std::mutex> lock(window_map_mutex);
+      window_map.erase(window->get_id());
+    });
+  });
+  connect(window->mediator(), &WindowMediator::close_window_requested, window,
+          [window]() { window->close(); });
   connect(window->mediator(), &WindowMediator::new_window_requested, this,
           &WindowActionRouter::new_window_requested);
 }
@@ -63,6 +75,7 @@ void WindowActionRouter::add_keymap(const QString &mode_string, const QString &k
 }
 
 WebViewId WindowActionRouter::fetch_current_tab_id(WindowId win_id) {
+  const std::lock_guard<std::mutex> lock(window_map_mutex);
   for (auto &pair : window_map) {
     auto *win = pair.second;
     auto is_current_window = win_id == win->get_id() || (win_id == 0 && win->isActiveWindow());
@@ -74,6 +87,7 @@ WebViewId WindowActionRouter::fetch_current_tab_id(WindowId win_id) {
 }
 
 QList<WebViewData> WindowActionRouter::fetch_webview_data_list(WindowId win_id) {
+  const std::lock_guard<std::mutex> lock(window_map_mutex);
   for (auto &pair : window_map) {
     auto *win = pair.second;
     auto is_current_window = win_id == win->get_id() || (win_id == 0 && win->isActiveWindow());

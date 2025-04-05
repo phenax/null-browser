@@ -24,6 +24,7 @@ signals:
   void webview_closed(WebViewId webview_id);
   void webview_selected(WebViewId webview_id);
   void new_window_requested(const QUrl &url);
+  void close_window_requested();
 
 private:
   WebViewStack *webview_stack;

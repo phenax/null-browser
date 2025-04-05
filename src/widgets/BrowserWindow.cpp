@@ -2,6 +2,7 @@
 #include <QStackedLayout>
 #include <QVBoxLayout>
 #include <QtCore>
+#include <qmainwindow.h>
 
 #include "Configuration.hpp"
 #include "WindowMediator.hpp"
@@ -10,7 +11,7 @@
 #include "widgets/WebViewStack.hpp"
 
 BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringList &urls)
-    : configuration(configuration) {
+    : QMainWindow(nullptr), configuration(configuration) {
   setCentralWidget(new QWidget());
 
   // Root stacked layout

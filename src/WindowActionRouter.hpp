@@ -4,6 +4,7 @@
 #include <QtCore>
 #include <cstdint>
 #include <functional>
+#include <mutex>
 
 #include "EventQueue.hpp"
 #include "widgets/BrowserWindow.hpp"
@@ -46,6 +47,7 @@ signals:
   void new_window_requested(const QUrl &url);
 
 private:
+  std::mutex window_map_mutex;
   WindowMap window_map;
   uint64_t last_id = 1;
   Configuration *configuration;

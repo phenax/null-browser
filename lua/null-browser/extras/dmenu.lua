@@ -1,3 +1,6 @@
+--- @type table
+local uv = uv
+
 local dmenu = {}
 
 function dmenu.select(list, opts, callback)

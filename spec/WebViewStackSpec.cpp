@@ -132,18 +132,17 @@ private slots:
 
     context("when close is called on current webview");
     context("- and there is only 1 tab");
-    it("closes the tab and opens empty tab in its place") {
+    it("requests closing window") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
+      QSignalSpy close_window_requested_spy(&webview_stack, &WebViewStack::close_window_requested);
       webview_stack.open_url(QUrl("https://a.com"));
       QCOMPARE(webview_stack.count(), 1);
 
       webview_stack.close(webview_stack.current_webview_id());
+      close_window_requested_spy.wait(100);
 
-      QCOMPARE(webview_stack.count(), 1);
-      QCOMPARE(webview_stack.urls(), (std::vector<QUrl>{configuration.new_tab_url}));
-      QCOMPARE(webview_stack.current_webview_index(), 0);
-      QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
+      QCOMPARE(close_window_requested_spy.count(), 1);
     }
 
     context("when close is called");

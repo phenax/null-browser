@@ -43,6 +43,13 @@ web.keymap.set('n', '<s-o>', function()
     web.tabs.set_url(trim(result))
   end)
 end)
+-- Delete from history
+web.keymap.set('n', '<c-h>d', function()
+  dmenu.select(history.list(), { prompt = 'Delete history:' }, function(err, result)
+    if err or not result then return end
+    history.delete(trim(result))
+  end)
+end)
 -- Update current url
 web.keymap.set('n', '<c-l>', function()
   local tabs = web.tabs.list()

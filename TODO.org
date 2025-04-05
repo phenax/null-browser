@@ -18,7 +18,8 @@
 - [X] Url changed event
 - [X] History storage
 - [X] History completion
-- [ ] Close window if last tab closed
+- [X] Close window if last tab closed
+- [ ] Configuration lua api
 - [ ] Switch to __internals
 - [ ] Tests for api
 - [ ] Log stdout, errors and results from lua somewhere
@@ -88,4 +89,5 @@ web.history.back(1, { win = 1 }) -- Back for current tab in win 1
 
 web.keymap.set('n', '<c-r>', ..., { tab = 1 }) -- Set keymap for tab 1
 web.keymap.set('n', '<c-r>', ..., { win = 1 }) -- Set keymap for win 1
+web.opt.new_tab_url = 'https://duckduckgo.com'
 #+end_src

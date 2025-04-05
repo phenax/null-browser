@@ -14,7 +14,7 @@ function history.list()
   for line in string.gmatch(data, '[^\r\n]+') do
     local already_exists = false
     for _, url in ipairs(urls) do
-      if url == line then already_exists = true end
+      if url == line or url .. '/' == line then already_exists = true end
     end
     if #urls >= history.max_entires then break end
     if not already_exists then
@@ -43,7 +43,7 @@ end
 
 function history.delete(url_to_delete)
   history.update(function(urls)
-    for index, url in urls do
+    for index, url in ipairs(urls) do
       if url == url_to_delete then
         table.remove(urls, index)
         return urls
