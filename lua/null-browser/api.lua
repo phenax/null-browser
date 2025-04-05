@@ -1,8 +1,12 @@
+print("FOOOOOOOOOOBARRRRRR")
+
 local function shallow_copy(t)
   local t2 = {}
   for k, v in pairs(t) do t2[k] = v end
   return t2
 end
+
+web.event = web.event or {}
 
 web.event.add_listener = function(events, opts)
   opts = shallow_copy(opts or {})

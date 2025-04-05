@@ -10,10 +10,16 @@
 #include "utils.hpp"
 #include "widgets/WebViewStack.hpp"
 
+#ifndef PROJECT_LUA_PATH
+#define PROJECT_LUA_PATH ""
+#endif
+
 #define preserve_top(STATE, BODY)                                              \
-  const int __top = lua_gettop(STATE);                                         \
-  BODY;                                                                        \
-  lua_settop(STATE, __top);
+  {                                                                            \
+    const int __top = lua_gettop(STATE);                                       \
+    BODY;                                                                      \
+    lua_settop(STATE, __top);                                                  \
+  };
 
 class LuaRuntime : public QObject {
   Q_OBJECT

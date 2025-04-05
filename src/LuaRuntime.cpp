@@ -1,6 +1,6 @@
-#include "WindowActionRouter.hpp"
-#include "lua.h"
 #include <QtCore>
+#include <cstdlib>
+#include <cstring>
 #include <lua.hpp>
 extern "C" {
 #include <luv/luv.h>
@@ -8,12 +8,29 @@ extern "C" {
 
 #include "AsyncEventLoop.hpp"
 #include "LuaRuntime.hpp"
+#include "WindowActionRouter.hpp"
 
 LuaRuntime::LuaRuntime() {
   state = luaL_newstate();
   luaL_openlibs(state);
 
-  preserve_top(state, { init_web_lib(); })
+  preserve_top(state, { init_web_lib(); });
+
+  auto lua_path = QString(PROJECT_LUA_PATH);
+  preserve_top(state, {
+    lua_getglobal(state, "package");
+    lua_getfield(state, -1, "path");
+    auto pkg_path = QString(lua_tostring(state, -1)) + ";" + lua_path;
+    lua_pop(state, 1);
+    lua_pushstring(state, pkg_path.toStdString().c_str());
+    lua_setfield(state, -2, "path");
+
+    lua_getglobal(state, "require");
+    lua_pushstring(state, "null-browser.api");
+    if (lua_pcall(state, 1, 0, 0) != LUA_OK) {
+      qCritical() << "Unable to load browser api" << lua_tostring(state, -1);
+    }
+  });
 }
 
 void LuaRuntime::start_event_loop() {

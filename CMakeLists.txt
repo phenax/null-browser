@@ -16,6 +16,9 @@ find_package(PkgConfig REQUIRED)
 set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 
+# TODO: Please fix this. This sucks
+add_compile_definitions(PROJECT_LUA_PATH="./lua/?.lua")
+
 if(DEFINED ENV{RELEASE})
   set(CMAKE_BUILD_TYPE Release)
   set(CMAKE_CXX_FLAGS "-O3 ${CMAKE_CXX_FLAGS}")

@@ -13,8 +13,9 @@
 - [X] Multi-window
 - [X] New window on new window request
 - [X] Socket for opening window in current session (lua eval)
-- [ ] Config loading and lua path
+- [X] Config loading and lua path
 - [ ] Events/autocommands
+- [ ] Url changed event
 - [ ] History storage
 - [ ] History completion
 - [ ] Log stdout, errors and results from lua somewhere
