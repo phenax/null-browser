@@ -132,15 +132,32 @@ private slots:
     }
   }
 
-  void test_internals_register_event() {
+  void test_web_event_add_event() {
     context("when events, patterns and callback are specified correctly");
     it("returns true and registers event") {
       auto &lua = LuaRuntime::instance();
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate(R"(
-        return __internals.register_event({
-          events = { 'Hello', 'World' },
+        return web.event.add_listener({ 'Hello', 'World' }, {
+          patterns = { 'p1', 'p2' },
+          callback = function() print("Called") end,
+        });
+      )");
+      evaluation_completed_spy.wait();
+
+      QCOMPARE(evaluation_completed_spy.count(), 1);
+      QVariant result = evaluation_completed_spy.takeFirst().at(0);
+      QCOMPARE(result, true);
+    }
+
+    context("when a single event is passed");
+    it("returns true and registers event") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
+
+      lua.evaluate(R"(
+        return web.event.add_listener('Hello', {
           patterns = { 'p1', 'p2' },
           callback = function() print("Called") end,
         });
@@ -158,8 +175,7 @@ private slots:
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate(R"(
-        return __internals.register_event({
-          events = { 'Hello', 'World' },
+        return web.event.add_listener({ 'Hello', 'World' }, {
           callback = function() print("Called") end,
         });
       )");
@@ -176,7 +192,7 @@ private slots:
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate(R"(
-        return __internals.register_event({
+        return web.event.add_listener(nil, {
           patterns = { 'p1', 'p2' },
           callback = function() print("Called") end,
         });
@@ -194,8 +210,7 @@ private slots:
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
       lua.evaluate(R"(
-        return __internals.register_event({
-          events = {'Ev'},
+        return web.event.add_listener({'Ev'}, {
           patterns = { 'p1', 'p2' },
         });
       )");
@@ -207,7 +222,7 @@ private slots:
     }
   }
 
-  void test_internals_register_event_handler() {
+  void test_web_event_dispatching() {
     context("when dispatching a registered event (without pattern)");
     it("calls the registered event handler") {
       auto &lua = LuaRuntime::instance();
@@ -215,16 +230,14 @@ private slots:
       lua.evaluate(R"(
         _G.event1_called = false;
         _G.event1_called_with = nil;
-        __internals.register_event({
-          events = { 'TestEvent1' },
+        web.event.add_listener('TestEvent1', {
           callback = function(opts)
             _G.event1_called = true
             _G.event1_called_with = opts
           end,
         });
         _G.event2_called = false;
-        __internals.register_event({
-          events = { 'TestEvent2' },
+        web.event.add_listener('TestEvent2', {
           callback = function(opts) _G.event2_called = true end,
         });
       )");
