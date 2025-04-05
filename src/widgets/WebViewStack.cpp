@@ -35,7 +35,7 @@ void WebViewStack::open_url(const QUrl &url, OpenType open_type, WebViewId webvi
     create_new_webview(url, false);
     break;
   case OpenType::OpenUrlInWindow:
-    create_new_webview(url, true);
+    emit new_window_requested(url);
     break;
   }
 }
@@ -68,20 +68,23 @@ WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
 
 QList<WebViewData> WebViewStack::get_webview_list() {
   QList<WebViewData> urls;
-  for (auto &view : webview_list)
-    urls.append(
-        WebViewData{.id = view->get_id(), .url = view->url().toString(), .title = view->title()});
+  for (auto &view : webview_list) {
+    urls.append(WebViewData{
+        .id = view->get_id(),
+        .url = view->url().toString(),
+        .title = view->title(),
+    });
+  }
   return urls;
 }
 
 void WebViewStack::on_new_webview_request(const QWebEngineNewWindowRequest &request) {
-  qDebug() << request.destination();
   switch (request.destination()) {
   case QWebEngineNewWindowRequest::InNewTab:
-    create_new_webview(request.requestedUrl(), true);
+    open_url(request.requestedUrl(), OpenType::OpenUrlInTab);
     break;
   case QWebEngineNewWindowRequest::InNewBackgroundTab:
-    create_new_webview(request.requestedUrl(), false);
+    open_url(request.requestedUrl(), OpenType::OpenUrlInBgTab);
     break;
   case QWebEngineNewWindowRequest::InNewWindow:
   case QWebEngineNewWindowRequest::InNewDialog:
@@ -202,13 +205,18 @@ QUrl WebViewStack::current_url() {
   auto *webview = current_webview();
   if (webview == nullptr) {
     qDebug() << "No current webview";
-    return QUrl{};
+    return configuration->new_tab_url;
   }
 
   return webview->url();
 }
 
 void WebViewStack::set_current_url(const QUrl &url) {
+  if (count() == 0) {
+    create_new_webview(url, true);
+    return;
+  }
+
   auto *webview = current_webview();
   if (webview == nullptr) {
     qDebug() << "No current webview";
@@ -217,10 +225,16 @@ void WebViewStack::set_current_url(const QUrl &url) {
 
   webview->setUrl(url);
 }
+
 void WebViewStack::set_webview_url(const QUrl &url, WebViewId webview_id) {
+  if (webview_id == 0) {
+    set_current_url(url);
+    return;
+  }
+
   auto *webview = get_webview(webview_id);
   if (webview == nullptr) {
-    qDebug() << "No current webview";
+    qDebug() << "Webview does not exist";
     return;
   }
 

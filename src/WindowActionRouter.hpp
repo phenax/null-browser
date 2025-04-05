@@ -9,12 +9,12 @@
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
-#define WITH_WEBVIEW_WINDOW(WEBVIEW_ID, IDENT, BLOCK)                          \
-  for (auto &win_match : window_map) {                                         \
-    auto *IDENT = win_match.second;                                            \
-    if (IDENT->mediator()->has_webview(WEBVIEW_ID)) {                          \
-      BLOCK;                                                                   \
-    }                                                                          \
+#define WITH_WEBVIEW_WINDOW(WEBVIEW_ID, IDENT, BLOCK)                                              \
+  for (auto &win_match : window_map) {                                                             \
+    auto *IDENT = win_match.second;                                                                \
+    if (IDENT->mediator()->has_webview(WEBVIEW_ID)) {                                              \
+      BLOCK;                                                                                       \
+    }                                                                                              \
   }
 
 class WindowActionRouter : public QWidget {
@@ -40,8 +40,7 @@ public:
 protected:
   WindowActionRouter() = default;
 
-  void add_keymap(const QString &mode_string, const QString &keyseq,
-                  std::function<void()> action);
+  void add_keymap(const QString &mode_string, const QString &keyseq, std::function<void()> action);
 
 signals:
   void new_window_requested(const QUrl &url);

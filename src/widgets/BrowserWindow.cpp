@@ -26,7 +26,7 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringLi
 
   // Open webviews for given urls
   if (urls.isEmpty()) {
-    webview_stack->open_url(configuration.new_tab_url.toString(), OpenType::OpenUrlInTab);
+    webview_stack->open_url(configuration.new_tab_url.toString());
   } else {
     for (const auto &url : urls) {
       webview_stack->open_url(url, OpenType::OpenUrlInTab);

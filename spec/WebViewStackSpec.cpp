@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Configuration.hpp"
+#include "LuaRuntime.hpp"
 #include "testUtils.h"
 #include "widgets/WebView.hpp"
 #include "widgets/WebViewStack.hpp"
@@ -13,178 +14,118 @@ class WebViewStackSpec : public QObject {
 
   class FakeNewWindowRequest : public QWebEngineNewWindowRequest {
   public:
-    FakeNewWindowRequest(DestinationType t, const QRect &r, const QUrl &u,
-                         bool b)
+    FakeNewWindowRequest(DestinationType t, const QRect &r, const QUrl &u, bool b)
         : QWebEngineNewWindowRequest(t, r, u, b, nullptr) {}
   };
 
 private slots:
+  void beforeTestCase() { LuaRuntime::instance().start_event_loop(); }
+  void cleanupTestCase() { LuaRuntime::instance().stop_event_loop(); }
+
   void test_initial_state() {
     context("when initialized");
-    it("opens a single tab") {
+    it("opens an empty stack maintaining current url") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
 
-      QCOMPARE(webview_stack.count(), 1);
+      QCOMPARE(webview_stack.count(), 0);
       QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
-      webview_stack.deleteLater();
     }
   }
 
   void test_open_url() {
-    context("when openUrl is called without an open type");
+    context("when openUrl is called with an empty stack");
+    it("opens a new webview") {
+      Configuration configuration;
+      WebViewStack webview_stack(&configuration);
+      QCOMPARE(webview_stack.count(), 0);
+
+      webview_stack.open_url(QUrl("http://a.com"));
+
+      QCOMPARE(webview_stack.count(), 1);
+      QCOMPARE(webview_stack.urls(), (std::vector<QUrl>{QUrl("http://a.com")}));
+      QCOMPARE(webview_stack.current_webview_index(), 0);
+      QCOMPARE(webview_stack.current_url(), QUrl("http://a.com"));
+    }
+
+    context("when openUrl is called with webviews open");
     it("replaces current tab url with newtab url") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
-      webview_stack.open_url(QUrl("http://a.com"), OpenType::OpenUrl);
+      webview_stack.open_url(QUrl("http://a.com"));
+      webview_stack.open_url(QUrl("http://b.com"), OpenType::OpenUrlInTab);
+      QCOMPARE(webview_stack.count(), 2);
+      QCOMPARE(webview_stack.current_webview_index(), 1);
 
-      webview_stack.open_url(QUrl(configuration.new_tab_url));
+      webview_stack.open_url(QUrl("http://new-b.com"));
 
-      QCOMPARE(webview_stack.count(), 1);
-      std::vector<QUrl> urls = {QUrl(configuration.new_tab_url)};
-      QCOMPARE(webview_stack.urls(), urls);
-      QCOMPARE(webview_stack.current_webview_index(), 0);
-      QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
+      QCOMPARE(webview_stack.count(), 2);
+      QCOMPARE(webview_stack.urls(), (std::vector<QUrl>{
+                                         QUrl("http://a.com"),
+                                         QUrl("http://new-b.com"),
+                                     }));
+      QCOMPARE(webview_stack.current_webview_index(), 1);
+      QCOMPARE(webview_stack.current_url(), QUrl("http://new-b.com"));
     }
 
-    context("when creating a new webview with a url and focus is false");
+    context("when openurl is called with OpenUrlInBgTab");
     it("opens the given url in background") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
+      webview_stack.open_url(QUrl("http://a.com"));
 
-      webview_stack.open_url(QUrl("https://duckduckgo.com"),
-                             OpenType::OpenUrlInBgTab);
+      webview_stack.open_url(QUrl("https://duckduckgo.com"), OpenType::OpenUrlInBgTab);
 
       QCOMPARE(webview_stack.count(), 2);
-      std::vector<QUrl> urls = {QUrl(configuration.new_tab_url),
-                                QUrl("https://duckduckgo.com")};
-      QCOMPARE(webview_stack.urls(), urls);
+      QCOMPARE(webview_stack.urls(),
+               (std::vector<QUrl>{QUrl("http://a.com"), QUrl("https://duckduckgo.com")}));
       QCOMPARE(webview_stack.current_webview_index(), 0);
-      QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
+      QCOMPARE(webview_stack.current_url(), QUrl("http://a.com"));
     }
 
-    context("when creating a new webview with a url and focus is true");
+    context("when openurl is called with OpenUrlInTab");
     it("opens the given url as current view") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
+      webview_stack.open_url(QUrl("http://a.com"));
 
-      webview_stack.open_url(QUrl("https://duckduckgo.com"),
-                             OpenType::OpenUrlInTab);
+      webview_stack.open_url(QUrl("https://duckduckgo.com"), OpenType::OpenUrlInTab);
 
       QCOMPARE(webview_stack.count(), 2);
-      std::vector<QUrl> urls = {QUrl(configuration.new_tab_url),
-                                QUrl("https://duckduckgo.com")};
-      QCOMPARE(webview_stack.urls(), urls);
+      QCOMPARE(webview_stack.urls(),
+               (std::vector<QUrl>{QUrl("http://a.com"), QUrl("https://duckduckgo.com")}));
       QCOMPARE(webview_stack.current_webview_index(), 1);
       QCOMPARE(webview_stack.current_url(), QUrl("https://duckduckgo.com"));
     }
-  }
 
-  // void test_next_navigation() {
-  //   context("when nextWebView is called");
-  //   context("- and there is only 1 tab");
-  //   it("does nothing") {
-  //     Configuration configuration;
-  //     WebViewStack webview_stack(&configuration);
-  //
-  //     webview_stack.next();
-  //
-  //     QCOMPARE(webview_stack.current_webview_index(), 0);
-  //     QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
-  //   }
-  //
-  //   context("when nextWebView is called");
-  //   context("- and there are tabs after the current tab");
-  //   it("goes to the next tab") {
-  //     Configuration configuration;
-  //     WebViewStack webview_stack(&configuration);
-  //     webview_stack.open_url(QUrl("http://a1.com"),
-  //     OpenType::OpenUrlInBgTab);
-  //     webview_stack.open_url(QUrl("http://a2.com"),
-  //     OpenType::OpenUrlInBgTab);
-  //
-  //     webview_stack.next();
-  //
-  //     QCOMPARE(webview_stack.current_webview_index(), 1);
-  //     QCOMPARE(webview_stack.current_url(), QUrl("http://a1.com"));
-  //   }
-  //
-  //   context("when nextWebView is called");
-  //   context("- and current tab is the last tab");
-  //   it("jumps to the first tab") {
-  //     Configuration configuration;
-  //     WebViewStack webview_stack(&configuration);
-  //     webview_stack.open_url(QUrl("http://a1.com"),
-  //     OpenType::OpenUrlInBgTab);
-  //     webview_stack.open_url(QUrl("http://a2.com"), OpenType::OpenUrlInTab);
-  //     QCOMPARE(webview_stack.current_webview_index(), 2);
-  //
-  //     webview_stack.next();
-  //
-  //     QCOMPARE(webview_stack.current_webview_index(), 0);
-  //     QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
-  //   }
-  // }
-  //
-  // void test_previous_navigation() {
-  //   context("when previousWebView is called");
-  //   context("- and there is only 1 tab");
-  //   it("does nothing") {
-  //     Configuration configuration;
-  //     WebViewStack webview_stack(&configuration);
-  //
-  //     webview_stack.previous();
-  //
-  //     QCOMPARE(webview_stack.current_webview_index(), 0);
-  //     QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
-  //   }
-  //
-  //   context("when previousWebView is called");
-  //   context("- and there are tabs before the current tab");
-  //   it("goes to the next tab") {
-  //     Configuration configuration;
-  //     WebViewStack webview_stack(&configuration);
-  //     webview_stack.open_url(QUrl("http://a1.com"),
-  //     OpenType::OpenUrlInBgTab);
-  //     webview_stack.open_url(QUrl("http://a2.com"), OpenType::OpenUrlInTab);
-  //     QCOMPARE(webview_stack.current_webview_index(), 2);
-  //
-  //     webview_stack.previous();
-  //
-  //     QCOMPARE(webview_stack.current_webview_index(), 1);
-  //     QCOMPARE(webview_stack.current_url(), QUrl("http://a1.com"));
-  //   }
-  //
-  //   context("when previousWebView is called");
-  //   context("- and current tab is the last tab");
-  //   it("jumps to the last tab") {
-  //     Configuration configuration;
-  //     WebViewStack webview_stack(&configuration);
-  //     webview_stack.open_url(QUrl("http://a1.com"),
-  //     OpenType::OpenUrlInBgTab);
-  //     webview_stack.open_url(QUrl("http://a2.com"),
-  //     OpenType::OpenUrlInBgTab);
-  //
-  //     webview_stack.previous();
-  //
-  //     QCOMPARE(webview_stack.current_webview_index(), 2);
-  //     QCOMPARE(webview_stack.current_url(), QUrl("http://a2.com"));
-  //   }
-  // }
+    context("when openurl is called with OpenUrlInWindow");
+    it("requests a new window") {
+      Configuration configuration;
+      WebViewStack webview_stack(&configuration);
+      QSignalSpy new_window_requested_spy(&webview_stack, &WebViewStack::new_window_requested);
+      webview_stack.open_url(QUrl("http://a.com"));
+
+      webview_stack.open_url(QUrl("https://duckduckgo.com"), OpenType::OpenUrlInWindow);
+      new_window_requested_spy.wait(100);
+
+      QCOMPARE(new_window_requested_spy.count(), 1);
+      QCOMPARE(new_window_requested_spy.takeFirst().at(0), QUrl("https://duckduckgo.com"));
+      QCOMPARE(webview_stack.count(), 1);
+    }
+  }
 
   void test_close() {
     context("when close is called");
     context("- with invalid id");
-    xit("does nothing") {
+    it("does nothing") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
-      webview_stack.open_url(QUrl("https://a.com"), OpenType::OpenUrl);
+      webview_stack.open_url(QUrl("https://a.com"));
 
       webview_stack.close(99);
 
       QCOMPARE(webview_stack.count(), 1);
-      QCOMPARE(webview_stack.urls(),
-               (std::vector<QUrl>{QUrl("https://a.com")}));
+      QCOMPARE(webview_stack.urls(), (std::vector<QUrl>{QUrl("https://a.com")}));
       QCOMPARE(webview_stack.current_webview_index(), 0);
       QCOMPARE(webview_stack.current_url(), QUrl("https://a.com"));
     }
@@ -194,14 +135,13 @@ private slots:
     it("closes the tab and opens empty tab in its place") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
-      webview_stack.open_url(QUrl("https://a.com"), OpenType::OpenUrl);
+      webview_stack.open_url(QUrl("https://a.com"));
       QCOMPARE(webview_stack.count(), 1);
 
       webview_stack.close(webview_stack.current_webview_id());
 
       QCOMPARE(webview_stack.count(), 1);
-      QCOMPARE(webview_stack.urls(),
-               (std::vector<QUrl>{configuration.new_tab_url}));
+      QCOMPARE(webview_stack.urls(), (std::vector<QUrl>{configuration.new_tab_url}));
       QCOMPARE(webview_stack.current_webview_index(), 0);
       QCOMPARE(webview_stack.current_url(), configuration.new_tab_url);
     }
@@ -212,6 +152,7 @@ private slots:
     it("closes the tab and focuses the next tab") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
+      webview_stack.open_url(QUrl("https://a0.com"));
       webview_stack.open_url(QUrl("https://a1.com"), OpenType::OpenUrlInTab);
       webview_stack.open_url(QUrl("https://a2.com"), OpenType::OpenUrlInBgTab);
       QCOMPARE(webview_stack.count(), 3);
@@ -221,8 +162,7 @@ private slots:
 
       QCOMPARE(webview_stack.count(), 2);
       QCOMPARE(webview_stack.urls(),
-               (std::vector<QUrl>{configuration.new_tab_url,
-                                  QUrl("https://a2.com")}));
+               (std::vector<QUrl>{QUrl("https://a0.com"), QUrl("https://a2.com")}));
       QCOMPARE(webview_stack.current_webview_index(), 1);
       QCOMPARE(webview_stack.current_url(), QUrl("https://a2.com"));
     }
@@ -233,6 +173,7 @@ private slots:
     it("closes the tab and focuses previous tab") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
+      webview_stack.open_url(QUrl("https://a0.com"));
       webview_stack.open_url(QUrl("https://a1.com"), OpenType::OpenUrlInBgTab);
       webview_stack.open_url(QUrl("https://a2.com"), OpenType::OpenUrlInTab);
       QCOMPARE(webview_stack.count(), 3);
@@ -242,8 +183,7 @@ private slots:
 
       QCOMPARE(webview_stack.count(), 2);
       QCOMPARE(webview_stack.urls(),
-               (std::vector<QUrl>{configuration.new_tab_url,
-                                  QUrl("https://a1.com")}));
+               (std::vector<QUrl>{QUrl("https://a0.com"), QUrl("https://a1.com")}));
       QCOMPARE(webview_stack.current_webview_index(), 1);
       QCOMPARE(webview_stack.current_url(), QUrl("https://a1.com"));
     }
@@ -252,45 +192,61 @@ private slots:
   void test_new_window_request_signal() {
     context("when webview emits a newWindowRequested signal");
     context("- of type new tab");
-    xit("opens a new web view and focusses it") {
+    it("opens a new web view and focuses it") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
-      webview_stack.open_url(QUrl("https://a.com"), OpenType::OpenUrl);
+      webview_stack.open_url(QUrl("https://a.com"));
       auto *webview = webview_stack.findChild<WebView *>();
       QCOMPARE(webview_stack.count(), 1);
 
-      FakeNewWindowRequest window_request(
-          FakeNewWindowRequest::DestinationType::InNewTab, QRect(0, 0, 0, 0),
-          QUrl("https://new.com"), true);
+      FakeNewWindowRequest window_request(FakeNewWindowRequest::DestinationType::InNewTab,
+                                          QRect(0, 0, 0, 0), QUrl("https://new.com"), true);
       emit webview->page()->newWindowRequested(window_request);
 
       QCOMPARE(webview_stack.count(), 2);
-      QCOMPARE(
-          webview_stack.urls(),
-          (std::vector<QUrl>{QUrl("https://a.com"), QUrl("https://new.com")}));
+      QCOMPARE(webview_stack.urls(),
+               (std::vector<QUrl>{QUrl("https://a.com"), QUrl("https://new.com")}));
       QCOMPARE(webview_stack.current_webview_index(), 1);
       QCOMPARE(webview_stack.current_url(), QUrl("https://new.com"));
     }
 
     context("when webview emits a newWindowRequested signal");
     context("- of type new background tab");
-    xit("opens a new web view in the background") {
+    it("opens a new web view in the background") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
-      webview_stack.open_url(QUrl("https://a.com"), OpenType::OpenUrl);
+      webview_stack.open_url(QUrl("https://a.com"));
       auto *webview = webview_stack.findChild<WebView *>();
 
-      FakeNewWindowRequest window_request(
-          FakeNewWindowRequest::DestinationType::InNewBackgroundTab,
-          QRect(0, 0, 0, 0), QUrl("https://new.com"), true);
+      FakeNewWindowRequest window_request(FakeNewWindowRequest::DestinationType::InNewBackgroundTab,
+                                          QRect(0, 0, 0, 0), QUrl("https://new.com"), true);
       emit webview->page()->newWindowRequested(window_request);
 
       QCOMPARE(webview_stack.count(), 2);
-      QCOMPARE(
-          webview_stack.urls(),
-          (std::vector<QUrl>{QUrl("https://a.com"), QUrl("https://new.com")}));
+      QCOMPARE(webview_stack.urls(),
+               (std::vector<QUrl>{QUrl("https://a.com"), QUrl("https://new.com")}));
       QCOMPARE(webview_stack.current_webview_index(), 0);
       QCOMPARE(webview_stack.current_url(), QUrl("https://a.com"));
+    }
+
+    context("when webview emits a newWindowRequested signal");
+    context("- of type new window");
+    it("requests a new window") {
+      Configuration configuration;
+      WebViewStack webview_stack(&configuration);
+      QSignalSpy new_window_requested_spy(&webview_stack, &WebViewStack::new_window_requested);
+      webview_stack.open_url(QUrl("https://a.com"));
+      QCOMPARE(webview_stack.count(), 1);
+      auto *webview = webview_stack.findChild<WebView *>();
+
+      FakeNewWindowRequest window_request(FakeNewWindowRequest::DestinationType::InNewWindow,
+                                          QRect(0, 0, 0, 0), QUrl("https://new.com"), true);
+      emit webview->page()->newWindowRequested(window_request);
+      new_window_requested_spy.wait(100);
+
+      QCOMPARE(new_window_requested_spy.count(), 1);
+      QCOMPARE(new_window_requested_spy.takeFirst().at(0), QUrl("https://new.com"));
+      QCOMPARE(webview_stack.count(), 1);
     }
   }
 };

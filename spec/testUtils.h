@@ -12,16 +12,18 @@
 #define COLOR_SKIP "\x1b[33m" ANSI_BOLD
 #define ANSI_RESET "\x1b[0m"
 
-#define context(msg) printf("⚪" COLOR_CONTEXT "%s" ANSI_RESET "\n", msg);
+#define context(msg)                                                                               \
+  printf("⚪" COLOR_CONTEXT "%s" ANSI_RESET "\n", msg);                                            \
+  fflush(stdout);
 
-#define it(msg)                                                                \
-  printf("    ⚪" ANSI_BOLD COLOR_IT "it " ANSI_RESET COLOR_IT "%s" ANSI_RESET \
-         "\n",                                                                 \
-         msg);                                                                 \
+#define it(msg)                                                                                    \
+  printf("    ⚪" ANSI_BOLD COLOR_IT "it " ANSI_RESET COLOR_IT "%s" ANSI_RESET "\n", msg);         \
+  fflush(stdout);                                                                                  \
   if (1)
 
-#define xit(msg)                                                               \
-  printf("    ⚪" COLOR_SKIP "SKIPPED it %s" ANSI_RESET "\n", msg);            \
+#define xit(msg)                                                                                   \
+  printf("    ⚪" COLOR_SKIP "SKIPPED it %s" ANSI_RESET "\n", msg);                                \
+  fflush(stdout);                                                                                  \
   if (0)
 
 #define STRINGIFY(x) #x
@@ -29,16 +31,16 @@
 std::vector<std::function<QObject *()>> &get_qtest_registry();
 int run_all_tests();
 
-#define QTEST_REGISTER(klass)                                                  \
-  namespace {                                                                  \
-  const bool registered__##klass = []() {                                      \
-    get_qtest_registry().push_back([]() {                                      \
-      auto test = new (klass);                                                 \
-      test->setObjectName(#klass);                                             \
-      return test;                                                             \
-    });                                                                        \
-    return true;                                                               \
-  }();                                                                         \
+#define QTEST_REGISTER(klass)                                                                      \
+  namespace {                                                                                      \
+  const bool registered__##klass = []() {                                                          \
+    get_qtest_registry().push_back([]() {                                                          \
+      auto test = new (klass);                                                                     \
+      test->setObjectName(#klass);                                                                 \
+      return test;                                                                                 \
+    });                                                                                            \
+    return true;                                                                                   \
+  }();                                                                                             \
   };
 
 bool wait_for_lua_to_be_true(QString lua_code);

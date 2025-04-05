@@ -12,21 +12,18 @@
 void WindowActionRouter::initialize() {
   auto &runtime = LuaRuntime::instance();
 
-  connect(&runtime, &LuaRuntime::keymap_added, this,
-          &WindowActionRouter::add_keymap);
+  connect(&runtime, &LuaRuntime::keymap_added, this, &WindowActionRouter::add_keymap);
 
   connect(&runtime, &LuaRuntime::history_back_requested, this,
           [this](WebViewId webview_id, qsizetype history_index) {
             WITH_WEBVIEW_WINDOW(webview_id, window, {
-              emit window->mediator()->history_back_requested(webview_id,
-                                                              history_index);
+              emit window->mediator()->history_back_requested(webview_id, history_index);
             });
           });
   connect(&runtime, &LuaRuntime::history_forward_requested, this,
           [this](WebViewId webview_id, qsizetype history_index) {
             WITH_WEBVIEW_WINDOW(webview_id, window, {
-              emit window->mediator()->history_forward_requested(webview_id,
-                                                                 history_index);
+              emit window->mediator()->history_forward_requested(webview_id, history_index);
             });
           });
   connect(&runtime, &LuaRuntime::url_opened, this,
@@ -35,18 +32,14 @@ void WindowActionRouter::initialize() {
               emit window->mediator()->url_opened(url, open_type, webview_id);
             });
           });
-  connect(&runtime, &LuaRuntime::webview_closed, this,
-          [this](WebViewId webview_id) {
-            WITH_WEBVIEW_WINDOW(webview_id, window, {
-              emit window->mediator()->webview_closed(webview_id);
-            });
-          });
-  connect(&runtime, &LuaRuntime::webview_selected, this,
-          [this](WebViewId webview_id) {
-            WITH_WEBVIEW_WINDOW(webview_id, window, {
-              emit window->mediator()->webview_selected(webview_id);
-            });
-          });
+  connect(&runtime, &LuaRuntime::webview_closed, this, [this](WebViewId webview_id) {
+    WITH_WEBVIEW_WINDOW(webview_id, window,
+                        { emit window->mediator()->webview_closed(webview_id); });
+  });
+  connect(&runtime, &LuaRuntime::webview_selected, this, [this](WebViewId webview_id) {
+    WITH_WEBVIEW_WINDOW(webview_id, window,
+                        { emit window->mediator()->webview_selected(webview_id); });
+  });
 }
 
 void WindowActionRouter::add_window(BrowserWindow *window) {
@@ -55,16 +48,14 @@ void WindowActionRouter::add_window(BrowserWindow *window) {
 
   window_map.insert({win_id, window});
   window->set_id(win_id);
-  connect(window, &BrowserWindow::closed, this,
-          [this, win_id]() { window_map.erase(win_id); });
+  connect(window, &BrowserWindow::closed, this, [this, win_id]() { window_map.erase(win_id); });
   connect(window->mediator(), &WindowMediator::new_window_requested, this,
           &WindowActionRouter::new_window_requested);
 }
 
 const WindowMap &WindowActionRouter::windows() { return window_map; }
 
-void WindowActionRouter::add_keymap(const QString &mode_string,
-                                    const QString &keyseq,
+void WindowActionRouter::add_keymap(const QString &mode_string, const QString &keyseq,
                                     std::function<void()> action) {
   auto &keymap_evaluator = KeymapEvaluator::instance();
   const KeyMode mode = keymap_evaluator.mode_from_string(mode_string);
@@ -74,8 +65,7 @@ void WindowActionRouter::add_keymap(const QString &mode_string,
 WebViewId WindowActionRouter::fetch_current_tab_id(WindowId win_id) {
   for (auto &pair : window_map) {
     auto *win = pair.second;
-    auto is_current_window =
-        win_id == win->get_id() || (win_id == 0 && win->isActiveWindow());
+    auto is_current_window = win_id == win->get_id() || (win_id == 0 && win->isActiveWindow());
     if (is_current_window) {
       return win->mediator()->current_webview_id();
     }
@@ -83,12 +73,10 @@ WebViewId WindowActionRouter::fetch_current_tab_id(WindowId win_id) {
   return 0;
 }
 
-QList<WebViewData>
-WindowActionRouter::fetch_webview_data_list(WindowId win_id) {
+QList<WebViewData> WindowActionRouter::fetch_webview_data_list(WindowId win_id) {
   for (auto &pair : window_map) {
     auto *win = pair.second;
-    auto is_current_window =
-        win_id == win->get_id() || (win_id == 0 && win->isActiveWindow());
+    auto is_current_window = win_id == win->get_id() || (win_id == 0 && win->isActiveWindow());
     if (is_current_window) {
       return win->mediator()->get_webview_list();
     }
