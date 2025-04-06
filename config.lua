@@ -1,9 +1,9 @@
 print('hello starting up...')
 
 --- @type table
-local web = web
+web = web
 --- @type table
-local uv = uv
+uv = uv
 
 local function trim(s)
   local res, _ = string.gsub(s, '^%s*(.-)%s*$', '%1')
@@ -24,7 +24,7 @@ local history = require 'null-browser.extras.history'
 
 web.event.add_listener('UrlChanged', {
   callback = function(opts)
-    print('url change', opts.url);
+    print('url change', web.inspect(opts));
     history.add(opts.url)
   end
 })

@@ -1,5 +1,5 @@
 --- @type table
-local uv = uv
+uv = uv
 
 local dmenu = {}
 
