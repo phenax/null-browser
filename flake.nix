@@ -32,17 +32,16 @@
         devShells.default = pkgs.mkShell rec {
           buildInputs = with pkgs; [
             cmake
+            ninja
             gnumake
             clang-tools
             pkg-config
+            ccache
             gdb
             valgrind
           ] ++ dependencies;
 
-          nativeBuildInputs = with pkgs; [gobject-introspection];
-
           LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath buildInputs}";
-          FOOBARITY = "${myPkgs.lua-libluv}";
         };
 
         packages.default = pkgs.stdenv.mkDerivation {
@@ -50,17 +49,18 @@
           version = "0.0.0";
           src = ./.;
 
-          buildInputs = [
-            myPkgs.qt.qtbase
-          ] ++ dependencies;
-
-          NIX_CFLAGS_COMPILE = "-DRELEASE=1";
-
+          buildInputs = dependencies;
           nativeBuildInputs = with pkgs; [
             cmake
+            ninja
             myPkgs.qt.wrapQtAppsHook
             pkg-config
           ];
+          dontUseCmakeConfigure = true;
+          buildPhase = ''make build PREFIX=$out'';
+          installPhase = ''make install PREFIX=$out'';
+
+          meta.mainProgram = "null-browser";
         };
       });
 }

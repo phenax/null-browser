@@ -11,10 +11,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(AUTOMOC ON)
 set(PKG_CONFIG_USE_STATIC_LIBS ON)
-find_package(PkgConfig REQUIRED)
-
 set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+find_package(PkgConfig REQUIRED)
 
 # message(COMMENT "${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}")
 
@@ -24,14 +23,6 @@ if(NOT DEFINED NULL_LUA_PREFIX OR NOT NULL_LUA_PREFIX)
 endif()
 set(PROJECT_LUA_PATH "${NULL_LUA_PREFIX}/?.lua")
 add_compile_definitions(PROJECT_LUA_PATH="${PROJECT_LUA_PATH}")
-
-if(DEFINED ENV{RELEASE})
-  set(CMAKE_BUILD_TYPE Release)
-  set(CMAKE_CXX_FLAGS "-O3 ${CMAKE_CXX_FLAGS}")
-elseif(DEFINED ENV{DEBUG})
-  set(CMAKE_BUILD_TYPE Debug)
-  set(CMAKE_CXX_FLAGS_DEBUG "-g ${CMAKE_CXX_FLAGS}")
-endif()
 
 # Source
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
@@ -43,6 +34,20 @@ file(GLOB_RECURSE SPEC_FILES spec/*.cpp)
 add_executable(${PROJECT})
 target_sources(${PROJECT} PRIVATE src/main.cpp ${SOURCE_FILES})
 target_include_directories(${PROJECT} PRIVATE src/)
+
+
+# Env config
+if(DEFINED ENV{RELEASE})
+  set(CMAKE_BUILD_TYPE Release)
+  set(CMAKE_CXX_FLAGS "-O3 ${CMAKE_CXX_FLAGS}")
+elseif(DEFINED ENV{DEBUG})
+  set(CMAKE_BUILD_TYPE Debug)
+  set(CMAKE_CXX_FLAGS_DEBUG "-g ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
+else()
+  set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
+endif()
+
 
 # Qt
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets WebEngineWidgets Test)
