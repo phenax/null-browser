@@ -1,35 +1,41 @@
-.PHONY: clean build build-release test check
+.PHONY: clean build build-release build-source test run check
 
-all: build
+all: build-dev
 
 PREFIX = "${PWD}/build/installdir"
+LUA_PREFIX = ""
 
-build:
+build-source:
 	@mkdir -p build
-	@cd build/ && cmake .. -DCMAKE_INSTALL_PREFIX="${PREFIX}" && make -j12
-	# cp --no-preserve=mode,ownership -r ${CEF_PACKAGE_PATH}/lib/* ./build/lib/
-	# cp --no-preserve=mode,ownership -r ${CEF_PACKAGE_PATH}/share/cef/* ./build/lib/
+	@cd build/ && cmake .. \
+		-DNULL_LUA_PREFIX="${LUA_PREFIX}" \
+		-DCMAKE_INSTALL_PREFIX="${PREFIX}" \
+		&& make -j8
+
+dev-setup:
 	@cp build/compile_commands.json .
 
-install: build-release
+build-dev: build-source dev-setup
+
+build:
+	RELEASE=1 make build-source LUA_PREFIX="${PREFIX}/lua"
+
+install:
 	cd build && cmake --install . --prefix "${PREFIX}"
 
-test: build
+test: build-source
 	cd build && QT_QPA_PLATFORM=offscreen ctest -V
 
 clean:
 	rm -rf build/
 	rm -f compile_commands.json
 
-run: build
+run: build-dev
 	./build/null-browser
 
 debug:
-	DEBUG=1 make build
+	DEBUG=1 make build-dev
 	gdb ./build/null-browser
-
-build-release:
-	RELEASE=1 make build
 
 check:
 	clang-format -i ./src/**/*.{hpp,cpp}

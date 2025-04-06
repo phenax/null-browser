@@ -271,8 +271,7 @@ int LuaRuntime::lua_tab_list(lua_State *state) {
 int LuaRuntime::lua_history_back(lua_State *state) {
   auto &runtime = LuaRuntime::instance();
 
-  qsizetype history_index =
-      lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
+  qsizetype history_index = lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
 
   WebViewId tab_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
 
@@ -283,8 +282,7 @@ int LuaRuntime::lua_history_back(lua_State *state) {
 int LuaRuntime::lua_history_forward(lua_State *state) {
   auto &runtime = LuaRuntime::instance();
 
-  qsizetype history_index =
-      lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
+  qsizetype history_index = lua_isnoneornil(state, 1) ? 1 : lua_tointeger(state, 1);
 
   WebViewId tab_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
 

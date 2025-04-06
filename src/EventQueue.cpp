@@ -18,6 +18,9 @@ void EventQueue::dispatch_event(BrowserEvent *event) {
       // TODO: Pattern filter
       event_handler.handler(event);
     }
+
+    // TODO: to delete or not to delete
+    // delete event;
   });
 }
 
