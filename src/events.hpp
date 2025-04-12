@@ -7,9 +7,9 @@
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
-#define SET_FIELD(NAME, TYPE, VALUE)                                           \
-  lua_pushstring(state, NAME);                                                 \
-  lua_push##TYPE(state, VALUE);                                                \
+#define SET_FIELD(NAME, TYPE, VALUE)                                                               \
+  lua_pushstring(state, NAME);                                                                     \
+  lua_push##TYPE(state, VALUE);                                                                    \
   lua_settable(state, -3);
 
 class BrowserEvent {
@@ -33,8 +33,8 @@ public:
 
   void lua_push(lua_State *state) const override {
     lua_newtable(state);
-    SET_FIELD("tab", integer, webview_id)
-    SET_FIELD("win", integer, win_id)
+    SET_FIELD("view_id", integer, webview_id)
+    SET_FIELD("win_id", integer, win_id)
     SET_FIELD("url", string, url.toStdString().c_str())
   }
 };

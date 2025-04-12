@@ -12,8 +12,8 @@ using WebViewId = qsizetype;
 
 enum OpenType : uint8_t {
   OpenUrl,
-  OpenUrlInTab,
-  OpenUrlInBgTab,
+  OpenUrlInView,
+  OpenUrlInBgView,
   OpenUrlInWindow,
 };
 

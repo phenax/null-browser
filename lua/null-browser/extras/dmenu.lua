@@ -12,6 +12,10 @@ function dmenu.select(list, opts, callback)
     table.insert(args, '-p')
     table.insert(args, opts.prompt)
   end
+  if opts.input then
+    table.insert(args, '-it')
+    table.insert(args, opts.input)
+  end
 
   uv.spawn('dmenu', { args = args, stdio = { stdin, stdout, nil } }, function(code)
     uv.close(stdout)

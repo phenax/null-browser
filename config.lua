@@ -5,10 +5,10 @@ web = web
 --- @type table
 uv = uv
 
-local function get_current_tab_index()
-  local currentTab = web.tabs.current();
-  for index, tab in ipairs(web.tabs.list()) do
-    if tab.id == currentTab then
+local function get_current_view_index()
+  local currentView = web.view.current();
+  for index, view in ipairs(web.view.list()) do
+    if view.id == currentView then
       return index
     end
   end
@@ -36,18 +36,18 @@ local function to_url(url)
   return "https://" .. trim(url)
 end
 
--- Open in new tab
+-- Open in new view
 web.keymap.set('n', 'o', function()
-  dmenu.select(history.list(), { prompt = 'Open tab:' }, function(err, result)
+  dmenu.select(history.list(), { prompt = 'Open view:' }, function(err, result)
     if err or not result then return end
-    web.tabs.new(to_url(result))
+    web.view.new(to_url(result))
   end)
 end)
--- Open in current tab
+-- Open in current view
 web.keymap.set('n', '<s-o>', function()
   dmenu.select(history.list(), { prompt = 'Open:' }, function(err, result)
     if err or not result then return end
-    web.tabs.set_url(to_url(result))
+    web.view.set_url(to_url(result))
   end)
 end)
 -- Delete from history
@@ -59,12 +59,12 @@ web.keymap.set('n', '<c-h>d', function()
 end)
 -- Update current url
 web.keymap.set('n', '<c-l>', function()
-  local tabs = web.tabs.list()
-  local tab = tabs[get_current_tab_index()];
-  if tab == nil then return end
-  dmenu.select(history.list(), { prompt = 'Set url:', input = tab.url }, function(err, result)
+  local views = web.view.list()
+  local view = views[get_current_view_index()];
+  if view == nil then return end
+  dmenu.select(history.list(), { prompt = 'Set url:', input = view.url }, function(err, result)
     if err or not result then return end
-    web.tabs.set_url(trim(result))
+    web.view.set_url(trim(result))
   end)
 end)
 
@@ -82,42 +82,42 @@ end)
 web.keymap.set('n', '<s-h>', function() web.history.back(); end)
 web.keymap.set('n', '<s-l>', function() web.history.forward(); end)
 
--- Close tab
-web.keymap.set('n', '<c-w>', function() web.tabs.close(); end)
+-- Close view
+web.keymap.set('n', '<c-w>', function() web.view.close(); end)
 
--- Tab select
+-- view select
 web.keymap.set('n', 'b', function()
-  local tabs_list = {}
-  local tabs = web.tabs.list()
-  for index, tab in ipairs(web.tabs.list()) do
-    table.insert(tabs_list, index .. ': ' .. tab.title .. ' (' .. tab.url .. ')')
+  local views_list = {}
+  local views = web.view.list()
+  for index, view in ipairs(web.view.list()) do
+    table.insert(views_list, index .. ': ' .. view.title .. ' (' .. view.url .. ')')
   end
-  dmenu.select(tabs_list, { prompt = 'Tab:' }, function(err, result)
+  dmenu.select(views_list, { prompt = 'Views:' }, function(err, result)
     if err or not result then return end
     local index_str, _ = trim(result):gsub('%s*:.*$', '')
     local index = tonumber(index_str)
-    if tabs[index] then
-      web.tabs.select(tabs[index].id)
+    if views[index] then
+      web.view.select(views[index].id)
     end
   end)
 end)
 
--- Next tab
+-- Next view
 web.keymap.set('n', 'tn', function()
-  local tabs = web.tabs.list()
-  if #tabs <= 1 then return end
-  local index = get_current_tab_index() + 1;
-  if index > #tabs then index = 1 end
-  web.tabs.select(tabs[index].id)
+  local views = web.view.list()
+  if #views <= 1 then return end
+  local index = get_current_view_index() + 1;
+  if index > #views then index = 1 end
+  web.view.select(views[index].id)
 end)
 
--- Prev tab
+-- Prev view
 web.keymap.set('n', 'tp', function()
-  local tabs = web.tabs.list()
-  if #tabs <= 1 then return end
-  local index = get_current_tab_index() - 1;
-  if index <= 0 then index = #tabs end
-  web.tabs.select(tabs[index].id)
+  local views = web.views.list()
+  if #views <= 1 then return end
+  local index = get_current_view_index() - 1;
+  if index <= 0 then index = #views end
+  web.views.select(views[index].id)
 end)
 
 print('ending...')

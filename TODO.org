@@ -5,11 +5,11 @@
 - [X] event loop for async work
 - [X] example: trigger dmenu for simple selection
 - [X] Fix segfault on quit
-- [X] Tab history navigation
-- [X] Tab next/prev
-- [X] Get tab list api
-- [X] Assign ID to each tab (reference in lua api)
-- [X] Tab select by id
+- [X] view history navigation
+- [X] view next/prev
+- [X] Get view list api
+- [X] Assign ID to each view (reference in lua api)
+- [X] view select by id
 - [X] Multi-window
 - [X] New window on new window request
 - [X] Socket for opening window in current session (lua eval)
@@ -18,8 +18,8 @@
 - [X] Url changed event
 - [X] History storage
 - [X] History completion
-- [X] Close window if last tab closed
-- [ ] Rename terms: webview/tab to page? (also web.tabs)
+- [X] Close window if last view closed
+- [X] Rename terms: tab to view? (also web.tabs)
 - [ ] Configuration lua api
 - [ ] Switch to __internals
 - [ ] Respect cli args for main window
@@ -27,7 +27,8 @@
 - [ ] Log stdout, errors and results from lua somewhere
 - [ ] Downloading/download path config
 - [ ] Run JS in page
-- [ ] Segfault on close
+- [ ] INVESTIGATE: Segfault on close
+- [ ] INVESTIGATE: Errors in keymap segfaults
 
 ** Next
 - [ ] Search text in page
@@ -63,37 +64,37 @@
 - [ ] Move modal keymap management into lua?
 
 ** Notes
-- Tab = 0, nil, none: Current tab
+- view = 0, nil, none: Current view
 - Win = 0: Current window
 - Win = nil, none: All windows or current window based on operation
 - Keep track of last focused window (current window is last focused)
 #+begin_src lua
-web.tab.set_url(url) -- Set url for current tab
-web.tab.set_url(url, { tab = 1 }) -- Set url for tab 1
-web.tab.set_url(url, { tab = 1, win = 1 }) -- Set url for tab 1 in win 1
-web.tab.set_url(url, { win = 1 }) -- Set url for current tab in win 1
+web.view.set_url(url) -- Set url for current view
+web.view.set_url(url, { view = 1 }) -- Set url for view 1
+web.view.set_url(url, { view = 1, win = 1 }) -- Set url for view 1 in win 1
+web.view.set_url(url, { win = 1 }) -- Set url for current view in win 1
 
-web.tab.new(url, { win = 1 }) -- New tab in win 1
-web.tab.new(url) -- New tab in current window
+web.view.new(url, { win = 1 }) -- New view in win 1
+web.view.new(url) -- New view in current window
 
-web.tab.close({ tab = 1 }) -- Close tab 1
-web.tab.close() -- Close current tab in current window
+web.view.close({ view = 1 }) -- Close view 1
+web.view.close() -- Close current view in current window
 
-web.tab.list({ win = nil }) -- List all tabs
-web.tab.list({ win = 1 }) -- List win 1 tabs
+web.view.list({ win = nil }) -- List all tabs
+web.view.list({ win = 1 }) -- List win 1 tabs
 
-web.tab.select({ tab = 1, win = 1 }) -- Select win 1 tab
-web.tab.select({ tab = 1, win = 0 }) -- Select tab 1 in current window
-web.tab.select({ tab = 1 }) -- Select tab 1
+web.view.select({ view = 1, win = 1 }) -- Select win 1 view
+web.view.select({ view = 1, win = 0 }) -- Select view 1 in current window
+web.view.select({ view = 1 }) -- Select view 1
 
-web.tab.current({ win = 1 }) -- Current tab in win 1
-web.tab.current() -- Current tab in current win
+web.view.current({ win = 1 }) -- Current view in win 1
+web.view.current() -- Current view in current win
 
-web.history.back(1) -- Back for current tab in current window
-web.history.back(1, { tab = 1 }) -- Back for tab 1
-web.history.back(1, { win = 1 }) -- Back for current tab in win 1
+web.history.back(1) -- Back for current view in current window
+web.history.back(1, { view = 1 }) -- Back for view 1
+web.history.back(1, { win = 1 }) -- Back for current view in win 1
 
-web.keymap.set('n', '<c-r>', ..., { tab = 1 }) -- Set keymap for tab 1
+web.keymap.set('n', '<c-r>', ..., { view = 1 }) -- Set keymap for view 1
 web.keymap.set('n', '<c-r>', ..., { win = 1 }) -- Set keymap for win 1
 web.opt.new_tab_url = 'https://duckduckgo.com'
 #+end_src

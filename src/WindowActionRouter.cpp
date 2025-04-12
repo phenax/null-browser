@@ -74,7 +74,7 @@ void WindowActionRouter::add_keymap(const QString &mode_string, const QString &k
   keymap_evaluator.add_keymap(mode, keyseq, std::move(action));
 }
 
-WebViewId WindowActionRouter::fetch_current_tab_id(WindowId win_id) {
+WebViewId WindowActionRouter::fetch_current_view_id(WindowId win_id) {
   const std::lock_guard<std::mutex> lock(window_map_mutex);
   for (auto &pair : window_map) {
     auto *win = pair.second;

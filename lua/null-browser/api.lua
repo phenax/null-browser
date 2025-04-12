@@ -18,7 +18,7 @@ else
 end
 
 -- web.keymap = web.keymap or {}
--- web.tab = web.tab or {}
+-- web.view = web.view or {}
 web.event = web.event or {}
 
 --- Listen to events from the browser

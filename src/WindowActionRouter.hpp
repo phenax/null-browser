@@ -32,7 +32,7 @@ public:
   void add_window(BrowserWindow *window);
   const WindowMap &windows();
 
-  WebViewId fetch_current_tab_id(WindowId win_id = 0);
+  WebViewId fetch_current_view_id(WindowId win_id = 0);
   QList<WebViewData> fetch_webview_data_list(WindowId win_id = 0);
 
   DELEGATE((&event_queue), dispatch_event, dispatch_event);

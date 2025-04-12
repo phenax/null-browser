@@ -14,11 +14,11 @@
 #define PROJECT_LUA_PATH ""
 #endif
 
-#define preserve_top(STATE, BODY)                                              \
-  {                                                                            \
-    const int __top = lua_gettop(STATE);                                       \
-    BODY;                                                                      \
-    lua_settop(STATE, __top);                                                  \
+#define preserve_top(STATE, BODY)                                                                  \
+  {                                                                                                \
+    const int __top = lua_gettop(STATE);                                                           \
+    BODY;                                                                                          \
+    lua_settop(STATE, __top);                                                                      \
   };
 
 class LuaRuntime : public QObject {
@@ -66,11 +66,11 @@ protected:
   static int lua_event_register(lua_State *state);
   static int lua_keymap_set(lua_State *state);
   static int lua_open_url(lua_State *state);
-  static int lua_tab_close(lua_State *state);
-  static int lua_tab_create(lua_State *state);
-  static int lua_tab_current(lua_State *state);
-  static int lua_tab_list(lua_State *state);
-  static int lua_tab_select(lua_State *state);
+  static int lua_view_close(lua_State *state);
+  static int lua_view_create(lua_State *state);
+  static int lua_view_current(lua_State *state);
+  static int lua_view_list(lua_State *state);
+  static int lua_view_select(lua_State *state);
 
 private:
   lua_State *state;

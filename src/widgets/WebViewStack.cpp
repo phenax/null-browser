@@ -28,10 +28,10 @@ void WebViewStack::open_url(const QUrl &url, OpenType open_type, WebViewId webvi
   case OpenType::OpenUrl:
     set_webview_url(url, webview_id);
     break;
-  case OpenType::OpenUrlInTab:
+  case OpenType::OpenUrlInView:
     create_new_webview(url, true);
     break;
-  case OpenType::OpenUrlInBgTab:
+  case OpenType::OpenUrlInBgView:
     create_new_webview(url, false);
     break;
   case OpenType::OpenUrlInWindow:
@@ -81,10 +81,10 @@ QList<WebViewData> WebViewStack::get_webview_list() {
 void WebViewStack::on_new_webview_request(const QWebEngineNewWindowRequest &request) {
   switch (request.destination()) {
   case QWebEngineNewWindowRequest::InNewTab:
-    open_url(request.requestedUrl(), OpenType::OpenUrlInTab);
+    open_url(request.requestedUrl(), OpenType::OpenUrlInView);
     break;
   case QWebEngineNewWindowRequest::InNewBackgroundTab:
-    open_url(request.requestedUrl(), OpenType::OpenUrlInBgTab);
+    open_url(request.requestedUrl(), OpenType::OpenUrlInBgView);
     break;
   case QWebEngineNewWindowRequest::InNewWindow:
   case QWebEngineNewWindowRequest::InNewDialog:
@@ -126,10 +126,10 @@ void WebViewStack::close(WebViewId webview_id) {
   webview->deleteLater();
 
   if (webview_list.isEmpty()) {
-    if (configuration->close_window_when_no_tabs) {
+    if (configuration->close_window_when_no_views) {
       emit close_window_requested();
     } else {
-      create_new_webview(configuration->new_tab_url, true);
+      create_new_webview(configuration->new_view_url, true);
     }
   }
 }
@@ -204,7 +204,7 @@ QUrl WebViewStack::current_url() {
   auto *webview = current_webview();
   if (webview == nullptr) {
     qDebug() << "No current webview";
-    return configuration->new_tab_url;
+    return configuration->new_view_url;
   }
 
   return webview->url();
