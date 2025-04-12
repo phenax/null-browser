@@ -12,13 +12,13 @@ BrowserApp::BrowserApp() {
 
   // Router init
   auto &window_action_router = WindowActionRouter::instance();
-  window_action_router.initialize();
+  window_action_router.initialize(&configuration);
 
   // Global event filter
   qApp->installEventFilter(this);
 
   // NOTE: TMP
-  lua.load_file("./config.lua");
+  lua.load_file_sync("./config.lua");
 
   connect(&window_action_router, &WindowActionRouter::new_window_requested, this,
           [this](const QUrl &url) { create_window({url.toString()}); });

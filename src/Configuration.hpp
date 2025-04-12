@@ -8,7 +8,7 @@ class Configuration : public QObject {
 public:
   using QObject::QObject;
 
-  QUrl new_view_url = QUrl("https://lite.duckduckgo.com");
+  QString new_view_url = "https://duckduckgo.com";
 
   bool close_window_when_no_views = true;
 };

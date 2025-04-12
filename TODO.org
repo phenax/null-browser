@@ -20,7 +20,7 @@
 - [X] History completion
 - [X] Close window if last view closed
 - [X] Rename terms: tab to view? (also web.tabs)
-- [ ] Configuration lua api
+- [X] Configuration lua api
 - [ ] Switch to __internals
 - [ ] Respect cli args for main window
 - [ ] Tests for api

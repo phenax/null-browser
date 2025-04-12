@@ -204,7 +204,7 @@ QUrl WebViewStack::current_url() {
   auto *webview = current_webview();
   if (webview == nullptr) {
     qDebug() << "No current webview";
-    return configuration->new_view_url;
+    return QUrl{configuration->new_view_url};
   }
 
   return webview->url();

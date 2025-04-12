@@ -35,7 +35,7 @@ public:
   }
 
   void evaluate(const QString &code);
-  void load_file(const QString &path);
+  void load_file_sync(const QString &path);
 
   void stop_event_loop();
   void start_event_loop();
@@ -54,6 +54,7 @@ signals:
   void url_opened(QString url, OpenType open_type, WebViewId webview_id);
   void webview_closed(WebViewId webview_id);
   void webview_selected(WebViewId webview_id);
+  void config_updated(const QString &key, const QVariant &value);
 
 protected:
   LuaRuntime();
@@ -71,6 +72,8 @@ protected:
   static int lua_view_current(lua_State *state);
   static int lua_view_list(lua_State *state);
   static int lua_view_select(lua_State *state);
+  static int lua_config_set(lua_State *state);
+  static int lua_config_get(lua_State *state);
 
 private:
   lua_State *state;

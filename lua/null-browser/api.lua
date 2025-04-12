@@ -45,4 +45,29 @@ function web.event.add_listener(events, opts)
   return __internals.register_event(opts)
 end
 
+--- Set configuration options
+---
+--- @param key string                    The name of the configuration
+--- @param value string|boolean|number   Configuration value
+---
+--- @example
+--- ```lua
+--- web.set('new_view_url', 'https://duckduckgo.com')
+--- ```
+function web.set(key, value)
+  __internals.set_config(key, value)
+end
+
+--- Get configuration value
+---
+--- @param key string The name of the configuration
+---
+--- @example
+--- ```lua
+--- local url = web.get('new_view_url')
+--- ```
+function web.get(key)
+  return __internals.get_config(key)
+end
+
 print("api loaded")

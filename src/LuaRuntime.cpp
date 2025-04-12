@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <lua.hpp>
+#include <qvariant.h>
 extern "C" {
 #include <luv/luv.h>
 }
@@ -73,13 +74,11 @@ void LuaRuntime::evaluate(const QString &code) {
   });
 }
 
-void LuaRuntime::load_file(const QString &path) {
-  queue_task([this, path]() {
-    preserve_top(state, {
-      if (luaL_dofile(state, path.toStdString().c_str()) != LUA_OK) {
-        qDebug() << "Load file error:" << lua_tostring(state, -1);
-      }
-    })
+void LuaRuntime::load_file_sync(const QString &path) {
+  preserve_top(state, {
+    if (luaL_dofile(state, path.toStdString().c_str()) != LUA_OK) {
+      qDebug() << "Load file error:" << lua_tostring(state, -1);
+    }
   });
 }
 
@@ -131,6 +130,8 @@ void LuaRuntime::init_web_lib() {
 
   luaL_Reg internals[] = {
       {"register_event", &LuaRuntime::lua_event_register},
+      {"set_config", &LuaRuntime::lua_config_set},
+      {"get_config", &LuaRuntime::lua_config_get},
       {nullptr, nullptr},
   };
   luaL_newlib(state, internals);
@@ -207,6 +208,31 @@ int LuaRuntime::lua_view_create(lua_State *state) {
   const char *url = luaL_optstring(state, 1, "");
   auto &runtime = LuaRuntime::instance();
   emit runtime.url_opened(url, OpenType::OpenUrlInView, 0);
+  return 1;
+}
+
+int LuaRuntime::lua_config_set(lua_State *state) {
+  const char *key = lua_tostring(state, 1);
+  auto &runtime = LuaRuntime::instance();
+  QVariant value = runtime.get_lua_value(2, "");
+  emit runtime.config_updated(key, value);
+  return 1;
+}
+
+int LuaRuntime::lua_config_get(lua_State *state) {
+  const char *key = lua_tostring(state, 1);
+  auto &router = WindowActionRouter::instance();
+  auto value = router.fetch_config_value(key);
+
+  if (value.typeId() == QMetaType::QString)
+    lua_pushstring(state, value.toString().toStdString().c_str());
+  else if (value.typeId() == QMetaType::Int)
+    lua_pushinteger(state, value.toInt());
+  else if (value.typeId() == QMetaType::Double)
+    lua_pushnumber(state, value.toDouble());
+  else
+    lua_pushnil(state);
+
   return 1;
 }
 

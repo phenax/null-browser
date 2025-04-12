@@ -32,7 +32,6 @@ clean:
 	rm -rf build/
 	rm -f compile_commands.json
 
-ARGS=""
 run: build-dev
 	./build/null-browser $(ARGS)
 

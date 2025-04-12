@@ -14,6 +14,9 @@ local function get_current_view_index()
   end
 end
 
+web.set('new_view_url', 'https://lite.duckduckgo.com')
+-- web.set('close_window_when_no_views', false)
+
 local dmenu = require 'null-browser.extras.dmenu'
 local history = require 'null-browser.extras.history'
 
@@ -38,6 +41,7 @@ end
 
 -- Open in new view
 web.keymap.set('n', 'o', function()
+  print(web.get('new_view_url'))
   dmenu.select(history.list(), { prompt = 'Open view:' }, function(err, result)
     if err or not result then return end
     web.view.new(to_url(result))

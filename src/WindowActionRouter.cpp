@@ -9,10 +9,30 @@
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
-void WindowActionRouter::initialize() {
+QVariant WindowActionRouter::fetch_config_value(const QString &key) {
+  if (key == "new_view_url")
+    return configuration->new_view_url;
+  if (key == "close_window_when_no_views")
+    return configuration->close_window_when_no_views;
+  return "";
+}
+
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
+void WindowActionRouter::initialize(Configuration *config) {
   auto &runtime = LuaRuntime::instance();
+  configuration = config;
 
   connect(&runtime, &LuaRuntime::keymap_added, this, &WindowActionRouter::add_keymap);
+
+  connect(&runtime, &LuaRuntime::config_updated, this,
+          [this](const QString &key, const QVariant &value) {
+            qDebug() << key << value;
+            if (key == "new_view_url") {
+              configuration->new_view_url = value.toString();
+            } else if (key == "close_window_when_no_views") {
+              configuration->close_window_when_no_views = value.toBool();
+            }
+          });
 
   connect(&runtime, &LuaRuntime::history_back_requested, this,
           [this](WebViewId webview_id, qsizetype history_index) {
