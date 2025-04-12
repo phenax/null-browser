@@ -25,20 +25,24 @@ int main(int argc, char *argv[]) {
   auto *parser = create_cli_parser();
   parser->process(app);
 
+  auto urls = parser->positionalArguments();
+  auto lua_expr = parser->value("expr");
+
   InstanceManager instance_manager;
   if (instance_manager.is_server()) {
     auto *browser = new BrowserApp;
-    browser->create_window();
+    browser->create_window(urls);
 
     auto &lua = LuaRuntime::instance();
-    QObject::connect(&instance_manager, &InstanceManager::lua_eval_requested,
-                     &lua, &LuaRuntime::evaluate);
-    QObject::connect(&instance_manager, &InstanceManager::urls_open_requested,
-                     browser, &BrowserApp::create_window);
+    QObject::connect(&instance_manager, &InstanceManager::lua_eval_requested, &lua,
+                     &LuaRuntime::evaluate);
+    QObject::connect(&instance_manager, &InstanceManager::urls_open_requested, browser,
+                     &BrowserApp::create_window);
+
+    if (!lua_expr.isEmpty())
+      lua.evaluate(lua_expr);
   } else {
     qInfo() << "Using current instance";
-    auto urls = parser->positionalArguments();
-    auto lua_expr = parser->value("expr");
 
     if (!urls.isEmpty() || lua_expr.isEmpty())
       instance_manager.write_open_urls_to_socket(urls);

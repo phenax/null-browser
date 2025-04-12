@@ -7,7 +7,12 @@ function dmenu.select(list, opts, callback)
   local selection = nil
   local stdin = uv.new_pipe();
   local stdout = uv.new_pipe();
-  local args = { '-p', opts.prompt or '>', '-it', opts.input or '' }
+  local args = opts.args or {}
+  if opts.prompt then
+    table.insert(args, '-p')
+    table.insert(args, opts.prompt)
+  end
+
   uv.spawn('dmenu', { args = args, stdio = { stdin, stdout, nil } }, function(code)
     uv.close(stdout)
     uv.close(stdin)

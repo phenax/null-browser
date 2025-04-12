@@ -19,11 +19,15 @@
 - [X] History storage
 - [X] History completion
 - [X] Close window if last tab closed
+- [ ] Rename terms: webview/tab to page? (also web.tabs)
 - [ ] Configuration lua api
 - [ ] Switch to __internals
+- [ ] Respect cli args for main window
 - [ ] Tests for api
 - [ ] Log stdout, errors and results from lua somewhere
-- [ ] Downloading
+- [ ] Downloading/download path config
+- [ ] Run JS in page
+- [ ] Segfault on close
 
 ** Next
 - [ ] Search text in page
@@ -31,7 +35,7 @@
 - [ ] Fullscreen
 - [ ] Zoom in/out
 - [ ] Permission requests handling/persisting
-- [ ] window.opener controls
+- [ ] window.opener controls (use createWindow api directly?)
 - [ ] Notifications
 - [ ] Conflict in keymap (keymap already exists)
 - [ ] Allow pattern filtering for event listeners
@@ -39,7 +43,9 @@
 - [ ] Handle resource cleanup + signal disconnecting
 - [ ] Open url sanitize/humanize (add protocol if missing, remove quotes, etc)
 - [ ] static linking for qt
-- [ ] static linking for libluv
+- [X] static linking for libluv
+- [ ] User scripts (greasemonkey?)
+- [ ] User stylesheets (per site and global?)
 - [ ] Bookmarking
 
 ** Later

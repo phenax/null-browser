@@ -5,11 +5,6 @@ web = web
 --- @type table
 uv = uv
 
-local function trim(s)
-  local res, _ = string.gsub(s, '^%s*(.-)%s*$', '%1')
-  return res
-end
-
 local function get_current_tab_index()
   local currentTab = web.tabs.current();
   for index, tab in ipairs(web.tabs.list()) do
@@ -29,18 +24,30 @@ web.event.add_listener('UrlChanged', {
   end
 })
 
+local function trim(s)
+  local res, _ = string.gsub(s, '^%s*(.-)%s*$', '%1')
+  return res
+end
+
+local function to_url(url)
+  if string.match(url, "^https?://") then
+    return trim(url)
+  end
+  return "https://" .. trim(url)
+end
+
 -- Open in new tab
 web.keymap.set('n', 'o', function()
   dmenu.select(history.list(), { prompt = 'Open tab:' }, function(err, result)
     if err or not result then return end
-    web.tabs.new(trim(result))
+    web.tabs.new(to_url(result))
   end)
 end)
 -- Open in current tab
 web.keymap.set('n', '<s-o>', function()
   dmenu.select(history.list(), { prompt = 'Open:' }, function(err, result)
     if err or not result then return end
-    web.tabs.set_url(trim(result))
+    web.tabs.set_url(to_url(result))
   end)
 end)
 -- Delete from history
