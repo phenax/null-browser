@@ -44,7 +44,7 @@ web.keymap.set('n', 'o', function()
   print(web.get('new_view_url'))
   dmenu.select(history.list(), { prompt = 'Open view:' }, function(err, result)
     if err or not result then return end
-    web.view.new(to_url(result))
+    web.view.create(to_url(result))
   end)
 end)
 -- Open in current view

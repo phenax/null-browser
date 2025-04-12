@@ -3,7 +3,6 @@
 #include <QtCore>
 #include <functional>
 #include <lua.hpp>
-#include <string>
 
 #include "AsyncEventLoop.hpp"
 #include "lua.h"
@@ -25,7 +24,6 @@ class LuaRuntime : public QObject {
   Q_OBJECT
 
   const char *uv_global_name = "uv";
-  const char *web_global_name = "web";
   const char *internals_global_name = "__internals";
 
 public:

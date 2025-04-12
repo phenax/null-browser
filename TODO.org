@@ -21,8 +21,8 @@
 - [X] Close window if last view closed
 - [X] Rename terms: tab to view? (also web.tabs)
 - [X] Configuration lua api
-- [ ] Switch to __internals
-- [ ] Respect cli args for main window
+- [X] Switch to __internals
+- [X] Respect cli args for main window
 - [ ] Tests for api
 - [ ] Log stdout, errors and results from lua somewhere
 - [ ] Downloading/download path config
@@ -74,8 +74,8 @@ web.view.set_url(url, { view = 1 }) -- Set url for view 1
 web.view.set_url(url, { view = 1, win = 1 }) -- Set url for view 1 in win 1
 web.view.set_url(url, { win = 1 }) -- Set url for current view in win 1
 
-web.view.new(url, { win = 1 }) -- New view in win 1
-web.view.new(url) -- New view in current window
+web.view.create(url, { win = 1 }) -- New view in win 1
+web.view.create(url) -- New view in current window
 
 web.view.close({ view = 1 }) -- Close view 1
 web.view.close() -- Close current view in current window

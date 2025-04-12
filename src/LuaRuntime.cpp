@@ -129,53 +129,22 @@ void LuaRuntime::init_web_lib() {
   // NOLINTBEGIN(modernize-avoid-c-arrays)
 
   luaL_Reg internals[] = {
-      {"register_event", &LuaRuntime::lua_event_register},
-      {"set_config", &LuaRuntime::lua_config_set},
-      {"get_config", &LuaRuntime::lua_config_get},
+      {"event_add_listener", &LuaRuntime::lua_event_register},
+      {"config_set", &LuaRuntime::lua_config_set},
+      {"config_get", &LuaRuntime::lua_config_get},
+      {"keymap_set", &LuaRuntime::lua_keymap_set},
+      {"view_close", &LuaRuntime::lua_view_close},
+      {"view_create", &LuaRuntime::lua_view_create},
+      {"view_current", &LuaRuntime::lua_view_current},
+      {"view_list", &LuaRuntime::lua_view_list},
+      {"view_select", &LuaRuntime::lua_view_select},
+      {"view_set_url", &LuaRuntime::lua_open_url},
+      {"history_back", &LuaRuntime::lua_history_back},
+      {"history_forward", &LuaRuntime::lua_history_forward},
       {nullptr, nullptr},
   };
   luaL_newlib(state, internals);
   lua_setglobal(state, internals_global_name);
-
-  // web
-  luaL_Reg web[] = {
-      /// @deprecated
-      {"open", &LuaRuntime::lua_open_url},
-      {nullptr, nullptr},
-  };
-  luaL_newlib(state, web);
-  lua_setglobal(state, web_global_name);
-  lua_getglobal(state, web_global_name);
-
-  // Keymap api (web.keymap)
-  luaL_Reg webkeymap[] = {
-      {"set", &LuaRuntime::lua_keymap_set},
-      {nullptr, nullptr},
-  };
-  luaL_newlib(state, webkeymap);
-  lua_setfield(state, -2, "keymap");
-
-  // View actions (web.view)
-  luaL_Reg webviews[] = {
-      {"close", &LuaRuntime::lua_view_close},
-      {"new", &LuaRuntime::lua_view_create},
-      {"current", &LuaRuntime::lua_view_current},
-      {"list", &LuaRuntime::lua_view_list},
-      {"select", &LuaRuntime::lua_view_select},
-      {"set_url", &LuaRuntime::lua_open_url},
-      {nullptr, nullptr},
-  };
-  luaL_newlib(state, webviews);
-  lua_setfield(state, -2, "view");
-
-  // History navigation
-  luaL_Reg webhistory[] = {
-      {"back", &LuaRuntime::lua_history_back},
-      {"forward", &LuaRuntime::lua_history_forward},
-      {nullptr, nullptr},
-  };
-  luaL_newlib(state, webhistory);
-  lua_setfield(state, -2, "history");
 
   // NOLINTEND(modernize-avoid-c-arrays)
 }
