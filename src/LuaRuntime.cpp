@@ -156,11 +156,11 @@ QVariant LuaRuntime::get_lua_value(int idx, QVariant default_value) {
   if (lua_isstring(state, idx))
     return lua_tostring(state, idx);
 
-  if (lua_isnumber(state, idx))
-    return lua_tonumber(state, idx);
-
   if (lua_isboolean(state, idx))
     return lua_toboolean(state, idx);
+
+  if (lua_isnumber(state, idx))
+    return lua_tonumber(state, idx);
 
   return lua_tostring(state, idx);
 }

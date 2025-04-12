@@ -23,9 +23,10 @@
 - [X] Configuration lua api
 - [X] Switch to __internals
 - [X] Respect cli args for main window
+- [ ] Downloading/download path config
+- [ ] Use table for internals api options?
 - [ ] Tests for api
 - [ ] Log stdout, errors and results from lua somewhere
-- [ ] Downloading/download path config
 - [ ] Run JS in page
 - [ ] INVESTIGATE: Segfault on close
 - [ ] INVESTIGATE: Errors in keymap segfaults

@@ -29,7 +29,7 @@ private slots:
       WebViewStack webview_stack(&configuration);
 
       QCOMPARE(webview_stack.count(), 0);
-      QCOMPARE(webview_stack.current_url(), configuration.new_view_url);
+      QCOMPARE(webview_stack.current_url(), configuration.new_view_url());
     }
   }
 

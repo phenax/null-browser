@@ -126,10 +126,10 @@ void WebViewStack::close(WebViewId webview_id) {
   webview->deleteLater();
 
   if (webview_list.isEmpty()) {
-    if (configuration->close_window_when_no_views) {
+    if (configuration->close_window_when_no_views()) {
       emit close_window_requested();
     } else {
-      create_new_webview(configuration->new_view_url, true);
+      create_new_webview(configuration->new_view_url(), true);
     }
   }
 }
@@ -204,7 +204,7 @@ QUrl WebViewStack::current_url() {
   auto *webview = current_webview();
   if (webview == nullptr) {
     qDebug() << "No current webview";
-    return QUrl{configuration->new_view_url};
+    return QUrl{configuration->new_view_url()};
   }
 
   return webview->url();
