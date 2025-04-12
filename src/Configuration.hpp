@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtCore>
+#include <qwebengineprofile.h>
 #include <unordered_map>
 
 class Configuration : public QObject {
@@ -10,24 +11,35 @@ private:
   std::unordered_map<QString, QVariant> config_map{
       {"new_view_url", "https://duckduckgo.com"},
       {"close_window_when_no_views", true},
+      {"user_agent", QWebEngineProfile::defaultProfile()->httpUserAgent()},
   };
 
 public:
   using QObject::QObject;
 
   void set_config(const QString &name, const QVariant &value) {
-    qDebug() << "config update" << name << value;
     config_map[name] = value;
-    emit config_updated(name, value);
+    on_update(name, value);
   }
 
-  QVariant get_config(const QString &name) const { return config_map.at(name); }
+  QVariant get_config(const QString &name, QVariant default_value = "") const {
+    if (!config_map.contains(name)) return default_value;
 
-  QString new_view_url() const { return get_config("new_view_url").toString(); }
+    return config_map.at(name);
+  }
+
   bool close_window_when_no_views() const {
     return get_config("close_window_when_no_views").toBool();
   }
+  QString new_view_url() const { return get_config("new_view_url").toString(); }
+  QString user_agent() const { return get_config("user_agent").toString(); }
+
+private:
+  void on_update(const QString &name, const QVariant &value) {
+    if (name == "user_agent")
+      emit user_agent_updated(value.toString());
+  }
 
 signals:
-  void config_updated(const QString &name, const QVariant &value);
+  void user_agent_updated(const QString &value);
 };

@@ -25,6 +25,7 @@ signals:
   void webview_selected(WebViewId webview_id);
   void new_window_requested(const QUrl &url);
   void close_window_requested();
+  void set_user_agent(const QString &user_agent);
 
 private:
   WebViewStack *webview_stack;

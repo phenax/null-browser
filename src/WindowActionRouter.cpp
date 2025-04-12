@@ -21,6 +21,11 @@ void WindowActionRouter::initialize(Configuration *config) {
   connect(&runtime, &LuaRuntime::keymap_added, this, &WindowActionRouter::add_keymap);
 
   connect(&runtime, &LuaRuntime::config_updated, configuration, &Configuration::set_config);
+  connect(configuration, &Configuration::user_agent_updated, this, [this](const QString &user_agent) {
+    for (auto &win_match : window_map) {
+      win_match.second->mediator()->set_user_agent(user_agent);
+    }
+  });
 
   connect(&runtime, &LuaRuntime::history_back_requested, this,
           [this](WebViewId webview_id, qsizetype history_index) {

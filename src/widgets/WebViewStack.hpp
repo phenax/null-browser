@@ -3,6 +3,7 @@
 #include <QStackedLayout>
 #include <QWebEngineProfile>
 #include <cstdint>
+#include <qwebengineprofile.h>
 #include <vector>
 
 #include "Configuration.hpp"
@@ -38,6 +39,8 @@ public:
   void set_webview_url(const QUrl &url, WebViewId webview_id);
 
   bool has_webview(WebViewId webview_id);
+
+  QWebEngineProfile *get_profile() { return profile; }
 
   /// @deprecated TODO: Remove
   std::vector<QUrl> urls();

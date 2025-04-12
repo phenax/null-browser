@@ -16,6 +16,7 @@ end
 
 web.set('new_view_url', 'https://lite.duckduckgo.com')
 web.set('close_window_when_no_views', true)
+web.set('user_agent', 'MacOS | Safari - $500 edition')
 
 local dmenu = require 'null-browser.extras.dmenu'
 local history = require 'null-browser.extras.history'
@@ -41,7 +42,7 @@ end
 
 -- Open in new view
 web.keymap.set('n', 'o', function()
-  print(web.get('new_view_url'))
+  print(web.get('new_view_url'), web.get('user_agent'))
   dmenu.select(history.list(), { prompt = 'Open view:' }, function(err, result)
     if err or not result then return end
     web.view.create(to_url(result))
