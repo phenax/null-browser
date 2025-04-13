@@ -1,60 +1,44 @@
-** Current
-- [X] Process spawning lua (+ stdio)
-- [X] Keybindings (lua api)
-- [X] Modal keys
-- [X] event loop for async work
-- [X] example: trigger dmenu for simple selection
-- [X] Fix segfault on quit
-- [X] view history navigation
-- [X] view next/prev
-- [X] Get view list api
-- [X] Assign ID to each view (reference in lua api)
-- [X] view select by id
-- [X] Multi-window
-- [X] New window on new window request
-- [X] Socket for opening window in current session (lua eval)
-- [X] Config loading and lua path
-- [X] Events/autocommands
-- [X] Url changed event
-- [X] History storage
-- [X] History completion
-- [X] Close window if last view closed
-- [X] Rename terms: tab to view? (also web.tabs)
-- [X] Configuration lua api
-- [X] Switch to __internals
-- [X] Respect cli args for main window
-- [X] Downloading/download path config
-- [ ] Use table for internals api options?
+** Usable
 - [ ] Tests for api
-- [ ] Log stdout, errors and results from lua somewhere
-- [ ] Run JS in page
+- [ ] Search text in page
+- [ ] Dev tools
+- [ ] Fullscreen
+- [ ] Zoom in/out
+- [ ] Scroll api (j/k/h/l/gg/G)
+- [ ] Permission requests handling/persisting
+- [ ] window.opener controls (use createWindow api directly?)
+- [ ] Notifications
+
+** Bugs
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open
 - [ ] INVESTIGATE: Segfault on close
 - [ ] INVESTIGATE: Errors in keymap/thread segfaults
 
 ** Next
-- [ ] Search text in page
-- [ ] Dev tools
-- [ ] Fullscreen
-- [ ] Zoom in/out
-- [ ] Permission requests handling/persisting
-- [ ] window.opener controls (use createWindow api directly?)
-- [ ] Notifications
+- [ ] Tests for window
+- [ ] More tests for stack
+- [ ] Tests for router
+- [ ] Run JS in page
+- [ ] Log stdout, errors and results from lua somewhere
+- [ ] Use table for all internals api options?
 - [ ] Conflict in keymap (keymap already exists)
 - [ ] Allow pattern filtering for event listeners
 - [ ] Allow tab_id, win_id filtering for event listeners
 - [ ] Handle resource cleanup + signal disconnecting
 - [ ] Open url sanitize/humanize (add protocol if missing, remove quotes, etc)
-- [ ] static linking for qt
-- [X] static linking for libluv
-- [ ] User scripts (greasemonkey?)
-- [ ] User stylesheets (per site and global?)
-- [ ] Bookmarking
+- [ ] Profiles
+- [ ] Private window (in-memory profile)
+- [ ] Read page contents via lua
 
 ** Later
+- [ ] Bookmarking
+- [ ] User scripts (greasemonkey?)
+- [ ] User stylesheets (per site and global?)
 - [ ] Support multiple modes for keymap.set: `web.keymap.set({'n','i'}, ...)`
-- [ ] Read page contents via lua
-- [ ] `web.to_string`: like vim.inspect
+- [ ] static linking for qt
+- [X] `web.inspect`: like vim.inspect
+- [ ] vendor web.inspect with build
+- [X] static linking for libluv
 - [X] Update window title on current webview title change
 
 ** Later later

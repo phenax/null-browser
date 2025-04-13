@@ -39,7 +39,6 @@ public:
   void start_event_loop();
   DELEGATE(event_loop, queue_task, queue_task)
 
-  QVariant get_lua_value(int idx, QVariant default_value = 0);
   DEFINE_GETTER(get_state, state)
 
 signals:
@@ -57,21 +56,8 @@ signals:
 protected:
   LuaRuntime();
   ~LuaRuntime() override;
-  void init_web_lib();
-
-  // Lua api
-  static int lua_history_back(lua_State *state);
-  static int lua_history_forward(lua_State *state);
-  static int lua_event_register(lua_State *state);
-  static int lua_keymap_set(lua_State *state);
-  static int lua_open_url(lua_State *state);
-  static int lua_view_close(lua_State *state);
-  static int lua_view_create(lua_State *state);
-  static int lua_view_current(lua_State *state);
-  static int lua_view_list(lua_State *state);
-  static int lua_view_select(lua_State *state);
-  static int lua_config_set(lua_State *state);
-  static int lua_config_get(lua_State *state);
+  void init_lua_package_path();
+  void init_web_api();
 
 private:
   lua_State *state;
@@ -106,5 +92,21 @@ public:
     lua_pop(state, 1);
 
     return values;
+  }
+
+  static QVariant get_lua_value(lua_State *state, int idx, QVariant default_value = 0) {
+    if (lua_isnoneornil(state, idx))
+      return default_value;
+
+    if (lua_isstring(state, idx))
+      return lua_tostring(state, idx);
+
+    if (lua_isboolean(state, idx))
+      return lua_toboolean(state, idx);
+
+    if (lua_isnumber(state, idx))
+      return lua_tonumber(state, idx);
+
+    return lua_tostring(state, idx);
   }
 };
