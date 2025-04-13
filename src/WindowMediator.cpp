@@ -16,14 +16,22 @@ WindowMediator::WindowMediator(WebViewStack *webview_stack) : webview_stack(webv
   connect(this, &WindowMediator::webview_closed, webview_stack, &WebViewStack::close);
   connect(this, &WindowMediator::webview_selected, webview_stack, &WebViewStack::focus_webview);
 
-  auto *profile = webview_stack->get_profile();
-  connect(this, &WindowMediator::set_user_agent, profile, &QWebEngineProfile::setHttpUserAgent);
-
   // Delegate signal
   connect(webview_stack, &WebViewStack::new_window_requested, this,
           &WindowMediator::new_window_requested);
   connect(webview_stack, &WebViewStack::close_window_requested, this,
           &WindowMediator::close_window_requested);
+}
+
+void WindowMediator::update_user_agent(const QString &user_agent) {
+  auto *profile = webview_stack->get_profile();
+  profile->setHttpUserAgent(user_agent);
+}
+
+void WindowMediator::update_downloads_dir(const QString &downloads_dir) {
+  qDebug() << "::: dl in med" << downloads_dir;
+  auto *profile = webview_stack->get_profile();
+  profile->setDownloadPath(downloads_dir);
 }
 
 WindowMediator::~WindowMediator() {

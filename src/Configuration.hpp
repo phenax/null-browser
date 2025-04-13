@@ -12,6 +12,7 @@ private:
       {"new_view_url", "https://duckduckgo.com"},
       {"close_window_when_no_views", true},
       {"user_agent", QWebEngineProfile::defaultProfile()->httpUserAgent()},
+      {"downloads_dir", QWebEngineProfile::defaultProfile()->downloadPath()},
   };
 
 public:
@@ -23,7 +24,8 @@ public:
   }
 
   QVariant get_config(const QString &name, QVariant default_value = "") const {
-    if (!config_map.contains(name)) return default_value;
+    if (!config_map.contains(name))
+      return default_value;
 
     return config_map.at(name);
   }
@@ -33,13 +35,17 @@ public:
   }
   QString new_view_url() const { return get_config("new_view_url").toString(); }
   QString user_agent() const { return get_config("user_agent").toString(); }
+  QString downloads_dir() const { return get_config("downloads_dir").toString(); }
 
 private:
   void on_update(const QString &name, const QVariant &value) {
     if (name == "user_agent")
       emit user_agent_updated(value.toString());
+    if (name == "downloads_dir")
+      emit downloads_dir_updated(value.toString());
   }
 
 signals:
   void user_agent_updated(const QString &value);
+  void downloads_dir_updated(const QString &value);
 };

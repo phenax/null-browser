@@ -21,8 +21,13 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringLi
   layout->setStackingMode(QStackedLayout::StackAll);
   centralWidget()->setLayout(layout);
 
+  // Webengine profile
+  auto *profile = new QWebEngineProfile("null-browser");
+  profile->setDownloadPath(configuration.downloads_dir());
+  profile->setHttpUserAgent(configuration.user_agent());
+
   // Web engine
-  auto *webview_stack = new WebViewStack(&configuration, new QWebEngineProfile("null-browser"));
+  auto *webview_stack = new WebViewStack(&configuration, profile);
   layout->addWidget(webview_stack);
 
   // Open webviews for given urls

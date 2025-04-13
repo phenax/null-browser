@@ -1,6 +1,7 @@
 #pragma once
 
 #include "widgets/BrowserWindow.hpp"
+#include <qlist.h>
 
 class BrowserApp : public QObject {
   Q_OBJECT
@@ -15,4 +16,6 @@ protected:
 
 private:
   Configuration configuration;
+  QWebEngineProfile default_profile{"default"};
+  QList<QWebEngineProfile *> profiles{&default_profile};
 };

@@ -20,6 +20,13 @@ BrowserApp::BrowserApp() {
   // NOTE: TMP
   lua.load_file_sync("./config.lua");
 
+  // Initializes profile
+  QList profiles{&default_profile};
+  for (auto *profile : profiles) {
+    profile->setDownloadPath(configuration.downloads_dir());
+    profile->setHttpUserAgent(configuration.user_agent());
+  }
+
   connect(&window_action_router, &WindowActionRouter::new_window_requested, this,
           [this](const QUrl &url) { create_window({url.toString()}); });
 };
@@ -28,6 +35,7 @@ BrowserWindow *BrowserApp::create_window(const QStringList &urls) {
   auto *window = new BrowserWindow((const Configuration &)configuration, urls);
   window->setWindowTitle("null-browser");
   WindowActionRouter::instance().add_window(window);
+
   window->show();
   return window;
 }

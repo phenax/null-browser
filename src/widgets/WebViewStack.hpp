@@ -57,6 +57,7 @@ protected:
   WebView *create_new_webview(const QUrl &url, bool focus = false);
   int32_t get_webview_index(WebViewId webview_id);
   WebView *get_webview(WebViewId webview_id);
+  void on_download_request(QWebEngineDownloadRequest *download);
 
 public slots:
   void open_url(const QUrl &url, OpenType open_type = OpenType::OpenUrl, WebViewId webview_id = 0);

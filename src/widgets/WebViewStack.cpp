@@ -21,6 +21,7 @@ WebViewStack::WebViewStack(const Configuration *configuration, QWebEngineProfile
 
   connect(layout, &QStackedLayout::currentChanged, this,
           &WebViewStack::current_webview_title_changed);
+  connect(profile, &QWebEngineProfile::downloadRequested, this, &WebViewStack::on_download_request);
 }
 
 void WebViewStack::open_url(const QUrl &url, OpenType open_type, WebViewId webview_id) {
@@ -91,6 +92,12 @@ void WebViewStack::on_new_webview_request(const QWebEngineNewWindowRequest &requ
     emit new_window_requested(request.requestedUrl());
     break;
   }
+}
+
+void WebViewStack::on_download_request(QWebEngineDownloadRequest *download) {
+  qDebug() << "DOWNLOADING" << download->downloadDirectory() << download->downloadFileName();
+  emit download->accept();
+  // TODO: Emit event to see download progress
 }
 
 int32_t WebViewStack::get_webview_index(WebViewId webview_id) {

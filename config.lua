@@ -17,6 +17,7 @@ end
 web.set('new_view_url', 'https://lite.duckduckgo.com')
 web.set('close_window_when_no_views', true)
 web.set('user_agent', 'MacOS | Safari - $500 edition')
+web.set('downloads_dir', os.getenv('HOME') .. '/Downloads/firefox')
 
 local dmenu = require 'null-browser.extras.dmenu'
 local history = require 'null-browser.extras.history'
