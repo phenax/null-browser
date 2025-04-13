@@ -57,7 +57,10 @@ Qt::Key KeySeqParser::parse_key(const QString &key_name) {
 
   if (key_name.length() == 1) {
     const char key_char = key_name.toStdString().at(0);
-    return Qt::Key(Qt::Key_A + (key_char - 'a'));
+    if (key_char >= 'a' && key_char <= 'z')
+      return Qt::Key(Qt::Key_A + (key_char - 'a'));
+    if (key_char >= '0' && key_char <= '9')
+      return Qt::Key(Qt::Key_0 + (key_char - '0'));
   }
 
   if (key_name == "space")

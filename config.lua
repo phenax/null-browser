@@ -108,6 +108,17 @@ web.keymap.set('n', 'b', function()
   end)
 end)
 
+-- 1-0 for tab indexes 1-10
+for index = 1, 10 do
+  local key = index
+  if index >= 10 then key = 0 end
+  web.keymap.set('n', '<space>' .. key, function()
+    local views = web.view.list()
+    if index > #views then return end
+    web.view.select(views[index].id)
+  end)
+end
+
 -- Next view
 web.keymap.set('n', 'tn', function()
   local views = web.view.list()

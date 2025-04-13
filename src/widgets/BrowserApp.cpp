@@ -21,7 +21,6 @@ BrowserApp::BrowserApp() {
   lua.load_file_sync("./config.lua");
 
   // Initializes profile
-  QList profiles{&default_profile};
   for (auto *profile : profiles) {
     profile->setDownloadPath(configuration.downloads_dir());
     profile->setHttpUserAgent(configuration.user_agent());

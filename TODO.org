@@ -23,13 +23,14 @@
 - [X] Configuration lua api
 - [X] Switch to __internals
 - [X] Respect cli args for main window
-- [ ] Downloading/download path config
+- [X] Downloading/download path config
 - [ ] Use table for internals api options?
 - [ ] Tests for api
 - [ ] Log stdout, errors and results from lua somewhere
 - [ ] Run JS in page
+- [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open
 - [ ] INVESTIGATE: Segfault on close
-- [ ] INVESTIGATE: Errors in keymap segfaults
+- [ ] INVESTIGATE: Errors in keymap/thread segfaults
 
 ** Next
 - [ ] Search text in page
