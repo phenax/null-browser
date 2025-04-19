@@ -75,6 +75,10 @@ void WindowActionRouter::initialize(Configuration *config) {
       win_match.second->mediator()->set_search_text(this->current_search_text, webview_id, false);
     })
   });
+  connect(&runtime, &LuaRuntime::devtools_requested, this, [this](WebViewId webview_id) {
+    WITH_WEBVIEW_WINDOW(webview_id, window,
+                        { win_match.second->mediator()->open_devtools(webview_id); })
+  });
 }
 
 void WindowActionRouter::add_window(BrowserWindow *window) {

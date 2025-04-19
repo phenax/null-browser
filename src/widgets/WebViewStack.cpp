@@ -199,6 +199,16 @@ void WebViewStack::focus_webview(WebViewId webview_id) {
     layout->setCurrentIndex((int)webview_index);
 }
 
+void WebViewStack::open_devtools(WebViewId webview_id) {
+  auto *webview = get_webview(webview_id);
+  if (webview == nullptr) {
+    qDebug() << "Webview does not exist";
+    return;
+  }
+
+  webview->open_devtools();
+}
+
 void WebViewStack::set_search_text(const QString &text, WebViewId webview_id, bool forward) {
   auto *webview = get_webview(webview_id);
   if (webview == nullptr) {

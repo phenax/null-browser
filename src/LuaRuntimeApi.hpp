@@ -209,6 +209,13 @@ int lua_api_search_previous(lua_State *state) {
   return 1;
 }
 
+int lua_api_view_open_devtools(lua_State *state) {
+  WebViewId view_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.devtools_requested(view_id);
+  return 1;
+}
+
 // NOLINTNEXTLINE
 static luaL_Reg internals_api[] = {
     luaL_Reg{"event_add_listener", &lua_event_register},
@@ -226,5 +233,6 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"search_set_text", &lua_api_search_set_text},
     luaL_Reg{"search_previous", &lua_api_search_previous},
     luaL_Reg{"search_next", &lua_api_search_next},
+    luaL_Reg{"view_open_devtools", &lua_api_view_open_devtools},
     luaL_Reg{nullptr, nullptr},
 };

@@ -55,6 +55,7 @@ signals:
   void search_requested(const QString &text, WebViewId webview_id);
   void search_next_requested(WebViewId webview_id);
   void search_previous_requested(WebViewId webview_id);
+  void devtools_requested(WebViewId webview_id);
 
 protected:
   LuaRuntime();

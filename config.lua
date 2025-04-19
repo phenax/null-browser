@@ -147,4 +147,6 @@ web.keymap.set('n', 'tp', function()
   web.views.select(views[index].id)
 end)
 
+web.keymap.set('n', '<c-i>', function() web.view.open_devtools() end)
+
 print('ending...')

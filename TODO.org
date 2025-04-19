@@ -1,7 +1,7 @@
 ** Usable
-- [ ] Tests for api
 - [X] Search text in page
-- [ ] Dev tools
+- [X] Dev tools
+- [ ] Tests for api
 - [ ] Fullscreen
 - [ ] Zoom in/out
 - [ ] Scroll api (j/k/h/l/gg/G)
@@ -16,6 +16,7 @@
 - [ ] INVESTIGATE: Errors in keymap/thread segfaults
 
 ** Next
+- [ ] Allow toggling devtools
 - [ ] Tests for window
 - [ ] More tests for stack
 - [ ] Tests for router
@@ -111,4 +112,7 @@ web.event.add_listener('SearchChanged', {
     -- OR inject js into view to show ui
   end,
 })
+
+web.view.open_devtools()
+web.view.open_devtools(2)
 #+end_src

@@ -189,4 +189,7 @@ function web.search.next(view_id) return __internals.search_next(view_id) end
 -- TODO: Documentation please
 function web.search.previous(view_id) return __internals.search_previous(view_id) end
 
+-- TODO: Documentation please
+function web.view.open_devtools(view_id) return __internals.view_open_devtools(view_id) end
+
 print("api loaded")
