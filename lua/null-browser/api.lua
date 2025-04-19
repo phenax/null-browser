@@ -184,6 +184,12 @@ function web.history.forward(count, view_id) return __internals.history_forward(
 function web.search.set_text(text, view_id) return __internals.search_set_text(text, view_id) end
 
 -- TODO: Documentation please
+function web.search.reset(view_id) return __internals.search_set_text('', view_id) end
+
+-- TODO: Documentation please
+function web.search.get_text() return __internals.search_get_text() end
+
+-- TODO: Documentation please
 function web.search.next(view_id) return __internals.search_next(view_id) end
 
 -- TODO: Documentation please

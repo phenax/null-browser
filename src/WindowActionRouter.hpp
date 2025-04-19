@@ -35,6 +35,7 @@ public:
   WebViewId fetch_current_view_id(WindowId win_id = 0);
   QList<WebViewData> fetch_webview_data_list(WindowId win_id = 0);
   QVariant fetch_config_value(const QString &key);
+  QString fetch_current_search_text() const;
 
   DELEGATE((&event_queue), dispatch_event, dispatch_event);
   DELEGATE((&event_queue), register_event, register_event)

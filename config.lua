@@ -1,5 +1,8 @@
 print('hello starting up...')
 
+local dmenu = require 'null-browser.extras.dmenu'
+local history = require 'null-browser.extras.history'
+
 --- @type table
 web = web
 --- @type table
@@ -18,9 +21,6 @@ web.set('new_view_url', 'https://lite.duckduckgo.com')
 web.set('close_window_when_no_views', true)
 web.set('user_agent', 'MacOS | Safari - $500 edition')
 web.set('downloads_dir', os.getenv('HOME') .. '/Downloads/firefox')
-
-local dmenu = require 'null-browser.extras.dmenu'
-local history = require 'null-browser.extras.history'
 
 web.event.add_listener('UrlChanged', {
   callback = function(opts)
@@ -41,12 +41,13 @@ local function to_url(url)
   return "https://" .. trim(url)
 end
 
-web.keymap.set('n', '<esc>', function() web.search.set_text('') end)
+-- Search
+web.keymap.set('n', '<esc>', function() web.search.reset() end)
 web.keymap.set('n', 'n', function() web.search.next() end)
 web.keymap.set('n', '<s-n>', function() web.search.previous() end)
 web.keymap.set('n', '<c-f>', function()
-  dmenu.input({ prompt = 'Search:' }, function(err, input)
-    if err or not input then return end
+  dmenu.input({ prompt = 'Search:', input = web.search.get_text() }, function(err, input)
+    if err then return end
     web.search.set_text(input)
   end)
 end)

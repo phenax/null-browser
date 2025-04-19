@@ -61,8 +61,9 @@ void WindowActionRouter::initialize(Configuration *config) {
   connect(&runtime, &LuaRuntime::search_requested, this,
           [this](const QString &text, WebViewId webview_id) {
             WITH_WEBVIEW_WINDOW(webview_id, window, {
-              this->current_search_text = text;
-              win_match.second->mediator()->set_search_text(text, webview_id, true);
+              auto *mediator = win_match.second->mediator();
+              this->current_search_text = text.trimmed();
+              mediator->set_search_text(this->current_search_text, webview_id, true);
             })
           });
   connect(&runtime, &LuaRuntime::search_next_requested, this, [this](WebViewId webview_id) {
@@ -136,3 +137,5 @@ QList<WebViewData> WindowActionRouter::fetch_webview_data_list(WindowId win_id) 
   }
   return {};
 }
+
+QString WindowActionRouter::fetch_current_search_text() const { return current_search_text; }

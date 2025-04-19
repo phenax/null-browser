@@ -4,6 +4,7 @@
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
+#include "lua.h"
 
 int lua_api_view_set_url(lua_State *state) {
   const char *url = lua_tostring(state, 1);
@@ -216,6 +217,13 @@ int lua_api_view_open_devtools(lua_State *state) {
   return 1;
 }
 
+int lua_api_search_get_text(lua_State *state) {
+  auto &router = WindowActionRouter::instance();
+  auto search_text = router.fetch_current_search_text();
+  lua_pushstring(state, search_text.toStdString().c_str());
+  return 1;
+}
+
 // NOLINTNEXTLINE
 static luaL_Reg internals_api[] = {
     luaL_Reg{"event_add_listener", &lua_event_register},
@@ -230,6 +238,7 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"view_set_url", &lua_api_view_set_url},
     luaL_Reg{"history_back", &lua_history_back},
     luaL_Reg{"history_forward", &lua_history_forward},
+    luaL_Reg{"search_get_text", &lua_api_search_get_text},
     luaL_Reg{"search_set_text", &lua_api_search_set_text},
     luaL_Reg{"search_previous", &lua_api_search_previous},
     luaL_Reg{"search_next", &lua_api_search_next},

@@ -1,12 +1,10 @@
 ![null-browser banner](./media/banner.png)
 
 # null-browser [WIP]
-
-A simple, fast web browser based on qtwebengine with a lua runtime.
+A simple, fast web browser built using [qtwebengine (chromium)](https://wiki.qt.io/QtWebEngine), that is configured and extended using lua.
 
 ## What does it do?
-This web browser is just a stack of web views that can be controlled using lua.
-Don't expect a full featured browser, expect the opposite.
+This web browser is just a stack of web views that can be controlled using lua. Don't expect a full featured web browser, expect the **opposite**.
 
 ## What does it not do? How can I do it?
 - **No url bar**
@@ -19,7 +17,9 @@ Don't expect a full featured browser, expect the opposite.
   - save it in a file on UrlChanged event and show as completion for your url input
   - same as above but in a sqlite db instead
 - **No splits**
-  - use window manager
+  - use a window manager
+- **No tab ui**
+  - use a window manager
   - use [tabbed (X11)](https://tools.suckless.org/tabbed/)
 - **No buttons**
   - define key bindings
@@ -27,12 +27,12 @@ Don't expect a full featured browser, expect the opposite.
   - filter host-names
 - **No settings page**
   - write some lua
-- **No chrome extensions**
+- **No chromium/web extensions**
   - inject javascript into pages from your lua config
 - **No built-in cryptocurrency**
-  - it's a web browser. Add it if you want it
+  - add it if you want it
 - **No built-in AI**
-  - it's a web browser. Add it if you want it
+  - add it if you want it
 
 Any feature you want, you implement yourself.
 
