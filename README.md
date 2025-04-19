@@ -1,4 +1,7 @@
-# Null browser [WIP]
+![null-browser banner](./media/banner.png)
+
+# null-browser [WIP]
+
 A simple, fast web browser based on qtwebengine with a lua runtime.
 
 ## What does it do?

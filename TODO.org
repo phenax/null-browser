@@ -19,6 +19,7 @@
 - [ ] More tests for stack
 - [ ] Tests for router
 - [ ] Run JS in page
+- [ ] Window list api
 - [ ] Log stdout, errors and results from lua somewhere
 - [ ] Use table for all internals api options?
 - [ ] Conflict in keymap (keymap already exists)
