@@ -65,6 +65,7 @@ public slots:
   void webview_history_forward(WebViewId webview_id, qsizetype history_index);
   void close(WebViewId webview_id);
   void focus_webview(WebViewId webview_id);
+  void set_search_text(const QString &text, WebViewId webview_id, bool forward = true);
 
 protected slots:
   void on_new_webview_request(const QWebEngineNewWindowRequest &request);

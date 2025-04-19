@@ -1,6 +1,6 @@
 ** Usable
 - [ ] Tests for api
-- [ ] Search text in page
+- [X] Search text in page
 - [ ] Dev tools
 - [ ] Fullscreen
 - [ ] Zoom in/out
@@ -10,6 +10,7 @@
 - [ ] Notifications
 
 ** Bugs
+- [ ] INVESTIGATE: segfault on api module error
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open
 - [ ] INVESTIGATE: Segfault on close
 - [ ] INVESTIGATE: Errors in keymap/thread segfaults
@@ -84,4 +85,30 @@ web.history.back(1, { win = 1 }) -- Back for current view in win 1
 web.keymap.set('n', '<c-r>', ..., { view = 1 }) -- Set keymap for view 1
 web.keymap.set('n', '<c-r>', ..., { win = 1 }) -- Set keymap for win 1
 web.opt.new_tab_url = 'https://duckduckgo.com'
+
+-- Search api
+web.search.set_search_text('whatever')
+web.search.next()
+web.search.prev()
+web.search.get_search_text()
+web.search.current()
+web.search.total()
+
+web.keymap.set('n', '/', function()
+  dmenu.input({ prompt = 'Search:' }, function(err, input)
+    if err or not input then return end
+    web.search.set_search_text(input)
+  end)
+end)
+web.keymap.set('n', 'n', function() web.search.next() end)
+web.keymap.set('n', 'p', function() web.search.prev() end)
+
+web.event.add_listener('SearchChanged', {
+  callback = function()
+    local label =
+      web.search.get_search_text() .. ': ' .. web.search.current() .. '/' .. web.search.total()
+    -- CALL notify-send
+    -- OR inject js into view to show ui
+  end,
+})
 #+end_src

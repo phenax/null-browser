@@ -1,4 +1,5 @@
 #include <QStackedLayout>
+#include <QWebEngineFindTextResult>
 #include <QWebEngineHistory>
 #include <QWebEngineNewWindowRequest>
 #include <QWebEngineProfile>
@@ -196,6 +197,25 @@ void WebViewStack::focus_webview(WebViewId webview_id) {
   auto webview_index = get_webview_index(webview_id);
   if (webview_index >= 0)
     layout->setCurrentIndex((int)webview_index);
+}
+
+void WebViewStack::set_search_text(const QString &text, WebViewId webview_id, bool forward) {
+  auto *webview = get_webview(webview_id);
+  if (webview == nullptr) {
+    qDebug() << "Webview does not exist";
+    return;
+  }
+
+  QString search_text = text.trimmed();
+
+  auto flags =
+      search_text.isLower() ? QWebEnginePage::FindFlags() : QWebEnginePage::FindCaseSensitively;
+  if (!forward)
+    flags |= QWebEnginePage::FindBackward;
+
+  webview->page()->findText(search_text, flags, [](const QWebEngineFindTextResult &result) {
+    qDebug() << result.numberOfMatches() << result.activeMatch();
+  });
 }
 
 WebView *WebViewStack::get_webview(WebViewId webview_id) {

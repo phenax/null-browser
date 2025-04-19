@@ -3,6 +3,7 @@
 #include <QWebEngineView>
 #include <QtCore>
 #include <cstdint>
+#include <qtypes.h>
 
 #include "utils.hpp"
 

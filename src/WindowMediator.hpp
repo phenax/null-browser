@@ -16,6 +16,7 @@ public:
   DELEGATE(webview_stack, has_webview, has_webview)
   DELEGATE(webview_stack, current_webview_id, current_webview_id)
   DELEGATE(webview_stack, get_webview_list, get_webview_list)
+  DELEGATE(webview_stack, set_search_text, set_search_text)
 
 signals:
   void history_back_requested(WebViewId webview_id, qsizetype history_index);

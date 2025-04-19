@@ -41,6 +41,16 @@ local function to_url(url)
   return "https://" .. trim(url)
 end
 
+web.keymap.set('n', '<esc>', function() web.search.set_text('') end)
+web.keymap.set('n', 'n', function() web.search.next() end)
+web.keymap.set('n', '<s-n>', function() web.search.previous() end)
+web.keymap.set('n', '<c-f>', function()
+  dmenu.input({ prompt = 'Search:' }, function(err, input)
+    if err or not input then return end
+    web.search.set_text(input)
+  end)
+end)
+
 -- Open in new view
 web.keymap.set('n', 'o', function()
   print(web.get('new_view_url'), web.get('user_agent'))

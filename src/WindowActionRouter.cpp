@@ -58,6 +58,23 @@ void WindowActionRouter::initialize(Configuration *config) {
     WITH_WEBVIEW_WINDOW(webview_id, window,
                         { emit window->mediator()->webview_selected(webview_id); });
   });
+  connect(&runtime, &LuaRuntime::search_requested, this,
+          [this](const QString &text, WebViewId webview_id) {
+            WITH_WEBVIEW_WINDOW(webview_id, window, {
+              this->current_search_text = text;
+              win_match.second->mediator()->set_search_text(text, webview_id, true);
+            })
+          });
+  connect(&runtime, &LuaRuntime::search_next_requested, this, [this](WebViewId webview_id) {
+    WITH_WEBVIEW_WINDOW(webview_id, window, {
+      win_match.second->mediator()->set_search_text(this->current_search_text, webview_id, true);
+    })
+  });
+  connect(&runtime, &LuaRuntime::search_previous_requested, this, [this](WebViewId webview_id) {
+    WITH_WEBVIEW_WINDOW(webview_id, window, {
+      win_match.second->mediator()->set_search_text(this->current_search_text, webview_id, false);
+    })
+  });
 }
 
 void WindowActionRouter::add_window(BrowserWindow *window) {

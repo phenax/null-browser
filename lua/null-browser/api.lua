@@ -3,6 +3,7 @@ __internals = __internals
 
 --- @type table
 _G.web = _G.web or {
+  search = {},
   keymap = {},
   view = {},
   history = {},
@@ -170,5 +171,22 @@ function web.history.back(count, view_id) return __internals.history_back(count,
 --- web.history.forward(2, 3) -- Go forward 2 history items for view id 3
 --- ```
 function web.history.forward(count, view_id) return __internals.history_forward(count, view_id) end
+
+--- Search
+---
+--- @param text    string     Text to search
+--- @param view_id? number    Id of the view
+---
+--- @example
+--- ```lua
+--- web.search.set_text('whatever')
+--- ```
+function web.search.set_text(text, view_id) return __internals.search_set_text(text, view_id) end
+
+-- TODO: Documentation please
+function web.search.next(view_id) return __internals.search_next(view_id) end
+
+-- TODO: Documentation please
+function web.search.previous(view_id) return __internals.search_previous(view_id) end
 
 print("api loaded")

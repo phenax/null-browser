@@ -74,7 +74,7 @@ AsyncEventLoop::~AsyncEventLoop() {
   uv_run(loop, UV_RUN_DEFAULT);
 
   if (uv_loop_alive(loop) > 0)
-    qDebug() << "WARNING: Loop still has active handles!";
+    qWarning() << "WARNING: Loop still has active handles!";
 
   free(loop);
   loop = nullptr;

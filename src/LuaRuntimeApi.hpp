@@ -5,7 +5,7 @@
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
 
-int lua_api_open_url(lua_State *state) {
+int lua_api_view_set_url(lua_State *state) {
   const char *url = lua_tostring(state, 1);
   WebViewId view_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
   auto &runtime = LuaRuntime::instance();
@@ -187,6 +187,28 @@ int lua_event_register(lua_State *state) {
   return 1;
 }
 
+int lua_api_search_set_text(lua_State *state) {
+  const char *text = lua_tostring(state, 1);
+  WebViewId view_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.search_requested(text, view_id);
+  return 1;
+}
+
+int lua_api_search_next(lua_State *state) {
+  WebViewId view_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.search_next_requested(view_id);
+  return 1;
+}
+
+int lua_api_search_previous(lua_State *state) {
+  WebViewId view_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.search_previous_requested(view_id);
+  return 1;
+}
+
 // NOLINTNEXTLINE
 static luaL_Reg internals_api[] = {
     luaL_Reg{"event_add_listener", &lua_event_register},
@@ -198,8 +220,11 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"view_current", &lua_api_view_current},
     luaL_Reg{"view_list", &lua_view_list},
     luaL_Reg{"view_select", &lua_view_select},
-    luaL_Reg{"view_set_url", &lua_api_open_url},
+    luaL_Reg{"view_set_url", &lua_api_view_set_url},
     luaL_Reg{"history_back", &lua_history_back},
     luaL_Reg{"history_forward", &lua_history_forward},
+    luaL_Reg{"search_set_text", &lua_api_search_set_text},
+    luaL_Reg{"search_previous", &lua_api_search_previous},
+    luaL_Reg{"search_next", &lua_api_search_next},
     luaL_Reg{nullptr, nullptr},
 };

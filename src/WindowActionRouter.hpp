@@ -54,4 +54,5 @@ private:
   Configuration *configuration;
 
   EventQueue event_queue;
+  QString current_search_text;
 };

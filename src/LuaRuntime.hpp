@@ -52,6 +52,9 @@ signals:
   void webview_closed(WebViewId webview_id);
   void webview_selected(WebViewId webview_id);
   void config_updated(const QString &key, const QVariant &value);
+  void search_requested(const QString &text, WebViewId webview_id);
+  void search_next_requested(WebViewId webview_id);
+  void search_previous_requested(WebViewId webview_id);
 
 protected:
   LuaRuntime();
