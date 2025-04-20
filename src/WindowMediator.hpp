@@ -18,13 +18,13 @@ public:
   DELEGATE(webview_stack, get_webview_list, get_webview_list)
   DELEGATE(webview_stack, set_search_text, set_search_text)
   DELEGATE(webview_stack, open_devtools, open_devtools)
+  DELEGATE(webview_stack, open_url, open_url)
+  DELEGATE(webview_stack, webview_history_back, history_back)
+  DELEGATE(webview_stack, webview_history_forward, history_forward)
+  DELEGATE(webview_stack, close, close_webview)
+  DELEGATE(webview_stack, focus_webview, select_webview)
 
 signals:
-  void history_back_requested(WebViewId webview_id, qsizetype history_index);
-  void history_forward_requested(WebViewId webview_id, qsizetype history_index);
-  void url_opened(QString url, OpenType open_type, WebViewId webview_id);
-  void webview_closed(WebViewId webview_id);
-  void webview_selected(WebViewId webview_id);
   void new_window_requested(const QUrl &url);
   void close_window_requested();
 

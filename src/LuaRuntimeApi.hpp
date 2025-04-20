@@ -64,7 +64,7 @@ int lua_api_keymap_set(lua_State *state) {
   // TODO: Cleanup function ref on after keymap clear
 
   auto &runtime = LuaRuntime::instance();
-  emit runtime.keymap_added(mode, keyseq, action);
+  emit runtime.keymap_add_requested(mode, keyseq, action);
 
   return 1;
 }
@@ -224,24 +224,41 @@ int lua_api_search_get_text(lua_State *state) {
   return 1;
 }
 
+int lua_api_keymap_get_mode(lua_State *state) {
+  auto &router = WindowActionRouter::instance();
+  auto search_text = router.fetch_current_mode();
+  lua_pushstring(state, search_text.toStdString().c_str());
+  return 1;
+}
+
+int lua_api_keymap_set_mode(lua_State *state) {
+  const auto *mode = lua_tostring(state, 1);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.keymap_mode_update_requested(mode);
+  lua_pushnil(state);
+  return 1;
+}
+
 // NOLINTNEXTLINE
 static luaL_Reg internals_api[] = {
     luaL_Reg{"event_add_listener", &lua_event_register},
     luaL_Reg{"config_set", &lua_api_config_set},
     luaL_Reg{"config_get", &lua_api_config_get},
     luaL_Reg{"keymap_set", &lua_api_keymap_set},
+    luaL_Reg{"keymap_get_mode", &lua_api_keymap_get_mode},
+    luaL_Reg{"keymap_set_mode", &lua_api_keymap_set_mode},
     luaL_Reg{"view_close", &lua_view_close},
     luaL_Reg{"view_create", &lua_api_view_create},
     luaL_Reg{"view_current", &lua_api_view_current},
     luaL_Reg{"view_list", &lua_view_list},
     luaL_Reg{"view_select", &lua_view_select},
     luaL_Reg{"view_set_url", &lua_api_view_set_url},
+    luaL_Reg{"view_open_devtools", &lua_api_view_open_devtools},
     luaL_Reg{"history_back", &lua_history_back},
     luaL_Reg{"history_forward", &lua_history_forward},
     luaL_Reg{"search_get_text", &lua_api_search_get_text},
     luaL_Reg{"search_set_text", &lua_api_search_set_text},
     luaL_Reg{"search_previous", &lua_api_search_previous},
     luaL_Reg{"search_next", &lua_api_search_next},
-    luaL_Reg{"view_open_devtools", &lua_api_view_open_devtools},
     luaL_Reg{nullptr, nullptr},
 };

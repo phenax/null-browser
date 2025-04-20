@@ -20,7 +20,7 @@ public:
 
   bool on_window_key_event(QKeyEvent *event);
 
-  void closeEvent(QCloseEvent * /*event*/) override;
+  void closeEvent(QCloseEvent * /*event*/) override { emit closed(); };
 
 signals:
   void closed();

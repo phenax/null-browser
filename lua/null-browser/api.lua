@@ -1,3 +1,4 @@
+--- Internal api (unstable)
 --- @type table
 __internals = __internals
 
@@ -197,5 +198,11 @@ function web.search.previous(view_id) return __internals.search_previous(view_id
 
 -- TODO: Documentation please
 function web.view.open_devtools(view_id) return __internals.view_open_devtools(view_id) end
+
+-- TODO: Documentation please
+function web.keymap.set_mode(mode) return __internals.keymap_set_mode(mode) end
+
+-- TODO: Documentation please
+function web.keymap.get_mode() return __internals.keymap_get_mode() end
 
 print("api loaded")

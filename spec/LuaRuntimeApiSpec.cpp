@@ -144,6 +144,73 @@ private slots:
       QVERIFY(wait_for_lua_to_be_true("return not _G.event2_called"));
     }
   }
+
+  void lua_api_view_set_url() {
+    context("when called with a url and view id");
+    it("emits url_opened for the given view id") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy url_opened(&lua, &LuaRuntime::url_opened);
+
+      lua.evaluate(R"(
+        web.view.set_url("https://updated-url.com", 42)
+      )");
+
+      QVERIFY(url_opened.wait());
+      QCOMPARE(url_opened.first()[0], "https://updated-url.com");
+      QCOMPARE(url_opened.first()[1], OpenType::OpenUrl);
+      QCOMPARE(url_opened.first()[2], 42);
+    }
+
+    context("when called with a url");
+    it("emits url_opened with the url and view id = 0") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy url_opened(&lua, &LuaRuntime::url_opened);
+
+      lua.evaluate(R"(
+        web.view.set_url("https://updated-url.com")
+      )");
+
+      QVERIFY(url_opened.wait());
+      QCOMPARE(url_opened.first()[0], "https://updated-url.com");
+      QCOMPARE(url_opened.first()[1], OpenType::OpenUrl);
+      QCOMPARE(url_opened.first()[2], 0);
+    }
+
+    context("when called without a url");
+    it("emits url_opened with empty url and view id = 0") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy url_opened(&lua, &LuaRuntime::url_opened);
+
+      lua.evaluate(R"(
+        web.view.set_url()
+      )");
+
+      QVERIFY(url_opened.wait());
+      QCOMPARE(url_opened.first()[0], "");
+      QCOMPARE(url_opened.first()[1], OpenType::OpenUrl);
+      QCOMPARE(url_opened.first()[2], 0);
+    }
+  }
+
+  void lua_api_view_current() {
+    context("when called without a window id");
+    it("emits url_opened for the given view id") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
+
+      lua.evaluate(R"(
+        return web.view.current()
+      )");
+      QVERIFY(evaluation_completed_spy.wait());
+
+      qDebug() << evaluation_completed_spy.first().first();
+
+      // QCOMPARE(evaluation_completed_spy.first().first(), 1);
+      // QCOMPARE(url_opened.first()[0], "https://updated-url.com");
+      // QCOMPARE(url_opened.first()[1], OpenType::OpenUrl);
+      // QCOMPARE(url_opened.first()[2], 42);
+    }
+  }
 };
 
 QTEST_REGISTER(LuaRuntimeApiSpec)

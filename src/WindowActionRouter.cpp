@@ -18,8 +18,11 @@ void WindowActionRouter::initialize(Configuration *config) {
   auto &runtime = LuaRuntime::instance();
   configuration = config;
 
-  connect(&runtime, &LuaRuntime::keymap_added, this, &WindowActionRouter::add_keymap);
+  connect(&runtime, &LuaRuntime::keymap_add_requested, this, &WindowActionRouter::add_keymap);
+  connect(&runtime, &LuaRuntime::keymap_mode_update_requested, this,
+          [](const QString &mode) { KeymapEvaluator::instance().set_current_mode(mode); });
 
+  // Configuration
   connect(&runtime, &LuaRuntime::config_updated, configuration, &Configuration::set_config);
   connect(configuration, &Configuration::user_agent_updated, this,
           [this](const QString &user_agent) {
@@ -32,54 +35,54 @@ void WindowActionRouter::initialize(Configuration *config) {
               win_match.second->mediator()->update_downloads_dir(downloads_dir);
           });
 
+  // History
   connect(&runtime, &LuaRuntime::history_back_requested, this,
           [this](WebViewId webview_id, qsizetype history_index) {
-            WITH_WEBVIEW_WINDOW(webview_id, window, {
-              emit window->mediator()->history_back_requested(webview_id, history_index);
-            });
+            WITH_WEBVIEW_WINDOW(webview_id, window,
+                                { window->mediator()->history_back(webview_id, history_index); });
           });
   connect(&runtime, &LuaRuntime::history_forward_requested, this,
           [this](WebViewId webview_id, qsizetype history_index) {
             WITH_WEBVIEW_WINDOW(webview_id, window, {
-              emit window->mediator()->history_forward_requested(webview_id, history_index);
+              window->mediator()->history_forward(webview_id, history_index);
             });
           });
+
+  // Webview action
   connect(&runtime, &LuaRuntime::url_opened, this,
           [this](const QString &url, OpenType open_type, WebViewId webview_id) {
-            WITH_WEBVIEW_WINDOW(webview_id, window, {
-              emit window->mediator()->url_opened(url, open_type, webview_id);
-            });
+            WITH_WEBVIEW_WINDOW(webview_id, window,
+                                { window->mediator()->open_url(url, open_type, webview_id); });
           });
   connect(&runtime, &LuaRuntime::webview_closed, this, [this](WebViewId webview_id) {
-    WITH_WEBVIEW_WINDOW(webview_id, window,
-                        { emit window->mediator()->webview_closed(webview_id); });
+    WITH_WEBVIEW_WINDOW(webview_id, window, { window->mediator()->close_webview(webview_id); });
   });
   connect(&runtime, &LuaRuntime::webview_selected, this, [this](WebViewId webview_id) {
-    WITH_WEBVIEW_WINDOW(webview_id, window,
-                        { emit window->mediator()->webview_selected(webview_id); });
+    WITH_WEBVIEW_WINDOW(webview_id, window, { window->mediator()->select_webview(webview_id); });
   });
+
+  // Search
   connect(&runtime, &LuaRuntime::search_requested, this,
           [this](const QString &text, WebViewId webview_id) {
-            WITH_WEBVIEW_WINDOW(webview_id, window, {
-              auto *mediator = win_match.second->mediator();
-              this->current_search_text = text.trimmed();
-              mediator->set_search_text(this->current_search_text, webview_id, true);
-            })
+            current_search_text = text.trimmed();
+            find_current_search_text(webview_id, true);
           });
-  connect(&runtime, &LuaRuntime::search_next_requested, this, [this](WebViewId webview_id) {
-    WITH_WEBVIEW_WINDOW(webview_id, window, {
-      win_match.second->mediator()->set_search_text(this->current_search_text, webview_id, true);
-    })
-  });
-  connect(&runtime, &LuaRuntime::search_previous_requested, this, [this](WebViewId webview_id) {
-    WITH_WEBVIEW_WINDOW(webview_id, window, {
-      win_match.second->mediator()->set_search_text(this->current_search_text, webview_id, false);
-    })
-  });
+  connect(&runtime, &LuaRuntime::search_next_requested, this,
+          [this](WebViewId webview_id) { find_current_search_text(webview_id, true); });
+  connect(&runtime, &LuaRuntime::search_previous_requested, this,
+          [this](WebViewId webview_id) { find_current_search_text(webview_id, false); });
+
+  // Devtools
   connect(&runtime, &LuaRuntime::devtools_requested, this, [this](WebViewId webview_id) {
     WITH_WEBVIEW_WINDOW(webview_id, window,
                         { win_match.second->mediator()->open_devtools(webview_id); })
   });
+}
+
+void WindowActionRouter::find_current_search_text(WebViewId webview_id, bool forward) {
+  WITH_WEBVIEW_WINDOW(webview_id, window, {
+    win_match.second->mediator()->set_search_text(current_search_text, webview_id, forward);
+  })
 }
 
 void WindowActionRouter::add_window(BrowserWindow *window) {
@@ -110,8 +113,7 @@ const WindowMap &WindowActionRouter::windows() { return window_map; }
 void WindowActionRouter::add_keymap(const QString &mode_string, const QString &keyseq,
                                     std::function<void()> action) {
   auto &keymap_evaluator = KeymapEvaluator::instance();
-  const KeyMode mode = keymap_evaluator.mode_from_string(mode_string);
-  keymap_evaluator.add_keymap(mode, keyseq, std::move(action));
+  keymap_evaluator.add_keymap(mode_string, keyseq, std::move(action));
 }
 
 WebViewId WindowActionRouter::fetch_current_view_id(WindowId win_id) {
@@ -138,4 +140,6 @@ QList<WebViewData> WindowActionRouter::fetch_webview_data_list(WindowId win_id) 
   return {};
 }
 
-QString WindowActionRouter::fetch_current_search_text() const { return current_search_text; }
+KeyMode WindowActionRouter::fetch_current_mode() const {
+  return KeymapEvaluator::instance().get_current_mode();
+}

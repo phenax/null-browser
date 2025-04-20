@@ -2,8 +2,8 @@
 
 #include <QWidget>
 #include <QtCore>
-#include <cstdint>
 #include <functional>
+#include <unordered_map>
 
 #include "keymap/KeySeqParser.hpp"
 #include "utils.hpp"
@@ -15,7 +15,16 @@ struct KeyMap {
   KeyAction action;
 };
 
-enum KeyMode : uint8_t { Normal, Insert };
+using KeyMode = QString;
+
+struct KeyModeConfig {
+  bool passthrough;
+};
+
+struct KeyModeState {
+  QList<KeyMap> keymap;
+  KeyModeConfig config;
+};
 
 class KeymapEvaluator : public QObject {
   Q_OBJECT
@@ -28,20 +37,20 @@ public:
     return keymap_evaluator;
   }
 
-  void add_keymap(KeyMode mode, const QString &key, KeyAction action);
+  void add_keymap(const KeyMode &mode, const QString &key, KeyAction action);
   bool evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key);
-  KeyMode mode_from_string(const QString &mode_string);
+  void define_mode(const KeyMode &mode, const KeyModeConfig &config);
 
   DEFINE_SETTER(set_current_mode, current_mode)
   DEFINE_GETTER(get_current_mode, current_mode)
 
 protected:
   const QList<KeyMap> *current_mode_keys();
-  bool is_insertable_mode();
+  bool is_passthrough_mode();
 
 private:
-  QMap<KeyMode, QList<KeyMap>> modal_keys;
+  std::unordered_map<KeyMode, KeyModeState> modal_keys;
   KeySeqParser key_seq_parser;
-  KeyMode current_mode = KeyMode::Normal;
+  KeyMode current_mode = "i";
   KeySequence active_key_sequence;
 };

@@ -7,6 +7,8 @@
 #include <mutex>
 
 #include "EventQueue.hpp"
+#include "keymap/KeymapEvaluator.hpp"
+#include "utils.hpp"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -35,15 +37,18 @@ public:
   WebViewId fetch_current_view_id(WindowId win_id = 0);
   QList<WebViewData> fetch_webview_data_list(WindowId win_id = 0);
   QVariant fetch_config_value(const QString &key);
-  QString fetch_current_search_text() const;
+  KeyMode fetch_current_mode() const;
 
-  DELEGATE((&event_queue), dispatch_event, dispatch_event);
-  DELEGATE((&event_queue), register_event, register_event)
+  DEFINE_GETTER(fetch_current_search_text, current_search_text)
+
+  DELEGATE(&event_queue, dispatch_event, dispatch_event)
+  DELEGATE(&event_queue, register_event, register_event)
 
 protected:
   WindowActionRouter() = default;
 
   void add_keymap(const QString &mode_string, const QString &keyseq, std::function<void()> action);
+  void find_current_search_text(WebViewId webview_id, bool forward);
 
 signals:
   void new_window_requested(const QUrl &url);

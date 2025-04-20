@@ -26,7 +26,7 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringLi
   profile->setDownloadPath(configuration.downloads_dir());
   profile->setHttpUserAgent(configuration.user_agent());
 
-  // Web engine
+  // Stack of web views
   auto *webview_stack = new WebViewStack(&configuration, profile);
   layout->addWidget(webview_stack);
 
@@ -40,16 +40,9 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringLi
   }
 
   // Default keymaps
-  auto &keymap_evaluator = KeymapEvaluator::instance();
-
-  // TODO: remove
-  keymap_evaluator.add_keymap(KeyMode::Normal, "i", [&keymap_evaluator]() {
-    keymap_evaluator.set_current_mode(KeyMode::Insert);
-  });
-  keymap_evaluator.add_keymap(KeyMode::Insert, "<esc>", [&keymap_evaluator]() {
-    keymap_evaluator.set_current_mode(KeyMode::Normal);
-  });
-  keymap_evaluator.add_keymap(KeyMode::Normal, "<c-t>a", []() { qDebug() << "Stuff"; });
+  auto &keymap = KeymapEvaluator::instance();
+  keymap.define_mode("n", {.passthrough = false});
+  keymap.define_mode("i", {.passthrough = true});
 
   win_mediator = new WindowMediator(webview_stack);
 
@@ -62,8 +55,6 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringLi
     }
   });
 }
-
-void BrowserWindow::closeEvent(QCloseEvent * /*event*/) { emit closed(); }
 
 bool BrowserWindow::on_window_key_event(QKeyEvent *event) {
   auto &keymap_evaluator = KeymapEvaluator::instance();

@@ -36,9 +36,9 @@ class WebView : public QWebEngineView {
 
 public:
   WebView(uint32_t webview_id, QWebEngineProfile *profile, QWidget *parent_node = nullptr);
-  DEFINE_GETTER(get_id, id)
-
   void open_devtools();
+
+  DEFINE_GETTER(get_id, id)
 
 private:
   uint32_t id;

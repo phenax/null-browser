@@ -13,9 +13,7 @@ private slots:
     it("calls mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
-      evaluator.add_keymap(KeyMode::Normal, "<c-t>", [&keymap_was_called]() {
-        keymap_was_called = true;
-      });
+      evaluator.add_keymap("n", "<c-t>", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
 
@@ -26,9 +24,7 @@ private slots:
     it("does not call mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
-      evaluator.add_keymap(KeyMode::Normal, "<c-t>", [&keymap_was_called]() {
-        keymap_was_called = true;
-      });
+      evaluator.add_keymap("n", "<c-t>", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_K);
 
@@ -41,9 +37,7 @@ private slots:
     it("calls mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
-      evaluator.add_keymap(KeyMode::Normal, "<c-t>a", [&keymap_was_called]() {
-        keymap_was_called = true;
-      });
+      evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
       evaluator.evaluate(Qt::NoModifier, Qt::Key_A);
@@ -55,9 +49,7 @@ private slots:
     it("does not call mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
-      evaluator.add_keymap(KeyMode::Normal, "<c-t>a", [&keymap_was_called]() {
-        keymap_was_called = true;
-      });
+      evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
 
@@ -68,9 +60,7 @@ private slots:
     it("does not call mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
-      evaluator.add_keymap(KeyMode::Normal, "<c-t>a", [&keymap_was_called]() {
-        keymap_was_called = true;
-      });
+      evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_K);
 
@@ -81,9 +71,7 @@ private slots:
     it("does not call mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
-      evaluator.add_keymap(KeyMode::Normal, "<c-t>a", [&keymap_was_called]() {
-        keymap_was_called = true;
-      });
+      evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
       evaluator.evaluate(Qt::NoModifier, Qt::Key_B);
@@ -95,9 +83,7 @@ private slots:
     it("calls mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
-      evaluator.add_keymap(KeyMode::Normal, "<c-t>a", [&keymap_was_called]() {
-        keymap_was_called = true;
-      });
+      evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
       evaluator.evaluate(Qt::NoModifier, Qt::Key_B);
@@ -108,14 +94,11 @@ private slots:
     }
 
     // TODO: maybe fix this behavior
-    context(
-        "when partial mapped sequence is entered before an entire sequence");
+    context("when partial mapped sequence is entered before an entire sequence");
     it("does not call mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
-      evaluator.add_keymap(KeyMode::Normal, "<c-t>a", [&keymap_was_called]() {
-        keymap_was_called = true;
-      });
+      evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);

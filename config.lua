@@ -22,6 +22,11 @@ web.set('close_window_when_no_views', true)
 web.set('user_agent', 'MacOS | Safari - $500 edition')
 web.set('downloads_dir', os.getenv('HOME') .. '/Downloads/firefox')
 
+-- Switch modes
+web.keymap.set_mode('n') -- Start in normal mode
+web.keymap.set('n', 'i', function() web.keymap.set_mode('i') end)
+web.keymap.set('i', '<esc>', function() web.keymap.set_mode('n') end)
+
 web.event.add_listener('UrlChanged', {
   callback = function(opts)
     print('url change', web.inspect(opts));
@@ -35,10 +40,11 @@ local function trim(s)
 end
 
 local function to_url(url)
+  url = trim(url)
   if string.match(url, "^https?://") then
-    return trim(url)
+    return url
   end
-  return "https://" .. trim(url)
+  return "https://" .. url
 end
 
 -- Search

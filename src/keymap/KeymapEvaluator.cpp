@@ -6,15 +6,14 @@
 #include "keymap/KeymapEvaluator.hpp"
 
 // TODO: Clear mapping after some time
+// TODO: Forward current keysequence with partial key after timeout (only passthrough kind)
 
-void KeymapEvaluator::add_keymap(KeyMode mode, const QString &key, KeyAction action) {
+void KeymapEvaluator::add_keymap(const KeyMode &mode, const QString &key, KeyAction action) {
   if (!modal_keys.contains(mode))
-    modal_keys.insert(mode, {});
-
-  qDebug() << "    " << mode << key;
+    modal_keys[mode] = {.keymap = {}, .config = {.passthrough = false}};
 
   auto key_seq = key_seq_parser.parse(key);
-  modal_keys[mode].append(KeyMap{.key_sequence = key_seq, .action = std::move(action)});
+  modal_keys[mode].keymap.append(KeyMap{.key_sequence = key_seq, .action = std::move(action)});
 }
 
 bool KeymapEvaluator::evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key) {
@@ -43,25 +42,29 @@ bool KeymapEvaluator::evaluate(Qt::KeyboardModifiers modifiers, Qt::Key key) {
   if (!found_pending_matches)
     active_key_sequence.clear();
 
-  if (is_insertable_mode())
+  if (is_passthrough_mode())
     return found_pending_matches;
 
   return true;
 }
 
-bool KeymapEvaluator::is_insertable_mode() { return current_mode == KeyMode::Insert; }
+bool KeymapEvaluator::is_passthrough_mode() {
+  if (!modal_keys.contains(current_mode))
+    return false;
+
+  return modal_keys[current_mode].config.passthrough;
+}
 
 const QList<KeyMap> *KeymapEvaluator::current_mode_keys() {
   if (!modal_keys.contains(current_mode))
     return new QList<KeyMap>();
 
-  return &modal_keys[current_mode];
+  return &modal_keys[current_mode].keymap;
 }
 
-KeyMode KeymapEvaluator::mode_from_string(const QString &mode_string) {
-  if (mode_string == "n")
-    return KeyMode::Normal;
-  if (mode_string == "i")
-    return KeyMode::Insert;
-  return KeyMode::Normal;
+void KeymapEvaluator::define_mode(const KeyMode &mode, const KeyModeConfig &config) {
+  if (!modal_keys.contains(current_mode))
+    modal_keys[current_mode] = {.keymap = {}, .config = config};
+  else
+    modal_keys[mode].config = config;
 }
