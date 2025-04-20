@@ -1,4 +1,4 @@
-![null-browser banner](./media/banner.png)
+![null-browser](./media/banner.png)
 
 # null-browser [WIP]
 A simple, fast web browser built using [qtwebengine (chromium)](https://wiki.qt.io/QtWebEngine), that is configured and extended using lua.
@@ -34,7 +34,7 @@ This web browser is just a stack of web views that can be controlled using lua. 
 - **No built-in AI**
   - add it if you want it
 
-Any feature you want, you implement yourself.
+Any feature you want, you implement yourself. Either from scratch or build on top of a built-in module.
 
 ## Who is it for?
 I built this for myself and people like me who enjoy tinkering with their tools.

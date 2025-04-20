@@ -43,6 +43,7 @@
 - [ ] vendor web.inspect with build
 - [X] static linking for libluv
 - [X] Update window title on current webview title change
+- [ ] Right click context menu items
 
 ** Later later
 - [ ] Custom file picker
