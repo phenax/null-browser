@@ -14,6 +14,8 @@ private slots:
   void cleanupTestCase() { LuaRuntime::instance().stop_event_loop(); }
 
   void test_evaluate() {
+    describe("#evaluate");
+
     context("when given an expression returning a number");
     it("emits evaluation_completed with the result") {
       auto &lua = LuaRuntime::instance();
@@ -68,6 +70,8 @@ private slots:
   }
 
   void test_queue_task() {
+    describe("#queue_task");
+
     context("when task is queued");
     it("evaluates task asynchronously") {
       auto &lua = LuaRuntime::instance();
@@ -81,6 +85,8 @@ private slots:
   }
 
   void test_sanity_check_uv_timer() {
+    describe("uv timer");
+
     context("when a 1 second timer is set");
     it("calls callback after 1 second") {
       auto &lua = LuaRuntime::instance();
@@ -101,6 +107,8 @@ private slots:
   }
 
   void test_sanity_check_uv_spawn() {
+    describe("uv spawn");
+
     it("calls exit callback when process exists") {
       auto &lua = LuaRuntime::instance();
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);

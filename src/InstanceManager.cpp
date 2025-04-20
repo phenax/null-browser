@@ -34,8 +34,7 @@ void InstanceManager::server_init() {
   server = new QLocalServer(this);
   is_server_mode = true;
 
-  connect(server, &QLocalServer::newConnection, this,
-          &InstanceManager::handle_new_connection);
+  connect(server, &QLocalServer::newConnection, this, &InstanceManager::handle_new_connection);
 
   QLocalServer::removeServer(socket_path);
   if (!server->listen(socket_path)) {
@@ -58,8 +57,7 @@ void InstanceManager::handle_new_connection() {
   if (client == nullptr)
     return;
 
-  connect(client, &QLocalSocket::disconnected, client,
-          &QLocalSocket::deleteLater);
+  connect(client, &QLocalSocket::disconnected, client, &QLocalSocket::deleteLater);
 
   client->waitForReadyRead();
   while (client->canReadLine()) {

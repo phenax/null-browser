@@ -64,7 +64,7 @@ void WindowActionRouter::initialize(Configuration *config) {
   // Search
   connect(&runtime, &LuaRuntime::search_requested, this,
           [this](const QString &text, WebViewId webview_id) {
-            current_search_text = text.trimmed();
+            set_current_search_text(text.trimmed());
             find_current_search_text(webview_id, true);
           });
   connect(&runtime, &LuaRuntime::search_next_requested, this,

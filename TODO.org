@@ -1,13 +1,17 @@
 ** Usable
+- [X] `web.inspect`: like vim.inspect
+- [X] static linking for libluv
+- [X] Update window title on current webview title change
 - [X] Search text in page
 - [X] Dev tools
+- [ ] Configuration
+- [ ] Scroll api (for j/k/h/l/gg/G)
 - [ ] Tests for api
 - [ ] Fullscreen
 - [ ] Zoom in/out
-- [ ] Scroll api (j/k/h/l/gg/G)
 - [ ] Permission requests handling/persisting
-- [ ] window.opener controls (use createWindow api directly?)
 - [ ] Notifications
+- [ ] window.opener controls (use createWindow api directly?)
 
 ** Bugs
 - [ ] INVESTIGATE: segfault on api module error
@@ -20,7 +24,7 @@
 - [ ] Tests for window
 - [ ] More tests for stack
 - [ ] Tests for router
-- [ ] Run JS in page
+- [ ] Run JS in page (web.view.eval_js())
 - [ ] Window list api
 - [ ] Log stdout, errors and results from lua somewhere
 - [ ] Use table for all internals api options?
@@ -39,11 +43,11 @@
 - [ ] User stylesheets (per site and global?)
 - [ ] Support multiple modes for keymap.set: `web.keymap.set({'n','i'}, ...)`
 - [ ] static linking for qt
-- [X] `web.inspect`: like vim.inspect
 - [ ] vendor web.inspect with build
-- [X] static linking for libluv
-- [X] Update window title on current webview title change
 - [ ] Right click context menu items
+- [ ] Listen to renderprocesstermination signal
+- [ ] Create view with html (web.view.set_html())
+- [ ] Change instance manager command format
 
 ** Later later
 - [ ] Custom file picker

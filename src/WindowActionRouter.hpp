@@ -40,6 +40,7 @@ public:
   KeyMode fetch_current_mode() const;
 
   DEFINE_GETTER(fetch_current_search_text, current_search_text)
+  DEFINE_SETTER(set_current_search_text, current_search_text)
 
   DELEGATE(&event_queue, dispatch_event, dispatch_event)
   DELEGATE(&event_queue, register_event, register_event)

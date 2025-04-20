@@ -25,7 +25,9 @@ private slots:
 
   void cleanupTestCase() { LuaRuntime::instance().stop_event_loop(); }
 
-  void test_web_event_add_event() {
+  void test_web_event_add_listener() {
+    describe("web.event.add_listener");
+
     context("when events, patterns and callback are specified correctly");
     it("returns true and registers event") {
       auto &lua = LuaRuntime::instance();
@@ -116,6 +118,8 @@ private slots:
   }
 
   void test_web_event_dispatching() {
+    describe("web.event.add_listener (event dispatch)");
+
     context("when dispatching a registered event (without pattern)");
     it("calls the registered event handler") {
       auto &lua = LuaRuntime::instance();
@@ -146,6 +150,8 @@ private slots:
   }
 
   void lua_api_view_set_url() {
+    describe("web.search.set_url");
+
     context("when called with a url and view id");
     it("emits url_opened for the given view id") {
       auto &lua = LuaRuntime::instance();
@@ -192,23 +198,114 @@ private slots:
     }
   }
 
-  void lua_api_view_current() {
-    context("when called without a window id");
-    it("emits url_opened for the given view id") {
+  void lua_api_search_set_text() {
+    describe("web.search.set_text");
+
+    context("when called with just the search text");
+    it("emits search_requested with search text and view id 0") {
       auto &lua = LuaRuntime::instance();
-      QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
+      QSignalSpy search_requested(&lua, &LuaRuntime::search_requested);
 
-      lua.evaluate(R"(
-        return web.view.current()
-      )");
-      QVERIFY(evaluation_completed_spy.wait());
+      lua.evaluate("web.search.set_text('search text')");
 
-      qDebug() << evaluation_completed_spy.first().first();
+      QVERIFY(search_requested.wait());
+      QCOMPARE(search_requested.first()[0], "search text");
+      QCOMPARE(search_requested.first()[1], 0);
+    }
 
-      // QCOMPARE(evaluation_completed_spy.first().first(), 1);
-      // QCOMPARE(url_opened.first()[0], "https://updated-url.com");
-      // QCOMPARE(url_opened.first()[1], OpenType::OpenUrl);
-      // QCOMPARE(url_opened.first()[2], 42);
+    context("when called with search text and view id");
+    it("emits search_requested with search text and given view id") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy search_requested(&lua, &LuaRuntime::search_requested);
+
+      lua.evaluate("web.search.set_text('search text', 2)");
+
+      QVERIFY(search_requested.wait());
+      QCOMPARE(search_requested.first()[0], "search text");
+      QCOMPARE(search_requested.first()[1], 2);
+    }
+  }
+
+  void lua_api_search_next() {
+    describe("web.search.next");
+
+    context("when called without view id");
+    it("emits search_next_requested with view id 0") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy search_next_requested(&lua, &LuaRuntime::search_next_requested);
+
+      lua.evaluate("web.search.next()");
+
+      QVERIFY(search_next_requested.wait());
+      QCOMPARE(search_next_requested.first().first(), 0);
+    }
+
+    context("when called with view id");
+    it("emits search_next_requested with given view id") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy search_next_requested(&lua, &LuaRuntime::search_next_requested);
+
+      lua.evaluate("web.search.next(2)");
+
+      QVERIFY(search_next_requested.wait());
+      QCOMPARE(search_next_requested.first().first(), 2);
+    }
+  }
+
+  void lua_api_search_previous() {
+    describe("web.search.previous");
+
+    context("when called without view id");
+    it("emits search_previous_requested with view id 0") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy search_previous_requested(&lua, &LuaRuntime::search_previous_requested);
+
+      lua.evaluate("web.search.previous()");
+
+      QVERIFY(search_previous_requested.wait());
+      QCOMPARE(search_previous_requested.first().first(), 0);
+    }
+
+    context("when called with view id");
+    it("emits search_previous_requested with given view id") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy search_previous_requested(&lua, &LuaRuntime::search_previous_requested);
+
+      lua.evaluate("web.search.previous(2)");
+
+      QVERIFY(search_previous_requested.wait());
+      QCOMPARE(search_previous_requested.first().first(), 2);
+    }
+  }
+
+  void lua_api_search_get_text() {
+    describe("web.search.get_text");
+
+    it("returns the current search text") {
+      auto &lua = LuaRuntime::instance();
+      auto &router = WindowActionRouter::instance();
+      router.set_current_search_text("some search text");
+      QSignalSpy evaluation_completed(&lua, &LuaRuntime::evaluation_completed);
+
+      lua.evaluate("return web.search.get_text()");
+
+      QVERIFY(evaluation_completed.wait());
+      QCOMPARE(evaluation_completed.first().first(), "some search text");
+    }
+  }
+
+  void lua_api_view_open_devtools() {
+    describe("web.view.open_devtools");
+
+    context("when called with view id");
+    it("emits devtools_requested with view id") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy devtools_requested(&lua, &LuaRuntime::devtools_requested);
+
+      lua.evaluate("web.view.open_devtools(42)");
+
+      QVERIFY(devtools_requested.wait());
+      QCOMPARE(devtools_requested.first().first(), 42);
     }
   }
 };

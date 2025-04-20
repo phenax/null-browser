@@ -23,6 +23,8 @@ private slots:
   void cleanupTestCase() { LuaRuntime::instance().stop_event_loop(); }
 
   void test_initial_state() {
+    describe("constructor");
+
     context("when initialized");
     it("opens an empty stack maintaining current url") {
       Configuration configuration;
@@ -34,6 +36,8 @@ private slots:
   }
 
   void test_open_url() {
+    describe("#open_url");
+
     context("when openUrl is called with an empty stack");
     it("opens a new webview") {
       Configuration configuration;
@@ -115,6 +119,8 @@ private slots:
   }
 
   void test_close() {
+    describe("#close");
+
     context("when close is called");
     context("- with invalid id");
     it("does nothing") {
@@ -189,6 +195,8 @@ private slots:
   }
 
   void test_new_window_request_signal() {
+    describe("signal newWindowRequested");
+
     context("when webview emits a newWindowRequested signal");
     context("- of type new view");
     it("opens a new web view and focuses it") {

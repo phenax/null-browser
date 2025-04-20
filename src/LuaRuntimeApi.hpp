@@ -4,7 +4,6 @@
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
-#include "lua.h"
 
 int lua_api_view_set_url(lua_State *state) {
   const char *url = lua_tostring(state, 1);
@@ -190,7 +189,7 @@ int lua_event_register(lua_State *state) {
 
 int lua_api_search_set_text(lua_State *state) {
   const char *text = lua_tostring(state, 1);
-  WebViewId view_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
+  WebViewId view_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
   auto &runtime = LuaRuntime::instance();
   emit runtime.search_requested(text, view_id);
   return 1;
