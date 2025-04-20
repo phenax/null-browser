@@ -29,17 +29,36 @@ end
 
 --- Add a keymap
 ---
---- @param mode   string|table     Mode or a list of modes ("i", "n")
+--- @param mode   string           Keymap mode ("i", "n", ...)
 --- @param key    string           Key sequence (Eg: `<c-t>j`)
 --- @param action function         Function to run when keymap is triggered
 ---
 --- @example
 --- ```lua
 --- web.keymap.set('n', 'o', function()
----   web.view.create('https://google.com') -- Open google in new view
+---   web.view.create('https://google.com')
 --- end)
 --- ```
 function web.keymap.set(mode, key, action) return __internals.keymap_set(mode, key, action) end
+
+--- Set the current keymap mode
+---
+--- @param mode string    The keymap mode to set
+---
+--- @example
+--- ```lua
+--- web.keymap.set_mode('n') -- Set to normal mode
+--- web.keymap.set_mode('i') -- Set to insert mode
+--- ```
+function web.keymap.set_mode(mode) return __internals.keymap_set_mode(mode) end
+
+--- Get the current keymap mode
+---
+--- @example
+--- ```lua
+--- local current_mode = web.keymap.get_mode()
+--- ```
+function web.keymap.get_mode() return __internals.keymap_get_mode() end
 
 --- Close view
 ---
@@ -105,6 +124,17 @@ function web.view.select(view_id) return __internals.view_select(view_id) end
 --- web.view.set_url('https://foobar.com', 3) -- Set url for view with id 3
 --- ```
 function web.view.set_url(url, view_id) return __internals.view_set_url(url, view_id) end
+
+--- Open devtools window for the view
+---
+--- @param view_id? number    Id of the view
+---
+--- @example
+--- ```lua
+--- web.view.open_devtools() -- Open devtools window for current view
+--- web.view.open_devtools(5) -- Open devtools window for view id 5
+--- ```
+function web.view.open_devtools(view_id) return __internals.view_open_devtools(view_id) end
 
 --- Listen to events from the browser
 ---
@@ -173,36 +203,57 @@ function web.history.back(count, view_id) return __internals.history_back(count,
 --- ```
 function web.history.forward(count, view_id) return __internals.history_forward(count, view_id) end
 
---- Search
+--- Search text inside a view
 ---
 --- @param text    string     Text to search
 --- @param view_id? number    Id of the view
 ---
 --- @example
 --- ```lua
---- web.search.set_text('whatever')
+--- web.search.set_text('whatever') -- Search in current view
+--- web.search.set_text('whatever', 5) -- Search in view id 5
 --- ```
 function web.search.set_text(text, view_id) return __internals.search_set_text(text, view_id) end
 
--- TODO: Documentation please
+--- Reset searched text in a view (Same as web.search.set_text(''))
+---
+--- @param view_id? number    Id of the view
+---
+--- @example
+--- ```lua
+--- web.search.reset() -- Reset search state for current view
+--- web.search.reset(5) -- Reset search state for view id 5
+--- ```
 function web.search.reset(view_id) return __internals.search_set_text('', view_id) end
 
--- TODO: Documentation please
+--- Get the last searched text
+---
+--- @example
+--- ```lua
+--- local text = web.search.get_text()
+--- ```
 function web.search.get_text() return __internals.search_get_text() end
 
--- TODO: Documentation please
+--- Highlight next search term for the last searched text
+---
+--- @param view_id? number    Id of the view
+---
+--- @example
+--- ```lua
+--- web.search.next() -- Next search result in current view
+--- web.search.next(5) -- Next search result in view id 5
+--- ```
 function web.search.next(view_id) return __internals.search_next(view_id) end
 
--- TODO: Documentation please
+--- Highlight previous search term for the last searched text
+---
+--- @param view_id? number    Id of the view
+---
+--- @example
+--- ```lua
+--- web.search.previous() -- Previous search result in current view
+--- web.search.previous(5) -- Previous search result in view id 5
+--- ```
 function web.search.previous(view_id) return __internals.search_previous(view_id) end
-
--- TODO: Documentation please
-function web.view.open_devtools(view_id) return __internals.view_open_devtools(view_id) end
-
--- TODO: Documentation please
-function web.keymap.set_mode(mode) return __internals.keymap_set_mode(mode) end
-
--- TODO: Documentation please
-function web.keymap.get_mode() return __internals.keymap_get_mode() end
 
 print("api loaded")

@@ -12,6 +12,7 @@ QCommandLineParser *create_cli_parser() {
   parser->addPositionalArgument("url", "URL(s) to open", "[url]");
   parser->addOptions({
       {{"e", "expr"}, "Lua expression to execute", "lua"},
+      {{"c", "config-dir"}, "Config directory for null browser", "dir"},
   });
 
   return parser;
@@ -27,10 +28,15 @@ int main(int argc, char *argv[]) {
 
   auto urls = parser->positionalArguments();
   auto lua_expr = parser->value("expr");
+  auto config_dir = parser->value("config-dir");
+
+  Configuration configuration;
+  if (!config_dir.isEmpty())
+    configuration.set_config_dir(config_dir);
 
   InstanceManager instance_manager;
   if (instance_manager.is_server()) {
-    auto *browser = new BrowserApp;
+    auto *browser = new BrowserApp(configuration);
     browser->create_window(urls);
 
     auto &lua = LuaRuntime::instance();

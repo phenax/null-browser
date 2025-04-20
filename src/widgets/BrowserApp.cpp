@@ -1,3 +1,4 @@
+#include <QDir>
 #include <QKeyEvent>
 #include <QtCore>
 
@@ -6,7 +7,7 @@
 #include "widgets/BrowserApp.hpp"
 #include "widgets/BrowserWindow.hpp"
 
-BrowserApp::BrowserApp() {
+BrowserApp::BrowserApp(Configuration &configuration) : configuration(configuration) {
   auto &lua = LuaRuntime::instance();
   lua.start_event_loop();
 
@@ -17,8 +18,18 @@ BrowserApp::BrowserApp() {
   // Global event filter
   qApp->installEventFilter(this);
 
-  // NOTE: TMP
-  lua.load_file_sync("./config.lua");
+  qDebug() << "Config dir:" << configuration.get_config_dir().path();
+
+  // Load lua directory into package path
+  lua.append_package_path(configuration.get_config_lua_dir());
+
+  // Load init.lua
+  auto lua_init_file = configuration.get_config_lua_init_file();
+  if (QFile::exists(lua_init_file)) {
+    lua.load_file_sync(lua_init_file);
+  } else {
+    qWarning() << "Unable to find init.lua:" << lua_init_file;
+  }
 
   // Initializes profile
   for (auto *profile : profiles) {

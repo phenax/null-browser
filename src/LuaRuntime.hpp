@@ -34,6 +34,7 @@ public:
 
   void evaluate(const QString &code);
   void load_file_sync(const QString &path);
+  void append_package_path(const QString &path);
 
   void stop_event_loop();
   void start_event_loop();
@@ -61,7 +62,7 @@ signals:
 protected:
   LuaRuntime();
   ~LuaRuntime() override;
-  void init_lua_package_path();
+  void init_builtins_package_path();
   void init_web_api();
 
 private:

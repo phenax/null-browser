@@ -1,5 +1,5 @@
 local history = {
-  path = '/tmp/.null-browser-history', -- TODO: Use proper path
+  path = web.get('app_data_dir') .. '/.null-browser-history',
   max_entires = 200,
 }
 

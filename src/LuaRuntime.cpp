@@ -15,7 +15,7 @@ LuaRuntime::LuaRuntime() {
   state = luaL_newstate();
   luaL_openlibs(state);
 
-  init_lua_package_path();
+  init_builtins_package_path();
   init_web_api();
 }
 
@@ -57,16 +57,9 @@ void LuaRuntime::init_web_api() {
   });
 }
 
-void LuaRuntime::init_lua_package_path() {
-  auto lua_path = QString(PROJECT_LUA_PATH);
-  preserve_top(state, {
-    lua_getglobal(state, "package");
-    lua_getfield(state, -1, "path");
-    auto pkg_path = QString(lua_tostring(state, -1)) + ";" + lua_path;
-    lua_pop(state, 1);
-    lua_pushstring(state, pkg_path.toStdString().c_str());
-    lua_setfield(state, -2, "path");
-  });
+void LuaRuntime::init_builtins_package_path() {
+  auto builtins_lua_path = QString(PROJECT_LUA_PATH);
+  append_package_path(builtins_lua_path);
 }
 
 void LuaRuntime::evaluate(const QString &code) {
@@ -81,6 +74,17 @@ void LuaRuntime::evaluate(const QString &code) {
         emit evaluation_completed(value);
       }
     })
+  });
+}
+
+void LuaRuntime::append_package_path(const QString &path) {
+  preserve_top(state, {
+    lua_getglobal(state, "package");
+    lua_getfield(state, -1, "path");
+    auto pkg_path = QString(lua_tostring(state, -1)) + ";" + path;
+    lua_pop(state, 1);
+    lua_pushstring(state, pkg_path.toStdString().c_str());
+    lua_setfield(state, -2, "path");
   });
 }
 
