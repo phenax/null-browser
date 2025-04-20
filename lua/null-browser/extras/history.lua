@@ -53,4 +53,13 @@ function history.delete(url_to_delete)
   end)
 end
 
+function history.attach_hooks()
+  web.event.add_listener('UrlChanged', {
+    callback = function(opts)
+      print('url change', web.inspect(opts));
+      history.add(opts.url)
+    end
+  })
+end
+
 return history

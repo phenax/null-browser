@@ -136,6 +136,24 @@ function web.view.set_url(url, view_id) return __internals.view_set_url(url, vie
 --- ```
 function web.view.open_devtools(view_id) return __internals.view_open_devtools(view_id) end
 
+--- Get current view index
+---
+--- @return number|nil index Current view index
+---
+--- @example
+--- ```lua
+--- local index = web.view.current_index()
+--- ```
+function web.view.current_index()
+  local current_view = web.view.current();
+  for index, view in ipairs(web.view.list()) do
+    if view.id == current_view then
+      return index
+    end
+  end
+  return nil
+end
+
 --- Listen to events from the browser
 ---
 --- @class nullb.EventListenerOptions

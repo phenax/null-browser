@@ -5,8 +5,10 @@
 - [X] Search text in page
 - [X] Dev tools
 - [X] Configuration
+- [X] Searchengines
 - [ ] Scroll api (for j/k/h/l/gg/G)
 - [ ] Tests for api
+- [ ] table extend/merge
 - [ ] Fullscreen
 - [ ] Zoom in/out
 - [ ] Permission requests handling/persisting
