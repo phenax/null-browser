@@ -6,7 +6,7 @@
 - [X] Dev tools
 - [X] Configuration
 - [X] Searchengines
-- [ ] Scroll api (for j/k/h/l/gg/G)
+- [X] Scroll api (for j/k/h/l/gg/G)
 - [ ] Tests for api
 - [ ] table extend/merge
 - [ ] Fullscreen

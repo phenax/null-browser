@@ -276,3 +276,33 @@ void WebViewStack::set_webview_url(const QUrl &url, WebViewId webview_id) {
 
   webview->setUrl(url);
 }
+
+void WebViewStack::scroll(WebViewId webview_id, int deltax, int deltay) {
+  auto *webview = get_webview(webview_id);
+  if (webview == nullptr) {
+    qDebug() << "Webview does not exist";
+    return;
+  }
+
+  webview->scroll_increment(deltax, deltay);
+}
+
+void WebViewStack::scroll_to_top(WebViewId webview_id) {
+  auto *webview = get_webview(webview_id);
+  if (webview == nullptr) {
+    qDebug() << "Webview does not exist";
+    return;
+  }
+
+  webview->scroll_to_top();
+}
+
+void WebViewStack::scroll_to_bottom(WebViewId webview_id) {
+  auto *webview = get_webview(webview_id);
+  if (webview == nullptr) {
+    qDebug() << "Webview does not exist";
+    return;
+  }
+
+  webview->scroll_to_bottom();
+}

@@ -67,6 +67,9 @@ public slots:
   void focus_webview(WebViewId webview_id);
   void set_search_text(const QString &text, WebViewId webview_id, bool forward = true);
   void open_devtools(WebViewId webview_id);
+  void scroll(WebViewId webview_id, int deltax, int deltay);
+  void scroll_to_top(WebViewId webview_id);
+  void scroll_to_bottom(WebViewId webview_id);
 
 protected slots:
   void on_new_webview_request(const QWebEngineNewWindowRequest &request);

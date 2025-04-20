@@ -77,6 +77,21 @@ void WindowActionRouter::initialize(Configuration *config) {
     WITH_WEBVIEW_WINDOW(webview_id, window,
                         { win_match.second->mediator()->open_devtools(webview_id); })
   });
+
+  // Scroll
+  connect(&runtime, &LuaRuntime::webview_scroll_requested, this,
+          [this](WebViewId webview_id, int deltax, int deltay) {
+            WITH_WEBVIEW_WINDOW(webview_id, window,
+                                { window->mediator()->scroll(webview_id, deltax, deltay); });
+          });
+  connect(&runtime, &LuaRuntime::webview_scroll_top_requested, this, [this](WebViewId webview_id) {
+    WITH_WEBVIEW_WINDOW(webview_id, window, { window->mediator()->scroll_to_top(webview_id); });
+  });
+  connect(&runtime, &LuaRuntime::webview_scroll_bottom_requested, this,
+          [this](WebViewId webview_id) {
+            WITH_WEBVIEW_WINDOW(webview_id, window,
+                                { window->mediator()->scroll_to_bottom(webview_id); });
+          });
 }
 
 void WindowActionRouter::find_current_search_text(WebViewId webview_id, bool forward) {

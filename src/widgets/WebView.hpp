@@ -37,6 +37,9 @@ class WebView : public QWebEngineView {
 public:
   WebView(uint32_t webview_id, QWebEngineProfile *profile, QWidget *parent_node = nullptr);
   void open_devtools();
+  void scroll_increment(int deltax, int deltay);
+  void scroll_to_top();
+  void scroll_to_bottom();
 
   DEFINE_GETTER(get_id, id)
 

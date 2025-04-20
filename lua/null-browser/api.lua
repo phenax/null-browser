@@ -274,4 +274,13 @@ function web.search.next(view_id) return __internals.search_next(view_id) end
 --- ```
 function web.search.previous(view_id) return __internals.search_previous(view_id) end
 
+--- TODO: Document
+function web.view.scroll(deltax, deltay, view_id) return __internals.view_scroll(deltax, deltay, view_id) end
+
+--- TODO: Document
+function web.view.scroll_to_top(view_id) return __internals.view_scroll_to_top(view_id) end
+
+--- TODO: Document
+function web.view.scroll_to_bottom(view_id) return __internals.view_scroll_to_bottom(view_id) end
+
 print("api loaded")

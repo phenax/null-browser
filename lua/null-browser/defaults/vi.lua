@@ -7,7 +7,7 @@ local M = {}
 local config = {
   menu = require 'null-browser.extras.dmenu',
   history = require 'null-browser.extras.history',
-  preprocess_url = function(url) return url end,
+  preprocess_url = trim,
 }
 
 
@@ -22,6 +22,14 @@ function M.initialize()
   web.keymap.set_mode('n')
   web.keymap.set('n', 'i', function() web.keymap.set_mode('i') end)
   web.keymap.set('i', '<esc>', function() web.keymap.set_mode('n') end)
+
+  -- Scrolling
+  web.keymap.set('n', 'j', function() web.view.scroll(0, 20) end)
+  web.keymap.set('n', 'k', function() web.view.scroll(0, -20) end)
+  web.keymap.set('n', '<s-j>', function() web.view.scroll(0, 80) end)
+  web.keymap.set('n', '<s-k>', function() web.view.scroll(0, -80) end)
+  web.keymap.set('n', 'gg', function() web.view.scroll_to_top() end)
+  web.keymap.set('n', '<s-g>', function() web.view.scroll_to_bottom() end)
 
   -- Open in new view
   web.keymap.set('n', 'o', function()

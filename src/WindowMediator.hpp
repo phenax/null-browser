@@ -23,6 +23,9 @@ public:
   DELEGATE(webview_stack, webview_history_forward, history_forward)
   DELEGATE(webview_stack, close, close_webview)
   DELEGATE(webview_stack, focus_webview, select_webview)
+  DELEGATE(webview_stack, scroll, scroll)
+  DELEGATE(webview_stack, scroll_to_top, scroll_to_top)
+  DELEGATE(webview_stack, scroll_to_bottom, scroll_to_bottom)
 
 signals:
   void new_window_requested(const QUrl &url);

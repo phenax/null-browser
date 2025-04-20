@@ -58,6 +58,9 @@ signals:
   void search_next_requested(WebViewId webview_id);
   void search_previous_requested(WebViewId webview_id);
   void devtools_requested(WebViewId webview_id);
+  void webview_scroll_requested(WebViewId webview_id, int deltax, int deltay);
+  void webview_scroll_top_requested(WebViewId webview_id);
+  void webview_scroll_bottom_requested(WebViewId webview_id);
 
 protected:
   LuaRuntime();

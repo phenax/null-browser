@@ -238,6 +238,32 @@ int lua_api_keymap_set_mode(lua_State *state) {
   return 1;
 }
 
+int lua_api_view_scroll(lua_State *state) {
+  long deltax = lua_tointeger(state, 1);
+  long deltay = lua_tointeger(state, 2);
+  WebViewId view_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.webview_scroll_requested(view_id, (int)deltax, (int)deltay);
+
+  lua_pushnil(state);
+  return 1;
+}
+
+int lua_api_view_scroll_top(lua_State *state) {
+  WebViewId view_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.webview_scroll_top_requested(view_id);
+  lua_pushnil(state);
+  return 1;
+}
+int lua_api_view_scroll_bottom(lua_State *state) {
+  WebViewId view_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.webview_scroll_bottom_requested(view_id);
+  lua_pushnil(state);
+  return 1;
+}
+
 // NOLINTNEXTLINE
 static luaL_Reg internals_api[] = {
     luaL_Reg{"event_add_listener", &lua_event_register},
@@ -253,6 +279,9 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"view_select", &lua_view_select},
     luaL_Reg{"view_set_url", &lua_api_view_set_url},
     luaL_Reg{"view_open_devtools", &lua_api_view_open_devtools},
+    luaL_Reg{"view_scroll", &lua_api_view_scroll},
+    luaL_Reg{"view_scroll_to_top", &lua_api_view_scroll_top},
+    luaL_Reg{"view_scroll_to_bottom", &lua_api_view_scroll_bottom},
     luaL_Reg{"history_back", &lua_history_back},
     luaL_Reg{"history_forward", &lua_history_forward},
     luaL_Reg{"search_get_text", &lua_api_search_get_text},

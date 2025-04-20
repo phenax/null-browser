@@ -21,3 +21,25 @@ void WebView::open_devtools() {
 
   page()->setDevToolsPage(devtools_window->page());
 }
+
+void WebView::scroll_increment(int deltax, int deltay) {
+  auto code = QString(R"((() => {
+    const $el = document.scrollingElement;
+    $el.scrollTo($el.scrollLeft + %1, $el.scrollTop + %2);
+  })())")
+                  .arg(deltax)
+                  .arg(deltay);
+
+  page()->runJavaScript(code);
+}
+
+void WebView::scroll_to_top() {
+  auto code = QString(R"(document.scrollingElement.scrollTo(0, 0))");
+  page()->runJavaScript(code);
+}
+
+void WebView::scroll_to_bottom() {
+  auto code =
+      QString(R"(document.scrollingElement.scrollTo(0, document.scrollingElement.scrollHeight))");
+  page()->runJavaScript(code);
+}
