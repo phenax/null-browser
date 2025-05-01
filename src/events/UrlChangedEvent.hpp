@@ -9,12 +9,12 @@
 
 class UrlChangedEvent : public Event {
 public:
-  const QString &url;
+  const QString url;
   const WebViewId webview_id;
   const WindowId win_id;
 
-  UrlChangedEvent(const QString &url, WebViewId webview_id, WindowId win_id)
-      : url(url), webview_id(webview_id), win_id(win_id) {
+  UrlChangedEvent(QString url, WebViewId webview_id, WindowId win_id)
+      : url(std::move(url)), webview_id(webview_id), win_id(win_id) {
     kind = "UrlChanged";
   }
 

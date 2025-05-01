@@ -1,21 +1,12 @@
 ** Usable
-- [X] `web.inspect`: like vim.inspect
-- [X] static linking for libluv
-- [X] Update window title on current webview title change
-- [X] Search text in page
-- [X] Dev tools
-- [X] Configuration
-- [X] Searchengines
-- [X] Scroll api (for j/k/h/l/gg/G)
-- [X] table extend/merge
-- [X] window.opener controls (use tab for now?)
-- [X] Permission requests handling
-- [X] Notifications
 - [-] Tests for api
 - [ ] Config permission persist (persist_permission_state = 'always' | 'never' | 'in_memory')
 - [ ] Permission list/allow/deny api
 - [ ] Fullscreen
 - [ ] Zoom in/out
+- [ ] Run JS in page (web.view.eval_js())
+- [ ] Use table for all internals api options?
+- [ ] Create window with new profile
 
 ** Bugs
 - [ ] INVESTIGATE: segfault on api module error
@@ -24,19 +15,17 @@
 - [ ] INVESTIGATE: Errors in keymap/thread segfaults
 
 ** Next
+- [ ] web.win.* apis (list, current_id)
 - [ ] Allow toggling devtools
 - [ ] Tests for window
 - [ ] More tests for stack
 - [ ] Tests for router
-- [ ] Run JS in page (web.view.eval_js())
-- [ ] Window list api
+- [ ] Set search text as the user is typing (dmenu -r)
 - [ ] Log stdout, errors and results from lua somewhere
-- [ ] Use table for all internals api options?
 - [ ] Conflict in keymap (keymap already exists)
 - [ ] Allow pattern filtering for event listeners
 - [ ] Allow tab_id, win_id filtering for event listeners
 - [ ] Handle resource cleanup + signal disconnecting
-- [ ] Open url sanitize/humanize (add protocol if missing, remove quotes, etc)
 - [ ] Profiles
 - [ ] Private window (in-memory profile)
 - [ ] Read page contents via lua
@@ -47,7 +36,7 @@
 - [ ] User stylesheets (per site and global?)
 - [ ] Support multiple modes for keymap.set: `web.keymap.set({'n','i'}, ...)`
 - [ ] static linking for qt
-- [ ] vendor web.inspect with build
+- [X] vendor web.inspect with build
 - [ ] Right click context menu items
 - [ ] Listen to renderprocesstermination signal
 - [ ] Create view with html (web.view.set_html())

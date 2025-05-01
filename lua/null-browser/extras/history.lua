@@ -3,6 +3,8 @@ local history = {
   max_entires = 200,
 }
 
+local hook_registered = false
+
 function history.list()
   local file = uv.fs_open(history.path, 'r', 438)
   if not file then return {} end
@@ -14,7 +16,7 @@ function history.list()
   for line in string.gmatch(data, '[^\r\n]+') do
     local already_exists = false
     for _, url in ipairs(urls) do
-      if url == line or url .. '/' == line then already_exists = true end
+      if history.are_urls_similar(url, line) then already_exists = true end
     end
     if #urls >= history.max_entires then break end
     if not already_exists then
@@ -23,6 +25,10 @@ function history.list()
   end
 
   return urls
+end
+
+function history.are_urls_similar(url1, url2)
+  return url1 == url2 or url1 .. '/' == url2
 end
 
 function history.update(func)
@@ -54,6 +60,8 @@ function history.delete(url_to_delete)
 end
 
 function history.attach_hooks()
+  if hook_registered then return end
+
   web.event.add_listener('UrlChanged', {
     callback = function(opts)
       print('url change', web.inspect(opts));

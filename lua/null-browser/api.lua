@@ -10,7 +10,7 @@ web.view = web.view or {}
 web.history = web.history or {}
 web.event = web.event or {}
 
-require 'null-browser.stdlib'
+require 'lua.null-browser.utils'
 
 --- Add a keymap
 ---

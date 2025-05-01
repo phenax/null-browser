@@ -17,7 +17,6 @@
           lua-libluv = pkgs.callPackage (import ./nix/libluv.nix) {
             inherit (myPkgs) libuv luajit;
           };
-          lua-inspect = pkgs.luajitPackages.inspect; # TODO: include with build?
         };
 
         dependencies = [
@@ -26,7 +25,6 @@
           myPkgs.luajit
           myPkgs.libuv
           myPkgs.lua-libluv
-          myPkgs.lua-inspect
         ];
       in {
         devShells.default = pkgs.mkShell rec {

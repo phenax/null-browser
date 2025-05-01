@@ -2,18 +2,12 @@
 _G.web = _G.web or {}
 web.utils = web.utils or {}
 
--- inspect lua tables
-local inspector_loaded, inspector = pcall(require, 'inspect')
-if inspector_loaded then
-  web.inspect = inspector.inspect
-else
-  --- Returns human-readable string representation of Lua tables
-  ---
-  --- @link https://github.com/kikito/inspect.lua
-  web.inspect = function(val)
-    print('[warn] "inspect" module not loaded'); return val
-  end
-end
+local inspector = require 'null-browser.inspect'
+
+--- Returns human-readable string representation of Lua tables
+---
+--- @link https://github.com/kikito/inspect.lua
+web.inspect = inspector.inspect
 
 -- TODO: Documentation
 function web.utils.string_trim(str)
