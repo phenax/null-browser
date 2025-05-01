@@ -3,10 +3,10 @@
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
-#include "events.hpp"
+#include "events/Event.hpp"
 #include "testUtils.h"
 
-class TestEvent1 : public BrowserEvent {
+class TestEvent1 : public Event {
 public:
   int num;
   TestEvent1(int num) : num(num) { kind = "TestEvent1"; }

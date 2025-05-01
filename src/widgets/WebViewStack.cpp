@@ -2,14 +2,17 @@
 #include <QWebEngineFindTextResult>
 #include <QWebEngineHistory>
 #include <QWebEngineNewWindowRequest>
+#include <QWebEngineNotification>
 #include <QWebEngineProfile>
 #include <cstdint>
 #include <cstdlib>
 #include <memory>
+#include <qwebengineprofile.h>
 #include <vector>
 
 #include "WindowActionRouter.hpp"
-#include "events.hpp"
+#include "events/PermissionRequestedEvent.hpp"
+#include "events/UrlChangedEvent.hpp"
 #include "widgets/WebViewStack.hpp"
 
 static WebViewId next_webview_id = 1;
@@ -62,7 +65,7 @@ WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
   connect(page, &QWebEnginePage::permissionRequested, this, [webview](QWebEnginePermission perm) {
     auto permission = std::make_shared<QWebEnginePermission>(std::move(perm));
     // TODO: Add windown id
-    auto *event = PermissionRequestEvent::from_permission(permission, webview->get_id(), 0);
+    auto *event = PermissionRequestedEvent::from_permission(permission, webview->get_id(), 0);
     WindowActionRouter::instance().dispatch_event(event);
   });
 

@@ -1,7 +1,10 @@
+#include <mutex>
+#include <unordered_map>
+
 #include "EventQueue.hpp"
 #include "LuaRuntime.hpp"
 
-void EventQueue::dispatch_event(BrowserEvent *event) {
+void EventQueue::dispatch_event(Event *event) {
   auto &runtime = LuaRuntime::instance();
 
   runtime.queue_task([this, event]() {

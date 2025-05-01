@@ -1,52 +1,14 @@
 #pragma once
 
+#include <QWebEnginePermission>
 #include <QtCore>
-#include <functional>
 #include <lua.hpp>
-#include <memory>
-#include <qwebenginepermission.h>
 
-#include "LuaRuntime.hpp"
-#include "lua.h"
+#include "events/Event.hpp"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
-#define SET_FIELD(NAME, TYPE, VALUE)                                                               \
-  lua_pushstring(state, NAME);                                                                     \
-  lua_push##TYPE(state, VALUE);                                                                    \
-  lua_settable(state, -3);
-
-class BrowserEvent {
-public:
-  QString kind = "-";
-
-  virtual void lua_push(lua_State *state) const {
-    lua_newtable(state);
-    SET_FIELD("type", string, kind.toStdString().c_str())
-  };
-};
-
-class UrlChangedEvent : public BrowserEvent {
-public:
-  const QString &url;
-  const WebViewId webview_id;
-  const WindowId win_id;
-
-  UrlChangedEvent(const QString &url, WebViewId webview_id, WindowId win_id)
-      : url(url), webview_id(webview_id), win_id(win_id) {
-    kind = "UrlChanged";
-  }
-
-  void lua_push(lua_State *state) const override {
-    lua_newtable(state);
-    SET_FIELD("type", string, kind.toStdString().c_str())
-    SET_FIELD("view_id", integer, webview_id)
-    SET_FIELD("win_id", integer, win_id)
-    SET_FIELD("url", string, url.toStdString().c_str())
-  }
-};
-
-class PermissionRequestEvent : public BrowserEvent {
+class PermissionRequestedEvent : public Event {
 public:
   const QWebEnginePermission::PermissionType premission_type;
   const WebViewId webview_id;
@@ -54,16 +16,18 @@ public:
   std::function<void()> accept_request;
   std::function<void()> reject_request;
 
-  PermissionRequestEvent(QWebEnginePermission::PermissionType type,
-                         std::function<void()> accept_request, std::function<void()> reject_request,
-                         WebViewId webview_id, WindowId win_id)
+  PermissionRequestedEvent(QWebEnginePermission::PermissionType type,
+                           std::function<void()> accept_request,
+                           std::function<void()> reject_request, WebViewId webview_id,
+                           WindowId win_id)
       : premission_type(type), webview_id(webview_id), win_id(win_id),
         accept_request(std::move(accept_request)), reject_request(std::move(reject_request)) {
     kind = "PermissionRequested";
   }
 
-  static PermissionRequestEvent *from_permission(std::shared_ptr<QWebEnginePermission> &permission,
-                                                 WebViewId webview_id, WindowId win_id) {
+  static PermissionRequestedEvent *
+  from_permission(std::shared_ptr<QWebEnginePermission> &permission, WebViewId webview_id,
+                  WindowId win_id) {
     auto accept = [permission]() {
       QMetaObject::invokeMethod(qApp, [=]() { permission->grant(); }, Qt::QueuedConnection);
     };
@@ -71,8 +35,8 @@ public:
       QMetaObject::invokeMethod(qApp, [=]() { permission->deny(); }, Qt::QueuedConnection);
     };
     // TODO: Manage delete for permission object
-    return new PermissionRequestEvent(permission->permissionType(), accept, reject, webview_id,
-                                      win_id);
+    return new PermissionRequestedEvent(permission->permissionType(), accept, reject, webview_id,
+                                        win_id);
   }
 
   [[nodiscard]] const char *permission_type() const {
@@ -115,7 +79,7 @@ public:
         state,
         [](lua_State *state) {
           void *userdata = lua_touserdata(state, lua_upvalueindex(1));
-          auto *event = static_cast<PermissionRequestEvent *>(userdata);
+          auto *event = static_cast<PermissionRequestedEvent *>(userdata);
           event->accept_request();
           lua_pushnil(state);
           return 1;
@@ -129,7 +93,7 @@ public:
         state,
         [](lua_State *state) {
           void *userdata = lua_touserdata(state, lua_upvalueindex(1));
-          auto *event = static_cast<PermissionRequestEvent *>(userdata);
+          auto *event = static_cast<PermissionRequestedEvent *>(userdata);
           event->reject_request();
           lua_pushnil(state);
           return 1;
@@ -137,11 +101,4 @@ public:
         1);
     lua_settable(state, -3);
   }
-};
-
-struct EventHandlerRequest {
-  std::vector<QString> event_names;
-  std::vector<QString> patterns;
-  std::function<void(BrowserEvent *)> handler;
-  int function_ref;
 };

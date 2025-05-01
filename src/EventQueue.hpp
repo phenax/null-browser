@@ -4,13 +4,14 @@
 #include <mutex>
 #include <unordered_map>
 
-#include "events.hpp"
+#include "events/Event.hpp"
+#include "events/EventHandlerRequest.hpp"
 
 class EventQueue {
 public:
   EventQueue() = default;
 
-  void dispatch_event(BrowserEvent *event);
+  void dispatch_event(Event *event);
   void register_event(const EventHandlerRequest &event);
 
 private:

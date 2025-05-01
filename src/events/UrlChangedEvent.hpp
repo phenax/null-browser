@@ -1,0 +1,28 @@
+#pragma once
+
+#include <QtCore>
+#include <lua.hpp>
+
+#include "events/Event.hpp"
+#include "widgets/BrowserWindow.hpp"
+#include "widgets/WebViewStack.hpp"
+
+class UrlChangedEvent : public Event {
+public:
+  const QString &url;
+  const WebViewId webview_id;
+  const WindowId win_id;
+
+  UrlChangedEvent(const QString &url, WebViewId webview_id, WindowId win_id)
+      : url(url), webview_id(webview_id), win_id(win_id) {
+    kind = "UrlChanged";
+  }
+
+  void lua_push(lua_State *state) const override {
+    lua_newtable(state);
+    SET_FIELD("type", string, kind.toStdString().c_str())
+    SET_FIELD("view_id", integer, webview_id)
+    SET_FIELD("win_id", integer, win_id)
+    SET_FIELD("url", string, url.toStdString().c_str())
+  }
+};

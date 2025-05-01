@@ -4,6 +4,7 @@
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
+#include "events/Event.hpp"
 
 int lua_api_view_set_url(lua_State *state) {
   const char *url = lua_tostring(state, 1);
@@ -172,7 +173,7 @@ int lua_event_register(lua_State *state) {
   const int function_ref = luaL_ref(state, LUA_REGISTRYINDEX);
   event.function_ref = function_ref;
   // TODO: Delete ref on clear callback
-  event.handler = [state, function_ref](BrowserEvent *event) {
+  event.handler = [state, function_ref](Event *event) {
     preserve_top(state, {
       lua_rawgeti(state, LUA_REGISTRYINDEX, function_ref);
       event->lua_push(state);
