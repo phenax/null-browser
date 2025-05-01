@@ -1,4 +1,5 @@
 #include <QtCore>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <lua.hpp>
@@ -19,6 +20,10 @@ LuaRuntime::LuaRuntime() {
   init_web_api();
 }
 
+int luv_callback(lua_State *state, int nargs, int nresults, int flags) {
+  return luv_cfpcall(state, nargs, nresults, flags | LUVF_CALLBACK_NOEXIT);
+}
+
 void LuaRuntime::start_event_loop() {
   if (event_loop != nullptr)
     stop_event_loop();
@@ -28,6 +33,7 @@ void LuaRuntime::start_event_loop() {
 
   // Load `uv` (luv)
   luv_set_loop(state, event_loop->get_uv_loop());
+  luv_set_callback(state, &luv_callback);
   luaopen_luv(state);
   lua_setglobal(state, uv_global_name);
 }

@@ -1,8 +1,9 @@
 #include <QKeyEvent>
+#include <QLabel>
+#include <QMainWindow>
 #include <QStackedLayout>
 #include <QVBoxLayout>
 #include <QtCore>
-#include <qmainwindow.h>
 
 #include "Configuration.hpp"
 #include "WindowMediator.hpp"
@@ -16,10 +17,9 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, QWebEngineProfi
   setCentralWidget(new QWidget());
 
   // Root stacked layout
-  auto *layout = new QStackedLayout();
+  auto *layout = new QVBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
-  layout->setStackingMode(QStackedLayout::StackAll);
   centralWidget()->setLayout(layout);
 
   // Webengine profile
