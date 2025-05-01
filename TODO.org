@@ -10,9 +10,10 @@
 - [X] table extend/merge
 - [X] window.opener controls (use tab for now?)
 - [X] Permission requests handling
+- [X] Notifications
 - [-] Tests for api
-- [ ] Permission requests persist
-- [ ] Notifications
+- [ ] Config permission persist (persist_permission_state = 'always' | 'never' | 'in_memory')
+- [ ] Permission list/allow/deny api
 - [ ] Fullscreen
 - [ ] Zoom in/out
 

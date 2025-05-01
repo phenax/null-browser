@@ -8,6 +8,15 @@
   lua_push##TYPE(state, VALUE);                                                                    \
   lua_settable(state, -3);
 
+// Not a huge fan but looks nice
+#define SET_FIELD_CLOSURE_WITH_SELF(NAME, CLOSURE)                                                 \
+  lua_pushstring(state, NAME);                                                                     \
+  lua_pushlightuserdata(state, (void *)this);                                                      \
+  lua_pushcclosure(state, CLOSURE, 1);                                                             \
+  lua_settable(state, -3);
+
+#define GET_CLOSURE_SELF(TYPE) static_cast<TYPE>(lua_touserdata(state, lua_upvalueindex(1)));
+
 class Event {
 public:
   QString kind = "-";

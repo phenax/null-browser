@@ -39,6 +39,28 @@ public:
                                         win_id);
   }
 
+  void lua_push(lua_State *state) const override {
+    lua_newtable(state);
+    SET_FIELD("type", string, kind.toStdString().c_str())
+    SET_FIELD("permission_type", string, permission_type())
+    SET_FIELD("view_id", integer, webview_id)
+    SET_FIELD("win_id", integer, win_id)
+
+    SET_FIELD_CLOSURE_WITH_SELF("accept", [](lua_State *state) {
+      auto *event = GET_CLOSURE_SELF(PermissionRequestedEvent *);
+      event->accept_request();
+      lua_pushnil(state);
+      return 1;
+    });
+
+    SET_FIELD_CLOSURE_WITH_SELF("reject", [](lua_State *state) {
+      auto *event = GET_CLOSURE_SELF(PermissionRequestedEvent *);
+      event->reject_request();
+      lua_pushnil(state);
+      return 1;
+    });
+  }
+
   [[nodiscard]] const char *permission_type() const {
     switch (premission_type) {
     case QWebEnginePermission::PermissionType::MediaAudioCapture:
@@ -64,41 +86,5 @@ public:
     default:
       return "Unsupported";
     }
-  }
-
-  void lua_push(lua_State *state) const override {
-    lua_newtable(state);
-    SET_FIELD("type", string, kind.toStdString().c_str())
-    SET_FIELD("permission_type", string, permission_type())
-    SET_FIELD("view_id", integer, webview_id)
-    SET_FIELD("win_id", integer, win_id)
-
-    lua_pushstring(state, "accept");
-    lua_pushlightuserdata(state, (void *)this);
-    lua_pushcclosure(
-        state,
-        [](lua_State *state) {
-          void *userdata = lua_touserdata(state, lua_upvalueindex(1));
-          auto *event = static_cast<PermissionRequestedEvent *>(userdata);
-          event->accept_request();
-          lua_pushnil(state);
-          return 1;
-        },
-        1);
-    lua_settable(state, -3);
-
-    lua_pushstring(state, "reject");
-    lua_pushlightuserdata(state, (void *)this);
-    lua_pushcclosure(
-        state,
-        [](lua_State *state) {
-          void *userdata = lua_touserdata(state, lua_upvalueindex(1));
-          auto *event = static_cast<PermissionRequestedEvent *>(userdata);
-          event->reject_request();
-          lua_pushnil(state);
-          return 1;
-        },
-        1);
-    lua_settable(state, -3);
   }
 };

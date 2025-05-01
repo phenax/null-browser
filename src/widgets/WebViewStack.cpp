@@ -2,7 +2,6 @@
 #include <QWebEngineFindTextResult>
 #include <QWebEngineHistory>
 #include <QWebEngineNewWindowRequest>
-#include <QWebEngineNotification>
 #include <QWebEngineProfile>
 #include <cstdint>
 #include <cstdlib>

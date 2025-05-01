@@ -1,9 +1,11 @@
 #include <QDir>
 #include <QKeyEvent>
+#include <QWebEngineNotification>
 #include <QtCore>
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
+#include "events/NotificationReceivedEvent.hpp"
 #include "widgets/BrowserApp.hpp"
 #include "widgets/BrowserWindow.hpp"
 
@@ -35,6 +37,12 @@ BrowserApp::BrowserApp(Configuration &configuration) : configuration(configurati
   for (auto *profile : profiles) {
     profile->setDownloadPath(configuration.downloads_dir());
     profile->setHttpUserAgent(configuration.user_agent());
+    profile->setNotificationPresenter([](std::unique_ptr<QWebEngineNotification> notification) {
+      auto *event = new NotificationReceivedEvent(std::move(notification));
+      WindowActionRouter::instance().dispatch_event(event);
+    });
+    profile->setPersistentPermissionsPolicy(
+        QWebEngineProfile::PersistentPermissionsPolicy::StoreInMemory);
   }
 
   connect(&window_action_router, &WindowActionRouter::new_window_requested, this,
@@ -42,7 +50,7 @@ BrowserApp::BrowserApp(Configuration &configuration) : configuration(configurati
 };
 
 BrowserWindow *BrowserApp::create_window(const QStringList &urls) {
-  auto *window = new BrowserWindow((const Configuration &)configuration, urls);
+  auto *window = new BrowserWindow((const Configuration &)configuration, &default_profile, urls);
   window->setWindowTitle("null-browser");
   WindowActionRouter::instance().add_window(window);
 

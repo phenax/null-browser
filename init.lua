@@ -23,14 +23,24 @@ web.event.add_listener('PermissionRequested', {
   callback = function(event)
     dmenu.select({ 'Allow', 'Deny' }, { prompt = 'Requesting permission for ' .. event.permission_type },
       function(err, choice)
-        if err then return print('-- x permission ignored') end
-        print('----- permission', event.permission_type, web.inspect(choice))
+        if err then return end
         if web.utils.string_trim(choice) == 'Allow' then
           event.accept()
         else
           event.reject()
         end
       end)
+  end,
+})
+
+web.event.add_listener('NotificationReceived', {
+  callback = function(event)
+    local args = { '-a', 'null-browser', '-r', event.tag, event.title, event.message }
+    uv.spawn('notify-send', { args = args }, function(code)
+      if code ~= 0 then
+        print('[notify-send] Exit with status code: ' .. code)
+      end
+    end)
   end,
 })
 

@@ -10,7 +10,8 @@
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
 
-BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringList &urls)
+BrowserWindow::BrowserWindow(const Configuration &configuration, QWebEngineProfile *profile,
+                             const QStringList &urls)
     : QMainWindow(nullptr), configuration(configuration) {
   setCentralWidget(new QWidget());
 
@@ -22,7 +23,6 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, const QStringLi
   centralWidget()->setLayout(layout);
 
   // Webengine profile
-  auto *profile = new QWebEngineProfile("null-browser");
   profile->setDownloadPath(configuration.downloads_dir());
   profile->setHttpUserAgent(configuration.user_agent());
 
