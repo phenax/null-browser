@@ -1,10 +1,10 @@
 local M = {}
+
 local config = {
   menu = require 'null-browser.extras.dmenu',
   history = require 'null-browser.extras.history',
-  preprocess_url = web.utils.string_trim,
+  transform_url_input = web.utils.string_trim,
 }
-
 
 function M.setup(opts)
   config = web.utils.table_merge(config, opts)
@@ -26,17 +26,16 @@ function M.initialize()
 
   -- Open in new view
   web.keymap.set('n', 'o', function()
-    print(web.get('new_view_url'), web.get('user_agent'))
     config.menu.select(config.history.list(), { prompt = 'Open view:' }, function(err, result)
       if err or not result then return end
-      web.view.create(config.preprocess_url(result))
+      web.view.create(config.transform_url_input(result))
     end)
   end)
   -- Open in current view
   web.keymap.set('n', '<s-o>', function()
     config.menu.select(config.history.list(), { prompt = 'Open:' }, function(err, result)
       if err or not result then return end
-      web.view.set_url(config.preprocess_url(result))
+      web.view.set_url(config.transform_url_input(result))
     end)
   end)
   -- Delete from history

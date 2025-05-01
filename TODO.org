@@ -9,8 +9,9 @@
 - [X] Scroll api (for j/k/h/l/gg/G)
 - [X] table extend/merge
 - [X] window.opener controls (use tab for now?)
-- [ ] Tests for api
-- [ ] Permission requests handling/persisting
+- [X] Permission requests handling
+- [-] Tests for api
+- [ ] Permission requests persist
 - [ ] Notifications
 - [ ] Fullscreen
 - [ ] Zoom in/out

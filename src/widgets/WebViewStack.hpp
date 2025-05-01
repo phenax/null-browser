@@ -3,7 +3,6 @@
 #include <QStackedLayout>
 #include <QWebEngineProfile>
 #include <cstdint>
-#include <functional>
 #include <qwebengineprofile.h>
 #include <vector>
 

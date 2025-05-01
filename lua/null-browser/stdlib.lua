@@ -7,6 +7,9 @@ local inspector_loaded, inspector = pcall(require, 'inspect')
 if inspector_loaded then
   web.inspect = inspector.inspect
 else
+  --- Returns human-readable string representation of Lua tables
+  ---
+  --- @link https://github.com/kikito/inspect.lua
   web.inspect = function(val)
     print('[warn] "inspect" module not loaded'); return val
   end

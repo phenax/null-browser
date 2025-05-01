@@ -5,6 +5,7 @@
 #include <QWebEngineProfile>
 #include <cstdint>
 #include <cstdlib>
+#include <memory>
 #include <vector>
 
 #include "WindowActionRouter.hpp"
@@ -48,17 +49,22 @@ WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
   layout->addWidget(webview);
   webview_list.append(webview);
 
-  connect(webview->page(), &QWebEnginePage::newWindowRequested, this,
-          &WebViewStack::on_new_webview_request);
-  connect(webview->page(), &QWebEnginePage::urlChanged, this, [webview](const QUrl &url) {
+  auto *page = webview->page();
+  connect(page, &QWebEnginePage::newWindowRequested, this, &WebViewStack::on_new_webview_request);
+  connect(page, &QWebEnginePage::urlChanged, this, [webview](const QUrl &url) {
     // TODO: Add window id
-    WindowActionRouter::instance().dispatch_event(
-        new UrlChangedEvent(url.toString(), webview->get_id(), 0));
+    auto *event = new UrlChangedEvent(url.toString(), webview->get_id(), 0);
+    WindowActionRouter::instance().dispatch_event(event);
   });
-  connect(webview->page(), &QWebEnginePage::titleChanged, this,
-          [this](const QString & /* title */) {
-            emit current_webview_title_changed(layout->currentIndex());
-          });
+  connect(page, &QWebEnginePage::titleChanged, this, [this](const QString & /* title */) {
+    emit current_webview_title_changed(layout->currentIndex());
+  });
+  connect(page, &QWebEnginePage::permissionRequested, this, [webview](QWebEnginePermission perm) {
+    auto permission = std::make_shared<QWebEnginePermission>(std::move(perm));
+    // TODO: Add windown id
+    auto *event = PermissionRequestEvent::from_permission(permission, webview->get_id(), 0);
+    WindowActionRouter::instance().dispatch_event(event);
+  });
 
   if (focus)
     focus_webview(webview->get_id());
