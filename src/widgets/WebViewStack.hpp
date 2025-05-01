@@ -3,6 +3,7 @@
 #include <QStackedLayout>
 #include <QWebEngineProfile>
 #include <cstdint>
+#include <functional>
 #include <qwebengineprofile.h>
 #include <vector>
 
@@ -72,7 +73,7 @@ public slots:
   void scroll_to_bottom(WebViewId webview_id);
 
 protected slots:
-  void on_new_webview_request(const QWebEngineNewWindowRequest &request);
+  void on_new_webview_request(QWebEngineNewWindowRequest &request);
 
 private:
   const Configuration *configuration;

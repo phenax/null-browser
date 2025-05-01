@@ -80,7 +80,7 @@ QList<WebViewData> WebViewStack::get_webview_list() {
   return urls;
 }
 
-void WebViewStack::on_new_webview_request(const QWebEngineNewWindowRequest &request) {
+void WebViewStack::on_new_webview_request(QWebEngineNewWindowRequest &request) {
   switch (request.destination()) {
   case QWebEngineNewWindowRequest::InNewTab:
     open_url(request.requestedUrl(), OpenType::OpenUrlInView);
@@ -90,7 +90,10 @@ void WebViewStack::on_new_webview_request(const QWebEngineNewWindowRequest &requ
     break;
   case QWebEngineNewWindowRequest::InNewWindow:
   case QWebEngineNewWindowRequest::InNewDialog:
-    emit new_window_requested(request.requestedUrl());
+    // NOTE: Using tabs for now instead of windows
+    auto *webview = create_new_webview(request.requestedUrl(), true);
+    request.openIn(webview->page());
+    // emit new_window_requested(request.requestedUrl());
     break;
   }
 }

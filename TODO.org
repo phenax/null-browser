@@ -8,12 +8,12 @@
 - [X] Searchengines
 - [X] Scroll api (for j/k/h/l/gg/G)
 - [X] table extend/merge
+- [X] window.opener controls (use tab for now?)
 - [ ] Tests for api
-- [ ] Fullscreen
-- [ ] Zoom in/out
 - [ ] Permission requests handling/persisting
 - [ ] Notifications
-- [ ] window.opener controls (use createWindow api directly?)
+- [ ] Fullscreen
+- [ ] Zoom in/out
 
 ** Bugs
 - [ ] INVESTIGATE: segfault on api module error

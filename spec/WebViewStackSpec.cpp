@@ -241,7 +241,6 @@ private slots:
     it("requests a new window") {
       Configuration configuration;
       WebViewStack webview_stack(&configuration);
-      QSignalSpy new_window_requested_spy(&webview_stack, &WebViewStack::new_window_requested);
       webview_stack.open_url(QUrl("https://a.com"));
       QCOMPARE(webview_stack.count(), 1);
       auto *webview = webview_stack.findChild<WebView *>();
@@ -249,11 +248,12 @@ private slots:
       FakeNewWindowRequest window_request(FakeNewWindowRequest::DestinationType::InNewWindow,
                                           QRect(0, 0, 0, 0), QUrl("https://new.com"), true);
       emit webview->page()->newWindowRequested(window_request);
-      new_window_requested_spy.wait(100);
 
-      QCOMPARE(new_window_requested_spy.count(), 1);
-      QCOMPARE(new_window_requested_spy.takeFirst().at(0), QUrl("https://new.com"));
-      QCOMPARE(webview_stack.count(), 1);
+      QCOMPARE(webview_stack.count(), 2);
+      QCOMPARE(webview_stack.urls(),
+               (std::vector<QUrl>{QUrl("https://a.com"), QUrl("https://new.com")}));
+      QCOMPARE(webview_stack.current_webview_index(), 1);
+      QCOMPARE(webview_stack.current_url(), QUrl("https://new.com"));
     }
   }
 };
