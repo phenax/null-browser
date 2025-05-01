@@ -35,6 +35,7 @@ public:
   void evaluate(const QString &code);
   void load_file_sync(const QString &path);
   void append_package_path(const QString &path);
+  void require_module(const QString &module_name);
 
   void stop_event_loop();
   void start_event_loop();

@@ -7,8 +7,8 @@
 - [X] Configuration
 - [X] Searchengines
 - [X] Scroll api (for j/k/h/l/gg/G)
+- [X] table extend/merge
 - [ ] Tests for api
-- [ ] table extend/merge
 - [ ] Fullscreen
 - [ ] Zoom in/out
 - [ ] Permission requests handling/persisting

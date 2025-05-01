@@ -48,11 +48,15 @@ void LuaRuntime::init_web_api() {
   luaL_newlib(state, internals_api);
   lua_setglobal(state, internals_global_name);
 
+  require_module("null-browser.api");
+}
+
+void LuaRuntime::require_module(const QString &module_name) {
   preserve_top(state, {
     lua_getglobal(state, "require");
-    lua_pushstring(state, "null-browser.api");
+    lua_pushstring(state, module_name.toStdString().c_str());
     if (lua_pcall(state, 1, 0, 0) != LUA_OK) {
-      qCritical() << "Unable to load browser api" << lua_tostring(state, -1);
+      qCritical() << "Unable to require module" << module_name << ":" << lua_tostring(state, -1);
     }
   });
 }

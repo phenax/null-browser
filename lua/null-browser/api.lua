@@ -3,29 +3,14 @@
 __internals = __internals
 
 --- @type table
-_G.web = _G.web or {
-  search = {},
-  keymap = {},
-  view = {},
-  history = {},
-  event = {},
-}
+_G.web = _G.web or {}
+web.search = web.search or {}
+web.keymap = web.keymap or {}
+web.view = web.view or {}
+web.history = web.history or {}
+web.event = web.event or {}
 
-local function shallow_copy(t)
-  local t2 = {}
-  for k, v in pairs(t) do t2[k] = v end
-  return t2
-end
-
--- inspect lua tables
-local inspector_loaded, inspector = pcall(require, 'inspect')
-if inspector_loaded then
-  web.inspect = inspector.inspect
-else
-  web.inspect = function(val)
-    print('[warn] "inspect" module not loaded'); return val
-  end
-end
+require 'null-browser.stdlib'
 
 --- Add a keymap
 ---
@@ -171,7 +156,7 @@ end
 --- })
 --- ```
 function web.event.add_listener(events, opts)
-  opts = shallow_copy(opts or {})
+  opts = web.utils.table_merge({}, opts or {})
   if type(events) == "string" then events = { events } end
   opts.events = events or {}
 

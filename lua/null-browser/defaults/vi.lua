@@ -1,20 +1,13 @@
-local function trim(s)
-  local res, _ = string.gsub(s, '^%s*(.-)%s*$', '%1')
-  return res
-end
-
 local M = {}
 local config = {
   menu = require 'null-browser.extras.dmenu',
   history = require 'null-browser.extras.history',
-  preprocess_url = trim,
+  preprocess_url = web.utils.string_trim,
 }
 
 
 function M.setup(opts)
-  if opts.menu then config.menu = opts.menu end
-  if opts.history then config.history = opts.history end
-  if opts.preprocess_url then config.preprocess_url = opts.preprocess_url end
+  config = web.utils.table_merge(config, opts)
 end
 
 function M.initialize()
@@ -50,7 +43,7 @@ function M.initialize()
   web.keymap.set('n', 'dh', function()
     config.menu.select(config.history.list(), { prompt = 'Delete history:' }, function(err, result)
       if err or not result then return end
-      config.history.delete(trim(result))
+      config.history.delete(web.utils.string_trim(result))
     end)
   end)
 
@@ -90,9 +83,10 @@ function M.initialize()
     for index, view in ipairs(web.view.list()) do
       table.insert(views_list, index .. ': ' .. view.title .. ' (' .. view.url .. ')')
     end
+
     config.menu.select(views_list, { prompt = 'Views:' }, function(err, result)
       if err or not result then return end
-      local index_str, _ = trim(result):gsub('%s*:.*$', '')
+      local index_str, _ = string.gsub(result, '%s*:.*$', '')
       local index = tonumber(index_str)
       if views[index] then
         web.view.select(views[index].id)
@@ -136,7 +130,7 @@ function M.initialize()
     if view == nil then return end
     config.menu.select(config.history.list(), { prompt = 'Set url:', input = view.url }, function(err, result)
       if err or not result then return end
-      web.view.set_url(trim(result))
+      web.view.set_url(web.utils.string_trim(result))
     end)
   end)
 
