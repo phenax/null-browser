@@ -13,6 +13,7 @@ private slots:
     it("calls mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
+      evaluator.set_current_mode("n");
       evaluator.add_keymap("n", "<c-t>", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
@@ -37,6 +38,7 @@ private slots:
     it("calls mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
+      evaluator.set_current_mode("n");
       evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
@@ -49,6 +51,7 @@ private slots:
     it("does not call mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
+      evaluator.set_current_mode("n");
       evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
@@ -60,6 +63,7 @@ private slots:
     it("does not call mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
+      evaluator.set_current_mode("n");
       evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_K);
@@ -71,6 +75,7 @@ private slots:
     it("does not call mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
+      evaluator.set_current_mode("n");
       evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
@@ -83,6 +88,7 @@ private slots:
     it("calls mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
+      evaluator.set_current_mode("n");
       evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);
@@ -98,6 +104,7 @@ private slots:
     it("does not call mapping") {
       auto keymap_was_called = false;
       KeymapEvaluator evaluator;
+      evaluator.set_current_mode("n");
       evaluator.add_keymap("n", "<c-t>a", [&keymap_was_called]() { keymap_was_called = true; });
 
       evaluator.evaluate(Qt::ControlModifier, Qt::Key_T);

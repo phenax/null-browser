@@ -95,7 +95,7 @@ void LuaRuntime::append_package_path(const QString &path) {
 void LuaRuntime::load_file_sync(const QString &path) {
   preserve_top(state, {
     if (luaL_dofile(state, path.toStdString().c_str()) != LUA_OK) {
-      qDebug() << "Load file error:" << lua_tostring(state, -1);
+      lua_error(state);
     }
   });
 }

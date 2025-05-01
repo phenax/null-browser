@@ -8,7 +8,7 @@ std::vector<std::function<QObject *()>> &get_qtest_registry() {
   return registry;
 }
 
-int run_all_tests() {
+int run_app_tests() {
   int exit_code = 0;
 
   QString test_name = getenv("TEST_NAME");
@@ -27,8 +27,7 @@ int run_all_tests() {
 bool wait_for_lua_to_be_true(QString lua_code) {
   return QTest::qWaitFor([&lua_code]() {
     auto &lua = LuaRuntime::instance();
-    QSignalSpy evaluation_completed_spy(&lua,
-                                        &LuaRuntime::evaluation_completed);
+    QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
     lua.evaluate(lua_code);
     evaluation_completed_spy.wait();
     return evaluation_completed_spy.first().first().toBool();

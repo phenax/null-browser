@@ -34,7 +34,7 @@
 #define STRINGIFY(x) #x
 
 std::vector<std::function<QObject *()>> &get_qtest_registry();
-int run_all_tests();
+int run_app_tests();
 
 #define QTEST_REGISTER(klass)                                                                      \
   namespace {                                                                                      \

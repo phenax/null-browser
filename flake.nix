@@ -17,14 +17,16 @@
           lua-libluv = pkgs.callPackage (import ./nix/libluv.nix) {
             inherit (myPkgs) libuv luajit;
           };
+          # lua-busted = pkgs.luajitPackages.busted;
         };
 
-        dependencies = [
-          myPkgs.qt.qtbase
-          myPkgs.qt.qtwebengine
-          myPkgs.luajit
-          myPkgs.libuv
-          myPkgs.lua-libluv
+        dependencies = with myPkgs; [
+          qt.qtbase
+          qt.qtwebengine
+          luajit
+          libuv
+          lua-libluv
+          # lua-busted
         ];
       in {
         devShells.default = pkgs.mkShell rec {
