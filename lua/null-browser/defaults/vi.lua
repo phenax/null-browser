@@ -137,6 +137,20 @@ function M.initialize()
 
   -- Open devtools
   web.keymap.set('n', '<c-i>', function() web.view.open_devtools() end)
+
+  web.event.add_listener('PermissionRequested', {
+    callback = function(event)
+      config.menu:select({ 'Allow', 'Deny' }, { prompt = 'Requesting permission for ' .. event.permission_type },
+        function(err, choice)
+          if err then return end
+          if web.utils.string_trim(choice) == 'Allow' then
+            event.accept()
+          else
+            event.reject()
+          end
+        end)
+    end,
+  })
 end
 
 M.initialize()
