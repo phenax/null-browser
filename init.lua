@@ -1,6 +1,6 @@
 print('hello starting up...')
 
-local dmenu = require 'null-browser.extras.dmenu'
+local Dmenu = require 'null-browser.extras.dmenu'
 local history = require 'null-browser.extras.history'
 local search_engines = require 'null-browser.extras.search-engines'
 
@@ -14,16 +14,23 @@ history.attach_hooks()
 
 search_engines.urls['ld'] = 'https://lite.duckduckgo.com/?q={}'
 
+local menu = Dmenu:new {
+  command = os.getenv('HOME') .. '/scripts/fzfmenu.sh',
+  prompt_arg = '--prompt',
+  query_arg = '-q',
+  args = { 'input', '--layout=default' },
+}
+
 require 'null-browser.defaults.vi'.setup {
-  menu = dmenu,
+  menu = menu,
   history = history,
   transform_url_input = search_engines.transform_url_input,
 }
 
--- web.set('permissions_persistance', 'never')
+web.set('permissions_persistance', 'never')
 web.event.add_listener('PermissionRequested', {
   callback = function(event)
-    dmenu.select({ 'Allow', 'Deny' }, { prompt = 'Requesting permission for ' .. event.permission_type },
+    menu:select({ 'Allow', 'Deny' }, { prompt = 'Requesting permission for ' .. event.permission_type },
       function(err, choice)
         if err then return end
         if web.utils.string_trim(choice) == 'Allow' then

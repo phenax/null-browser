@@ -1,7 +1,9 @@
 local M = {}
 
+local Dmenu = require 'null-browser.extras.dmenu'
+
 local config = {
-  menu = require 'null-browser.extras.dmenu',
+  menu = Dmenu:new {},
   history = require 'null-browser.extras.history',
   transform_url_input = web.utils.string_trim,
 }
@@ -26,21 +28,21 @@ function M.initialize()
 
   -- Open in new view
   web.keymap.set('n', 'o', function()
-    config.menu.select(config.history.list(), { prompt = 'Open view:' }, function(err, result)
+    config.menu:select(config.history.list(), { prompt = 'Open view:' }, function(err, result)
       if err or not result then return end
       web.view.create(config.transform_url_input(result))
     end)
   end)
   -- Open in current view
   web.keymap.set('n', '<s-o>', function()
-    config.menu.select(config.history.list(), { prompt = 'Open:' }, function(err, result)
+    config.menu:select(config.history.list(), { prompt = 'Open:' }, function(err, result)
       if err or not result then return end
       web.view.set_url(config.transform_url_input(result))
     end)
   end)
   -- Delete from history
   web.keymap.set('n', 'dh', function()
-    config.menu.select(config.history.list(), { prompt = 'Delete history:' }, function(err, result)
+    config.menu:select(config.history.list(), { prompt = 'Delete history:' }, function(err, result)
       if err or not result then return end
       config.history.delete(web.utils.string_trim(result))
     end)
@@ -48,7 +50,7 @@ function M.initialize()
 
   -- Search
   web.keymap.set('n', '<c-f>', function()
-    config.menu.input({ prompt = 'Search:', input = web.search.get_text() }, function(err, input)
+    config.menu:input({ prompt = 'Search:', query = web.search.get_text() }, function(err, input)
       if err then return end
       web.search.set_text(input)
     end)
@@ -59,7 +61,7 @@ function M.initialize()
 
   -- Run lua code
   web.keymap.set('n', 'q', function()
-    config.menu.input({ prompt = 'Lua:' }, function(err, result)
+    config.menu:input({ prompt = 'Lua:' }, function(err, result)
       if err or not result then return end
       local run, run_err = load(result)
       if run_err then print(run_err) end
@@ -83,7 +85,7 @@ function M.initialize()
       table.insert(views_list, index .. ': ' .. view.title .. ' (' .. view.url .. ')')
     end
 
-    config.menu.select(views_list, { prompt = 'Views:' }, function(err, result)
+    config.menu:select(views_list, { prompt = 'Views:' }, function(err, result)
       if err or not result then return end
       local index_str, _ = string.gsub(result, '%s*:.*$', '')
       local index = tonumber(index_str)
@@ -127,7 +129,7 @@ function M.initialize()
     local views = web.view.list()
     local view = views[web.view.current_index()];
     if view == nil then return end
-    config.menu.select(config.history.list(), { prompt = 'Set url:', input = view.url }, function(err, result)
+    config.menu:select(config.history.list(), { prompt = 'Set url:', query = view.url }, function(err, result)
       if err or not result then return end
       web.view.set_url(web.utils.string_trim(result))
     end)

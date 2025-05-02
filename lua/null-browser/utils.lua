@@ -24,7 +24,7 @@ end
 -- TODO: Documentation
 function web.utils.table_merge(t, ...)
   for i = 1, select("#", ...) do
-    for k, v in pairs(select(i, ...)) do
+    for k, v in pairs(select(i, ...) or {}) do
       t[k] = v
     end
   end

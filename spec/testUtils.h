@@ -35,6 +35,7 @@
 
 std::vector<std::function<QObject *()>> &get_qtest_registry();
 int run_app_tests();
+int run_lua_tests();
 
 #define QTEST_REGISTER(klass)                                                                      \
   namespace {                                                                                      \
