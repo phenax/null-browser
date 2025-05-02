@@ -41,8 +41,7 @@ BrowserApp::BrowserApp(Configuration &configuration) : configuration(configurati
       auto *event = new NotificationReceivedEvent(std::move(notification));
       WindowActionRouter::instance().dispatch_event(event);
     });
-    profile->setPersistentPermissionsPolicy(
-        QWebEngineProfile::PersistentPermissionsPolicy::StoreInMemory);
+    profile->setPersistentPermissionsPolicy(configuration.permission_persistance_policy());
   }
 
   connect(&window_action_router, &WindowActionRouter::new_window_requested, this,

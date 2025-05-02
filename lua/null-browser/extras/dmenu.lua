@@ -1,12 +1,9 @@
---- @type table
-uv = uv
-
 local dmenu = {}
 
 function dmenu.select(list, opts, callback)
   local selection = nil
-  local stdin = uv.new_pipe();
-  local stdout = uv.new_pipe();
+  local stdin = web.uv.new_pipe();
+  local stdout = web.uv.new_pipe();
   local args = opts.args or {}
   if opts.prompt then
     table.insert(args, '-p')
@@ -17,9 +14,9 @@ function dmenu.select(list, opts, callback)
     table.insert(args, opts.input)
   end
 
-  uv.spawn('dmenu', { args = args, stdio = { stdin, stdout, nil } }, function(code)
-    uv.close(stdout)
-    uv.close(stdin)
+  web.uv.spawn('dmenu', { args = args, stdio = { stdin, stdout, nil } }, function(code)
+    web.uv.close(stdout)
+    web.uv.close(stdin)
     if code == 0 then
       callback(nil, selection)
     else
@@ -27,14 +24,14 @@ function dmenu.select(list, opts, callback)
     end
   end)
 
-  uv.read_start(stdout, function(_, data)
+  web.uv.read_start(stdout, function(_, data)
     if data then selection = data end
   end)
 
   for _, value in ipairs(list) do
-    uv.write(stdin, value .. '\n')
+    web.uv.write(stdin, value .. '\n')
   end
-  uv.shutdown(stdin)
+  web.uv.shutdown(stdin)
 end
 
 function dmenu.input(opts, callback)

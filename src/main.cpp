@@ -12,7 +12,7 @@ QCommandLineParser *create_cli_parser() {
   parser->addPositionalArgument("url", "URL(s) to open", "[url]");
   parser->addOptions({
       {{"e", "expr"}, "Lua expression to execute", "lua"},
-      {{"c", "config-dir"}, "Config directory for null browser", "dir"},
+      {{"C", "config-dir"}, "Config directory for null browser", "dir"},
   });
 
   return parser;

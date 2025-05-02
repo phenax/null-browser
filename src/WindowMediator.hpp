@@ -34,6 +34,7 @@ signals:
 public slots:
   void update_user_agent(const QString &user_agent);
   void update_downloads_dir(const QString &downloads_dir);
+  void update_permissions_persistance(const QString &persistance);
 
 private:
   WebViewStack *webview_stack;

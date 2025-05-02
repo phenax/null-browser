@@ -23,6 +23,12 @@ void WindowMediator::update_downloads_dir(const QString &downloads_dir) {
   profile->setDownloadPath(downloads_dir);
 }
 
+void WindowMediator::update_permissions_persistance(const QString &persistance) {
+  auto *profile = webview_stack->get_profile();
+  auto persistance_policy = Configuration::to_permission_persistance_policy(persistance);
+  profile->setPersistentPermissionsPolicy(persistance_policy);
+}
+
 WindowMediator::~WindowMediator() {
   disconnect(this);
   delete webview_stack;

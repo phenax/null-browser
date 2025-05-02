@@ -27,6 +27,8 @@ This web browser is just a stack of web views that can be controlled using lua. 
   - filter host-names
 - **No settings page**
   - write some lua
+- **No incognito/private window**
+  - create a window with a custom user data directory and delete it when window is closed
 - **No chromium/web extensions**
   - inject javascript into pages from your lua config
 - **No built-in cryptocurrency**

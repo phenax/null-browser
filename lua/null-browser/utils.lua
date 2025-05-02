@@ -2,6 +2,12 @@
 _G.web = _G.web or {}
 web.utils = web.utils or {}
 
+--- luv api
+--- @type table
+--- @link https://github.com/luvit/luv/blob/master/docs.md
+--- @diagnostic disable-next-line: undefined-global
+web.uv = web.uv or nil
+
 local inspector = require 'null-browser.inspect'
 
 --- Returns human-readable string representation of Lua tables

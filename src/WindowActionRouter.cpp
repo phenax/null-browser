@@ -34,6 +34,11 @@ void WindowActionRouter::initialize(Configuration *config) {
             for (auto &win_match : window_map)
               win_match.second->mediator()->update_downloads_dir(downloads_dir);
           });
+  connect(configuration, &Configuration::permissions_persistance_updated, this,
+          [this](const QString &persistance) {
+            for (auto &win_match : window_map)
+              win_match.second->mediator()->update_permissions_persistance(persistance);
+          });
 
   // History
   connect(&runtime, &LuaRuntime::history_back_requested, this,

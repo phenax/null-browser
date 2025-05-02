@@ -15,6 +15,7 @@ private:
       {"user_agent", QWebEngineProfile::defaultProfile()->httpUserAgent()},
       {"downloads_dir", QWebEngineProfile::defaultProfile()->downloadPath()},
       {"app_data_dir", QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)},
+      {"permissions_persistance", "always"},
   };
   QDir config_dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
 
@@ -42,6 +43,22 @@ public:
   QString new_view_url() const { return get_config("new_view_url").toString(); }
   QString user_agent() const { return get_config("user_agent").toString(); }
   QString downloads_dir() const { return get_config("downloads_dir").toString(); }
+  QString permissions_persistance() const {
+    return get_config("permissions_persistance").toString();
+  }
+
+  QWebEngineProfile::PersistentPermissionsPolicy permission_persistance_policy() const {
+    return to_permission_persistance_policy(permissions_persistance());
+  }
+
+  static QWebEngineProfile::PersistentPermissionsPolicy
+  to_permission_persistance_policy(const QString &persistance) {
+    if (persistance == "session")
+      return QWebEngineProfile::PersistentPermissionsPolicy::StoreInMemory;
+    if (persistance == "never")
+      return QWebEngineProfile::PersistentPermissionsPolicy::AskEveryTime;
+    return QWebEngineProfile::PersistentPermissionsPolicy::StoreOnDisk;
+  }
 
   DEFINE_GETTER(get_config_dir, config_dir)
   DEFINE_SETTER(set_config_dir, config_dir)
@@ -53,11 +70,14 @@ private:
   void on_update(const QString &name, const QVariant &value) {
     if (name == "user_agent")
       emit user_agent_updated(value.toString());
-    if (name == "downloads_dir")
+    else if (name == "downloads_dir")
       emit downloads_dir_updated(value.toString());
+    else if (name == "permissions_persistance")
+      emit permissions_persistance_updated(value.toString());
   }
 
 signals:
   void user_agent_updated(const QString &value);
   void downloads_dir_updated(const QString &value);
+  void permissions_persistance_updated(const QString &value);
 };

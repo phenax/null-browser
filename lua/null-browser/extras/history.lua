@@ -6,11 +6,11 @@ local history = {
 local hook_registered = false
 
 function history.list()
-  local file = uv.fs_open(history.path, 'r', 438)
+  local file = web.uv.fs_open(history.path, 'r', 438)
   if not file then return {} end
-  local stat = assert(uv.fs_fstat(file))
-  local data = assert(uv.fs_read(file, stat.size))
-  assert(uv.fs_close(file))
+  local stat = assert(web.uv.fs_fstat(file))
+  local data = assert(web.uv.fs_read(file, stat.size))
+  assert(web.uv.fs_close(file))
 
   local urls = {}
   for line in string.gmatch(data, '[^\r\n]+') do
@@ -33,11 +33,11 @@ end
 
 function history.update(func)
   local urls = history.list()
-  local file = assert(uv.fs_open(history.path, 'w', 438))
+  local file = assert(web.uv.fs_open(history.path, 'w', 438))
   urls = func(urls)
   local contents = table.concat(urls, '\n')
-  assert(uv.fs_write(file, contents))
-  assert(uv.fs_close(file))
+  assert(web.uv.fs_write(file, contents))
+  assert(web.uv.fs_close(file))
 end
 
 function history.add(url)

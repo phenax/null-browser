@@ -35,7 +35,8 @@ void LuaRuntime::start_event_loop() {
   luv_set_loop(state, event_loop->get_uv_loop());
   luv_set_callback(state, &luv_callback);
   luaopen_luv(state);
-  lua_setglobal(state, uv_global_name);
+  lua_setglobal(state, "uv");
+  luaL_dostring(state, "web.uv = uv");
 }
 
 void LuaRuntime::stop_event_loop() {
@@ -46,13 +47,13 @@ void LuaRuntime::stop_event_loop() {
 
   // Clear the uv global
   lua_pushnil(state);
-  lua_setglobal(state, uv_global_name);
+  lua_setglobal(state, "uv");
   lua_gc(state, LUA_GCCOLLECT, 0);
 }
 
 void LuaRuntime::init_web_api() {
   luaL_newlib(state, internals_api);
-  lua_setglobal(state, internals_global_name);
+  lua_setglobal(state, "__internals");
 
   require_module("null-browser.api");
 }

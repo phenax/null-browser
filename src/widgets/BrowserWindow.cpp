@@ -22,10 +22,6 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, QWebEngineProfi
   layout->setSpacing(0);
   centralWidget()->setLayout(layout);
 
-  // Webengine profile
-  profile->setDownloadPath(configuration.downloads_dir());
-  profile->setHttpUserAgent(configuration.user_agent());
-
   // Stack of web views
   auto *webview_stack = new WebViewStack(&configuration, profile);
   layout->addWidget(webview_stack);

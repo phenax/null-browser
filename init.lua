@@ -20,6 +20,7 @@ require 'null-browser.defaults.vi'.setup {
   transform_url_input = search_engines.transform_url_input,
 }
 
+-- web.set('permissions_persistance', 'never')
 web.event.add_listener('PermissionRequested', {
   callback = function(event)
     dmenu.select({ 'Allow', 'Deny' }, { prompt = 'Requesting permission for ' .. event.permission_type },
@@ -38,7 +39,7 @@ web.event.add_listener('NotificationReceived', {
   callback = function(event)
     -- TODO: Add action/click (-A)
     local args = { '-a', 'null-browser', '-r', event.tag, event.title, event.message }
-    uv.spawn('notify-send', { args = args }, function(code)
+    web.uv.spawn('notify-send', { args = args }, function(code)
       if code ~= 0 then
         print('[notify-send] Exit with status code: ' .. code)
       end

@@ -23,9 +23,6 @@
 class LuaRuntime : public QObject {
   Q_OBJECT
 
-  const char *uv_global_name = "uv";
-  const char *internals_global_name = "__internals";
-
 public:
   static LuaRuntime &instance() {
     static LuaRuntime runtime;
