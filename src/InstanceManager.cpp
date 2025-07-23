@@ -5,29 +5,11 @@
 
 #include "InstanceManager.hpp"
 
-InstanceManager::InstanceManager() {
+void InstanceManager::initialize() {
   bool connected = try_server_connection();
   if (!connected) {
     server_init();
   }
-}
-
-void InstanceManager::write_open_urls_to_socket(const QStringList &urls) {
-  if (socket == nullptr)
-    return;
-
-  auto message = urls.join(" ").toStdString();
-  socket->write(message.c_str());
-  socket->write("\n");
-}
-
-void InstanceManager::write_lua_expr_to_socket(const QString &lua_expr) {
-  if (socket == nullptr)
-    return;
-
-  auto message = ("lua " + lua_expr).toStdString();
-  socket->write(message.c_str());
-  socket->write("\n");
 }
 
 void InstanceManager::server_init() {
@@ -43,7 +25,15 @@ void InstanceManager::server_init() {
   }
 }
 
-void InstanceManager::send_message() {
+void InstanceManager::write_message(ServerMsg &msg) {
+  if (socket == nullptr)
+    return;
+
+  msg.write_to_socket(socket);
+  socket->waitForBytesWritten();
+}
+
+void InstanceManager::close() {
   socket->waitForBytesWritten();
   socket->close();
 }

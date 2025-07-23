@@ -1,12 +1,13 @@
 ** Usable
 - [-] Tests for api
-- [ ] Permission list/allow/deny lua api
 - [ ] Fullscreen
-- [ ] Zoom in/out
 - [ ] Run JS in page (web.view.eval_js())
+- [ ] f-key navigation
+- [ ] Zoom in/out
 - [ ] Use table for all internals api options?
-- [ ] Create window with new profile
-- [ ] User data/profiles management
+- [ ] Permission management (list/allow/deny) lua api
+- [ ] Generate docs for api
+- [ ] Decorations api (just for statusline)
 
 ** Bugs
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
@@ -14,20 +15,22 @@
 - [ ] API's don't validate types. (type conversion segfaults)
 
 ** Next
-- [ ] Configuration validation
-- [ ] web.win.* apis (list, current_id)
-- [ ] Allow toggling devtools
 - [ ] Tests for window
 - [ ] More tests for stack
 - [ ] Tests for router
-- [ ] Set search text as the user is typing (dmenu -r)
+- [ ] Read page contents via lua
+- [ ] User data/profiles management
+- [ ] Create window with new profile
+- [ ] Configuration validation
+- [ ] web.win.* apis (list, current_id)
+- [ ] Allow toggling devtools
+- [X] Set search text as the user is typing (dmenu -r)
 - [ ] Log stdout, errors and results from lua somewhere
 - [ ] Conflict in keymap (keymap already exists)
 - [ ] Allow pattern filtering for event listeners
 - [ ] Allow tab_id, win_id filtering for event listeners
 - [ ] Handle resource cleanup + signal disconnecting
 - [ ] Private window (in-memory profile)
-- [ ] Read page contents via lua
 
 ** Later
 - [ ] Bookmarking
