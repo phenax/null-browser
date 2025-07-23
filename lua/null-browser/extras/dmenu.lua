@@ -10,6 +10,8 @@ function Dmenu:new(opts)
     query_arg = '-it',
     prompt = nil,
     query = nil,
+    select_last_line = true,
+    transform_output = nil,
   }
   local obj = {}
   setmetatable(obj, self)
@@ -18,7 +20,7 @@ function Dmenu:new(opts)
   return obj
 end
 
-function Dmenu:prepare_command(opts)
+function Dmenu:prepare_options(opts)
   opts = opts or {}
   local args = web.utils.table_merge({}, self.options.args or {})
   for _, arg in ipairs(opts.args or {}) do
@@ -37,29 +39,45 @@ function Dmenu:prepare_command(opts)
     table.insert(args, options.query)
   end
 
-  return { command = options.command, args = args }
+  return {
+    command = options.command,
+    args = args,
+    select_last_line = options.select_last_line,
+    transform_output = options.transform_output or function(s) return s end,
+  }
 end
 
 function Dmenu:select(list, opts, callback)
-  local cmd = self:prepare_command(opts)
+  local options = self:prepare_options(opts)
 
   local stdin = web.uv.new_pipe();
   local stdout = web.uv.new_pipe();
 
   local selection = nil
-  web.uv.spawn(cmd.command, { args = cmd.args, stdio = { stdin, stdout, nil } }, function(code)
+  if not options.select_last_line then
+    selection = {}
+  end
+  web.uv.spawn(options.command, { args = options.args, stdio = { stdin, stdout, nil } }, function(code)
     web.uv.close(stdout)
     web.uv.close(stdin)
 
+    local result = options.transform_output(selection)
     if code == 0 then
-      callback(nil, selection)
+      callback(nil, result)
     else
-      callback('[dmenu] Exit with status code: ' .. code, selection)
+      callback('[dmenu] Exit with status code: ' .. code, result)
     end
   end)
 
   web.uv.read_start(stdout, function(_, data)
-    if data then selection = data end
+    if data then
+      if options.select_last_line then
+        selection = data
+      else
+        selection = selection or {}
+        table.insert(selection, data)
+      end
+    end
   end)
 
   for _, value in ipairs(list) do

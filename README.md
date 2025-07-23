@@ -11,16 +11,15 @@ This web browser is just a stack of web views that can be controlled using lua. 
   - use dmenu, rofi, fzf in a terminal, etc. for url input
 - **No tab ui**
   - use dmenu, rofi, etc. to show a list of tabs on key
-  - use tabbed (x11) with multiple windows 
+  - use [tabbed (X11)](https://tools.suckless.org/tabbed/) with multiple windows 
   - use window manager with multiple windows
 - **No persistant history**
   - save it in a file on UrlChanged event and show as completion for your url input
   - same as above but in a sqlite db instead
+- **No notifications**
+  - Call notify-send (or whatever) on NotificationReceived event
 - **No splits**
   - use a window manager
-- **No tab ui**
-  - use a window manager
-  - use [tabbed (X11)](https://tools.suckless.org/tabbed/)
 - **No buttons**
   - define key bindings
 - **No built-in ad blocker**

@@ -42,10 +42,11 @@ function M.initialize()
   end)
   -- Delete from history
   web.keymap.set('n', 'dh', function()
-    config.menu:select(config.history.list(), { prompt = 'Delete history:' }, function(err, result)
-      if err or not result then return end
-      config.history.delete(web.utils.string_trim(result))
-    end)
+    config.menu:select(config.history.list(), { prompt = 'Delete history:', select_last_line = true },
+      function(err, result)
+        if err or not result then return end
+        config.history.delete(web.utils.string_trim(result))
+      end)
   end)
 
   -- Search
@@ -85,7 +86,7 @@ function M.initialize()
       table.insert(views_list, index .. ': ' .. view.title .. ' (' .. view.url .. ')')
     end
 
-    config.menu:select(views_list, { prompt = 'Views:' }, function(err, result)
+    config.menu:select(views_list, { prompt = 'Views:', select_last_line = true }, function(err, result)
       if err or not result then return end
       local index_str, _ = string.gsub(result, '%s*:.*$', '')
       local index = tonumber(index_str)
@@ -140,7 +141,8 @@ function M.initialize()
 
   web.event.add_listener('PermissionRequested', {
     callback = function(event)
-      config.menu:select({ 'Allow', 'Deny' }, { prompt = 'Requesting permission for ' .. event.permission_type },
+      config.menu:select({ 'Allow', 'Deny' },
+        { prompt = 'Requesting permission for ' .. event.permission_type, select_last_line = true },
         function(err, choice)
           if err then return end
           if web.utils.string_trim(choice) == 'Allow' then

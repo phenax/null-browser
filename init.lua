@@ -5,19 +5,30 @@ web.set('close_window_when_no_views', true)
 web.set('user_agent',
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36')
 web.set('downloads_dir', os.getenv('HOME') .. '/Downloads/firefox')
+web.set('permissions_persistance', 'never')
 
 local history = require 'null-browser.extras.history'
 history.attach_hooks()
 
 local search_engines = require 'null-browser.extras.search-engines'
 search_engines.urls['ld'] = 'https://lite.duckduckgo.com/?q={}'
+search_engines.urls['g'] = 'https://github.com/{}'
+search_engines.urls['y'] = 'https://youtube.com/results?search_query={}'
+search_engines.urls['r'] = 'https://reddit.com/{}'
 
 local Dmenu = require 'null-browser.extras.dmenu'
 local menu = Dmenu:new {
-  command = os.getenv('HOME') .. '/scripts/fzfmenu.sh',
-  prompt_arg = '--prompt',
-  query_arg = '-q',
-  args = { 'input', '--layout=default' },
+  select_last_line = false,
+  args = { '-r' },
+  transform_output = function(selections)
+    if type(selections) ~= "table" then return selections end
+    if #selections <= 1 then return selections[1] end
+    return selections[#selections - 1]
+  end,
+  -- command = os.getenv('HOME') .. '/scripts/fzfmenu.sh',
+  -- prompt_arg = '--prompt',
+  -- query_arg = '-q',
+  -- args = { 'input', '--layout=default', '--print-query' },
 }
 
 require 'null-browser.defaults.vi'.setup {
@@ -26,7 +37,10 @@ require 'null-browser.defaults.vi'.setup {
   transform_url_input = search_engines.transform_url_input,
 }
 
-web.set('permissions_persistance', 'never')
+-- web.keymap.set('zoom', 'j', function() web.view.zoom_out() end)
+-- web.keymap.set('zoom', 'k', function() web.view.zoom_in() end)
+-- web.keymap.set('zoom', '<esc>', function() web.keymap.set_mode('n') end)
+-- web.keymap.set('n', 'z', function() web.keymap.set_mode('zoom') end)
 
 web.event.add_listener('NotificationReceived', {
   callback = function(event)

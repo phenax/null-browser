@@ -1,6 +1,6 @@
 ** Usable
 - [-] Tests for api
-- [ ] Permission list/allow/deny api
+- [ ] Permission list/allow/deny lua api
 - [ ] Fullscreen
 - [ ] Zoom in/out
 - [ ] Run JS in page (web.view.eval_js())
@@ -11,6 +11,7 @@
 ** Bugs
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
 - [ ] INVESTIGATE: Segfault on close sometimes
+- [ ] API's don't validate types. (type conversion segfaults)
 
 ** Next
 - [ ] Configuration validation
@@ -91,24 +92,15 @@ web.search.get_search_text()
 web.search.current()
 web.search.total()
 
-web.keymap.set('n', '/', function()
-  dmenu.input({ prompt = 'Search:' }, function(err, input)
-    if err or not input then return end
-    web.search.set_search_text(input)
-  end)
-end)
-web.keymap.set('n', 'n', function() web.search.next() end)
-web.keymap.set('n', 'p', function() web.search.prev() end)
-
-web.event.add_listener('SearchChanged', {
-  callback = function()
-    local label =
-      web.search.get_search_text() .. ': ' .. web.search.current() .. '/' .. web.search.total()
-    -- CALL notify-send
-    -- OR inject js into view to show ui
-  end,
+web.decorations.configure('left', {
+  url = 'https://something.com',
+  size = 100,
 })
+local sidebar_decoration = web.decorations.left()
+web.decorations.delete(sidebar_decoration)
+web.decorations.hide(sidebar_decoration)
 
-web.view.open_devtools()
-web.view.open_devtools(2)
+web.decorations.configure('top', { size = 28 })
+local tabline_decoration = web.decorations.top()
+web.view.set_html('<div>Hello world</div>', { view_id = tabline_decoration.view_id })
 #+end_src
