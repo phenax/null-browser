@@ -174,6 +174,16 @@ end
 --- ```
 function web.set(key, value) __internals.config_set(key, value) end
 
+--- Web options. Calls web.set/web.get for options
+web.opts = setmetatable({}, {
+  __index = function(_, key)
+    return web.get(key)
+  end,
+  __newindex = function(_, key, value)
+    web.set(key, value)
+  end,
+})
+
 --- Get configuration value
 ---
 --- @param key string The name of the configuration

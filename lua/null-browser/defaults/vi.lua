@@ -79,7 +79,7 @@ function M.initialize()
   web.keymap.set('n', 'dv', function() web.view.close(); end)
 
   -- View select
-  web.keymap.set('n', 'b', function()
+  web.keymap.set('n', '<space>b', function()
     local views_list = {}
     local views = web.view.list()
     for index, view in ipairs(web.view.list()) do

@@ -1,11 +1,18 @@
 print('hello starting up...')
 
-web.set('new_view_url', 'https://lite.duckduckgo.com')
-web.set('close_window_when_no_views', true)
-web.set('user_agent',
-  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36')
-web.set('downloads_dir', os.getenv('HOME') .. '/Downloads/firefox')
-web.set('permissions_persistance', 'never')
+-- web.set('new_view_url', 'https://lite.duckduckgo.com')
+-- web.set('close_window_when_no_views', true)
+-- web.set('user_agent',
+--   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36')
+-- web.set('downloads_dir', os.getenv('HOME') .. '/Downloads/firefox')
+-- web.set('permissions_persistance', 'never')
+
+web.opts.downloads_dir = os.getenv('HOME') .. '/Downloads/firefox'
+web.opts.permissions_persistance = 'never'
+web.opts.user_agent =
+'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'
+web.opts.close_window_when_no_views = true
+web.opts.new_view_url = 'https://lite.duckduckgo.com'
 
 local history = require 'null-browser.extras.history'
 history.attach_hooks()
