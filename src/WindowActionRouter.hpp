@@ -15,7 +15,7 @@
 #define WITH_WEBVIEW_WINDOW(WEBVIEW_ID, IDENT, BLOCK)                                              \
   for (auto &win_match : window_map) {                                                             \
     auto *IDENT = win_match.second;                                                                \
-    if (IDENT->mediator()->has_webview(WEBVIEW_ID)) {                                              \
+    if (IDENT->has_webview(WEBVIEW_ID)) {                                                          \
       BLOCK;                                                                                       \
     }                                                                                              \
   }

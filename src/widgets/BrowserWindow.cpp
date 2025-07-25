@@ -6,7 +6,6 @@
 #include <QtCore>
 
 #include "Configuration.hpp"
-#include "WindowMediator.hpp"
 #include "keymap/KeymapEvaluator.hpp"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
@@ -23,7 +22,7 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, QWebEngineProfi
   centralWidget()->setLayout(layout);
 
   // Stack of web views
-  auto *webview_stack = new WebViewStack(&configuration, profile);
+  webview_stack = new WebViewStack(&configuration, profile, this);
   layout->addWidget(webview_stack);
 
   // Open webviews for given urls
@@ -40,16 +39,19 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, QWebEngineProfi
   keymap.define_mode("n", {.passthrough = false});
   keymap.define_mode("i", {.passthrough = true});
 
-  win_mediator = new WindowMediator(webview_stack);
-
   // Update window title when webview changes
   connect(webview_stack, &WebViewStack::current_webview_title_changed, this, [this](int index) {
-    auto webviews = win_mediator->get_webview_list();
+    auto webviews = webview_stack->get_webview_list();
     if (index >= 0 && index < webviews.count()) {
       const auto &webview = webviews.at(index);
       setWindowTitle(webview.title);
     }
   });
+
+  connect(webview_stack, &WebViewStack::new_window_requested, this,
+          &BrowserWindow::new_window_requested);
+  connect(webview_stack, &WebViewStack::close_window_requested, this,
+          &BrowserWindow::close_window_requested);
 }
 
 bool BrowserWindow::on_window_key_event(QKeyEvent *event) {
@@ -57,4 +59,20 @@ bool BrowserWindow::on_window_key_event(QKeyEvent *event) {
   const bool should_skip = keymap_evaluator.evaluate(event->modifiers(), (Qt::Key)event->key());
 
   return should_skip;
+}
+
+void BrowserWindow::update_user_agent(const QString &user_agent) {
+  auto *profile = webview_stack->get_profile();
+  profile->setHttpUserAgent(user_agent);
+}
+
+void BrowserWindow::update_downloads_dir(const QString &downloads_dir) {
+  auto *profile = webview_stack->get_profile();
+  profile->setDownloadPath(downloads_dir);
+}
+
+void BrowserWindow::update_permissions_persistance(const QString &persistance) {
+  auto *profile = webview_stack->get_profile();
+  auto persistance_policy = Configuration::to_permission_persistance_policy(persistance);
+  profile->setPersistentPermissionsPolicy(persistance_policy);
 }

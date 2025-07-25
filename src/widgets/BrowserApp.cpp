@@ -35,18 +35,22 @@ BrowserApp::BrowserApp(Configuration &configuration) : configuration(configurati
 
   // Initializes profile
   for (auto *profile : profiles) {
-    profile->setDownloadPath(configuration.downloads_dir());
-    profile->setHttpUserAgent(configuration.user_agent());
-    profile->setNotificationPresenter([](std::unique_ptr<QWebEngineNotification> notification) {
-      auto *event = new NotificationReceivedEvent(std::move(notification));
-      WindowActionRouter::instance().dispatch_event(event);
-    });
-    profile->setPersistentPermissionsPolicy(configuration.permission_persistance_policy());
+    setup_profile(profile);
   }
 
   connect(&window_action_router, &WindowActionRouter::new_window_requested, this,
           [this](const QUrl &url) { create_window({url.toString()}); });
 };
+
+void BrowserApp::setup_profile(QWebEngineProfile *profile) {
+  profile->setDownloadPath(configuration.downloads_dir());
+  profile->setHttpUserAgent(configuration.user_agent());
+  profile->setNotificationPresenter([](std::unique_ptr<QWebEngineNotification> notification) {
+    auto *event = new NotificationReceivedEvent(std::move(notification));
+    WindowActionRouter::instance().dispatch_event(event);
+  });
+  profile->setPersistentPermissionsPolicy(configuration.permission_persistance_policy());
+}
 
 BrowserWindow *BrowserApp::create_window(const QStringList &urls) {
   auto *window = new BrowserWindow((const Configuration &)configuration, &default_profile, urls);
