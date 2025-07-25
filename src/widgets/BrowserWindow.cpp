@@ -7,8 +7,10 @@
 
 #include "Configuration.hpp"
 #include "keymap/KeymapEvaluator.hpp"
-#include "widgets/BrowserWindow.hpp"
+#include "widgets/Decorations.hpp"
 #include "widgets/WebViewStack.hpp"
+
+#include "widgets/BrowserWindow.hpp"
 
 BrowserWindow::BrowserWindow(const Configuration &configuration, QWebEngineProfile *profile,
                              const QStringList &urls)
@@ -23,7 +25,8 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, QWebEngineProfi
 
   // Stack of web views
   webview_stack = new WebViewStack(&configuration, profile, this);
-  layout->addWidget(webview_stack);
+  decorations = new Decorations(webview_stack, profile, this);
+  layout->addWidget(decorations);
 
   // Open webviews for given urls
   if (urls.isEmpty()) {

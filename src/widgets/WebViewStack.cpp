@@ -12,9 +12,10 @@
 #include "WindowActionRouter.hpp"
 #include "events/PermissionRequestedEvent.hpp"
 #include "events/UrlChangedEvent.hpp"
+
 #include "widgets/WebViewStack.hpp"
 
-static WebViewId next_webview_id = 1;
+WebViewId WebViewStack::next_webview_id = 1;
 
 WebViewStack::WebViewStack(const Configuration *configuration, QWebEngineProfile *profile,
                            QWidget *parent)
@@ -46,7 +47,7 @@ void WebViewStack::open_url(const QUrl &url, OpenType open_type, WebViewId webvi
 }
 
 WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
-  auto *webview = new WebView(next_webview_id++, profile);
+  auto *webview = new WebView(WebViewStack::next_webview_id++, profile);
   webview->setUrl(url);
   layout->addWidget(webview);
   webview_list.append(webview);

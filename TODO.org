@@ -13,6 +13,7 @@
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
 - [ ] INVESTIGATE: Segfault on close sometimes
 - [ ] API's don't validate types. (type conversion segfaults)
+- [ ] web.view apis in `-e` flag from "clients" (non-servers calls) don't work
 
 ** Next
 - [ ] Tests for window
@@ -95,15 +96,26 @@ web.search.get_search_text()
 web.search.current()
 web.search.total()
 
-web.decorations.configure('left', {
-  url = 'https://something.com',
-  size = 100,
-})
-local sidebar_decoration = web.decorations.left()
-web.decorations.delete(sidebar_decoration)
-web.decorations.hide(sidebar_decoration)
+web.decorations.top.configure({ visible = true, size = 30 })
+web.decorations.top.configure({ visible = false }) -- hide/show
+local view_id = web.decorations.top.view()
+web.view.set_html('<div>Hello world</div>', { view = view })
+web.decorations.top.destroy() -- Maybe to destroy unwanted webviews
 
-web.decorations.configure('top', { size = 28 })
-local tabline_decoration = web.decorations.top()
-web.view.set_html('<div>Hello world</div>', { view_id = tabline_decoration.view_id })
+-- Show tabs in top decoration
+web.view.expose_js('openTab', function(tabId)
+  web.view.select({ view = tabId })
+end, { view = web.decorations.top.view() })
+web.event.add_listener({ 'TabOpen', 'TabClose' }, {
+  callback = function()
+    local tabs_html = ''
+    local views = web.view.list()
+    for index, view in ipairs(web.view.list()) do
+      local text = index..': '..view.title..' ('..view.url..')'
+      local tab = '<span onclick="__nullbrowser__.openTab('..view.id..')">' .. text .. '</span>')
+      tabs_html = tabs_html .. tab
+    end
+    web.view.set_html(tabs_html, { view = web.decorations.top.view() })
+  end,
+})
 #+end_src

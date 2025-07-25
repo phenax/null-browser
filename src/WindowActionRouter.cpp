@@ -3,10 +3,11 @@
 #include <unordered_map>
 
 #include "LuaRuntime.hpp"
-#include "WindowActionRouter.hpp"
 #include "keymap/KeymapEvaluator.hpp"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/WebViewStack.hpp"
+
+#include "WindowActionRouter.hpp"
 
 QVariant WindowActionRouter::fetch_config_value(const QString &key) {
   return configuration->get_config(key);

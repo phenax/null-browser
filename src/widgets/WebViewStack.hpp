@@ -28,6 +28,8 @@ class WebViewStack : public QWidget {
   Q_OBJECT
 
 public:
+  static WebViewId next_webview_id;
+
   WebViewStack(const Configuration *configuration,
                QWebEngineProfile *profile = new QWebEngineProfile, QWidget *parent = nullptr);
 

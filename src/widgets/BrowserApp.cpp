@@ -6,8 +6,9 @@
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
 #include "events/NotificationReceivedEvent.hpp"
-#include "widgets/BrowserApp.hpp"
 #include "widgets/BrowserWindow.hpp"
+
+#include "widgets/BrowserApp.hpp"
 
 BrowserApp::BrowserApp(Configuration &configuration) : configuration(configuration) {
   auto &lua = LuaRuntime::instance();

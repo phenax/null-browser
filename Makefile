@@ -1,4 +1,4 @@
-.PHONY: clean build build-release build-source test run check
+.PHONY: clean build build-release dev-setup build-dev install build-source test run check fmt
 
 all: build-dev
 
@@ -39,8 +39,10 @@ debug:
 	DEBUG=1 make build-dev
 	gdb ./build/null-browser
 
-check:
+fmt:
 	clang-format -i ./src/**/*.{hpp,cpp}
+
+check: fmt
 	clang-tidy --config-file=.clang-tidy ./src/**/*.{hpp,cpp}
 
 # appimage:

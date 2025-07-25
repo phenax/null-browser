@@ -4,6 +4,7 @@
 
 #include "Configuration.hpp"
 #include "utils.hpp"
+#include "widgets/Decorations.hpp"
 #include "widgets/WebViewStack.hpp"
 
 using WindowId = qsizetype;
@@ -47,6 +48,7 @@ signals:
 private:
   const Configuration &configuration;
   WebViewStack *webview_stack;
+  Decorations *decorations;
 
   WindowId win_id = -1;
 };
