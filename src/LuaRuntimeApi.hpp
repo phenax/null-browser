@@ -5,6 +5,7 @@
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
 #include "events/Event.hpp"
+#include "widgets/Decorations.hpp"
 
 int lua_api_view_set_url(lua_State *state) {
   const char *url = lua_tostring(state, 1);
@@ -265,6 +266,16 @@ int lua_api_view_scroll_bottom(lua_State *state) {
   return 1;
 }
 
+int lua_api_decorations_set_enabled(lua_State *state) {
+  auto type = (DecorationType)lua_tointeger(state, 1);
+  bool enabled = lua_toboolean(state, 2);
+  qDebug() << type << enabled;
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.decoration_set_enabled(type, enabled);
+  lua_pushnil(state);
+  return 1;
+}
+
 // NOLINTNEXTLINE
 static luaL_Reg internals_api[] = {
     luaL_Reg{"event_add_listener", &lua_event_register},
@@ -289,5 +300,6 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"search_set_text", &lua_api_search_set_text},
     luaL_Reg{"search_previous", &lua_api_search_previous},
     luaL_Reg{"search_next", &lua_api_search_next},
+    luaL_Reg{"decorations_set_enabled", &lua_api_decorations_set_enabled},
     luaL_Reg{nullptr, nullptr},
 };

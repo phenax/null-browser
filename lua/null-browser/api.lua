@@ -9,6 +9,7 @@ web.keymap = web.keymap or {}
 web.view = web.view or {}
 web.history = web.history or {}
 web.event = web.event or {}
+web.decorations = web.decorations or {}
 
 require 'null-browser.utils'
 
@@ -277,5 +278,25 @@ function web.view.scroll_to_top(view_id) return __internals.view_scroll_to_top(v
 
 --- TODO: Document
 function web.view.scroll_to_bottom(view_id) return __internals.view_scroll_to_bottom(view_id) end
+
+--- Decoration api
+---
+--- @alias DecorationType number
+---
+--- @param type DecorationType
+local function create_decoration_api(type)
+  return {
+    enable = function() __internals.decorations_set_enabled(type, true) end,
+    disable = function() __internals.decorations_set_enabled(type, false) end,
+  }
+end
+
+--- @see DecorationType in ./src/widgets/Decorations.hpp
+local DecorationType = { top = 1, bottom = 2, left = 3, right = 4 }
+
+web.decorations.top = create_decoration_api(DecorationType.top)
+web.decorations.bottom = create_decoration_api(DecorationType.bottom)
+web.decorations.left = create_decoration_api(DecorationType.left)
+web.decorations.right = create_decoration_api(DecorationType.right)
 
 print("api loaded")

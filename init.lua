@@ -61,4 +61,18 @@ web.event.add_listener('NotificationReceived', {
   end,
 })
 
+-- EVENT for window creation for setting up decorations
+-- web.decorations.top.enable()
+-- web.decorations.bottom.enable()
+
+web.keymap.set('n', '<space>gg', function()
+  web.decorations.top.enable()
+  web.decorations.bottom.enable()
+end)
+
+web.keymap.set('n', '<space>gt', function()
+  web.decorations.top.disable()
+  web.decorations.bottom.disable()
+end)
+
 print('ending...')

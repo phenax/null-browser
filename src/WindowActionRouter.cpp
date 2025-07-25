@@ -94,6 +94,12 @@ void WindowActionRouter::initialize(Configuration *config) {
           [this](WebViewId webview_id) {
             WITH_WEBVIEW_WINDOW(webview_id, window, { window->scroll_to_bottom(webview_id); });
           });
+  connect(&runtime, &LuaRuntime::decoration_set_enabled, this,
+          [this](DecorationType type, bool enabled) {
+            qDebug() << "routing" << type << enabled << window_map.size();
+            for (auto &win_match : window_map)
+              win_match.second->set_decoration_enabled(type, enabled);
+          });
 }
 
 void WindowActionRouter::find_current_search_text(WebViewId webview_id, bool forward) {

@@ -47,21 +47,21 @@ void EdgeDecoration::set_enabled(bool enabled_value) {
 
 void EdgeDecoration::setup_webview() {
   if (enabled) {
-    if (webview == nullptr) {
+    if (!webview.has_value()) {
       webview = new WebView(WebViewStack::next_webview_id++, profile, this);
-      layout()->addWidget(webview);
+      layout()->addWidget(webview.value());
     }
 
-    webview->setHtml(default_html_layout.replace("{{body}}", html_content));
+    webview.value()->setHtml(default_html_layout.replace("{{body}}", html_content));
     if (vertical)
-      setFixedWidth(size);
+      webview.value()->setFixedWidth(size);
     else
-      setFixedHeight(size);
+      webview.value()->setFixedHeight(size);
   } else {
-    if (webview != nullptr) {
-      layout()->removeWidget(webview);
-      webview->deleteLater();
-      webview = nullptr;
+    if (webview.has_value()) {
+      layout()->removeWidget(webview.value());
+      webview.value()->deleteLater();
+      webview = std::nullopt;
     }
   }
 }

@@ -7,6 +7,7 @@
 #include "AsyncEventLoop.hpp"
 #include "lua.h"
 #include "utils.hpp"
+#include "widgets/Decorations.hpp"
 #include "widgets/WebViewStack.hpp"
 
 #ifndef PROJECT_LUA_PATH
@@ -46,7 +47,7 @@ signals:
 
   void history_back_requested(WebViewId webview_id, qsizetype history_index);
   void history_forward_requested(WebViewId webview_id, qsizetype history_index);
-  void keymap_add_requested(QString mode, QString keyseq, std::function<void()>);
+  void keymap_add_requested(QString mode, QString keyseq, std::function<void()> action);
   void keymap_mode_update_requested(const QString &mode);
   void url_opened(QString url, OpenType open_type, WebViewId webview_id);
   void webview_closed(WebViewId webview_id);
@@ -59,6 +60,7 @@ signals:
   void webview_scroll_requested(WebViewId webview_id, int deltax, int deltay);
   void webview_scroll_top_requested(WebViewId webview_id);
   void webview_scroll_bottom_requested(WebViewId webview_id);
+  void decoration_set_enabled(DecorationType type, bool enabled);
 
 protected:
   LuaRuntime();

@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QtCore>
 #include <cstdint>
+#include <optional>
 #include <qwebengineprofile.h>
 #include <qwebengineview.h>
 
@@ -20,10 +21,10 @@ public:
 
 private:
   bool vertical;
-  WebView *webview = nullptr;
+  std::optional<WebView *> webview = std::nullopt;
   QWebEngineProfile *profile;
-  bool enabled;
-  QString html_content;
+  bool enabled = false;
+  QString html_content = "";
   uint16_t size = 24;
 
   void setup_webview();

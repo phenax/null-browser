@@ -96,8 +96,9 @@ web.search.get_search_text()
 web.search.current()
 web.search.total()
 
-web.decorations.top.configure({ visible = true, size = 30 })
-web.decorations.top.configure({ visible = false }) -- hide/show
+web.decorations.top.enable()
+web.decorations.top.disable()
+web.decorations.top.set_size(20)
 local view_id = web.decorations.top.view()
 web.view.set_html('<div>Hello world</div>', { view = view })
 web.decorations.top.destroy() -- Maybe to destroy unwanted webviews
