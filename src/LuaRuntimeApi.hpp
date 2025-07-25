@@ -289,6 +289,18 @@ int lua_api_decorations_get_enabled(lua_State *state) {
   return 1;
 }
 
+int lua_api_decorations_get_view(lua_State *state) {
+  auto type = (DecorationType)lua_tointeger(state, 1);
+  WindowId win_id = lua_isnoneornil(state, 2) ? lua_tointeger(state, 2) : 0;
+  auto &router = WindowActionRouter::instance();
+  auto view_id = router.fetch_get_decoration_view_id(type, win_id);
+  if (view_id.has_value())
+    lua_pushinteger(state, view_id.value());
+  else
+    lua_pushnil(state);
+  return 1;
+}
+
 // NOLINTNEXTLINE
 static luaL_Reg internals_api[] = {
     luaL_Reg{"event_add_listener", &lua_event_register},
@@ -315,5 +327,6 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"search_next", &lua_api_search_next},
     luaL_Reg{"decorations_set_enabled", &lua_api_decorations_set_enabled},
     luaL_Reg{"decorations_get_enabled", &lua_api_decorations_get_enabled},
+    luaL_Reg{"decorations_get_view", &lua_api_decorations_get_view},
     luaL_Reg{nullptr, nullptr},
 };

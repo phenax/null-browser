@@ -15,15 +15,6 @@ Decorations::Decorations(QWidget *content_widget, QWebEngineProfile *profile, QW
   decoration_left = new EdgeDecoration(true, profile, this);
   decoration_right = new EdgeDecoration(true, profile, this);
 
-  QString content = R"HTML(
-    <div>
-      Hello world testing testing
-      <button>Btn 1</button><button>Btn 2</button>
-    </div>
-  )HTML";
-  decoration_bottom->set_html(content);
-  // decoration_bottom->set_enabled(true);
-
   auto *vbox = new QVBoxLayout();
   vbox->setContentsMargins(0, 0, 0, 0);
   vbox->setSpacing(0);

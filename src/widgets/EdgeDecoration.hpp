@@ -9,6 +9,7 @@
 
 #include "utils.hpp"
 #include "widgets/WebView.hpp"
+#include "widgets/WebViewStack.hpp"
 
 class EdgeDecoration : public QWidget {
   Q_OBJECT
@@ -19,8 +20,17 @@ public:
   void set_size(uint16_t size_value);
   void set_html(const QString &content);
   void set_enabled(bool enabled_value);
+  void set_url(const QUrl &url) {
+    if (!webview.has_value())
+      return;
+    webview.value()->setUrl(url);
+  }
 
   DEFINE_GETTER(is_enabled, enabled)
+
+  std::optional<WebViewId> get_view_id() {
+    return webview.has_value() ? std::make_optional(webview.value()->get_id()) : std::nullopt;
+  }
 
 private:
   bool vertical;

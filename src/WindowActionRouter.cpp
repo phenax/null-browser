@@ -99,7 +99,7 @@ void WindowActionRouter::initialize(Configuration *config) {
   // Decoration
   connect(&runtime, &LuaRuntime::decoration_set_enabled, this,
           [this](DecorationType type, bool enabled, std::optional<WindowId> win_id) {
-            for (auto *win : get_windows_for_optional_win_id(win_id))
+            for (auto *win : get_relevant_windows(win_id))
               win->set_decoration_enabled(type, enabled);
           });
 }
@@ -141,26 +141,14 @@ void WindowActionRouter::add_keymap(const QString &mode_string, const QString &k
 }
 
 WebViewId WindowActionRouter::fetch_current_view_id(WindowId win_id) {
-  const std::lock_guard<std::mutex> lock(window_map_mutex);
-  for (auto &pair : window_map) {
-    auto *win = pair.second;
-    auto is_current_window = win_id == win->get_id() || (win_id == 0 && win->isActiveWindow());
-    if (is_current_window) {
-      return win->current_webview_id();
-    }
-  }
+  for (auto *win : get_relevant_windows(std::make_optional(win_id)))
+    return win->current_webview_id();
   return 0;
 }
 
 QList<WebViewData> WindowActionRouter::fetch_webview_data_list(WindowId win_id) {
-  const std::lock_guard<std::mutex> lock(window_map_mutex);
-  for (auto &pair : window_map) {
-    auto *win = pair.second;
-    auto is_current_window = win_id == win->get_id() || (win_id == 0 && win->isActiveWindow());
-    if (is_current_window) {
-      return win->get_webview_list();
-    }
-  }
+  for (auto *win : get_relevant_windows(std::make_optional(win_id)))
+    return win->get_webview_list();
   return {};
 }
 
@@ -169,8 +157,35 @@ KeyMode WindowActionRouter::fetch_current_mode() const {
 }
 
 bool WindowActionRouter::fetch_is_decoration_enabled(DecorationType type, WindowId win_id) {
-  auto windows = get_windows_for_optional_win_id(std::make_optional(win_id));
+  auto windows = get_relevant_windows(std::make_optional(win_id));
   for (auto *win : windows)
     return win->get_decoration_enabled(type);
   return false;
+}
+
+std::optional<WebViewId> WindowActionRouter::fetch_get_decoration_view_id(DecorationType type,
+                                                                          WindowId win_id) {
+  for (auto *win : get_relevant_windows(std::make_optional(win_id)))
+    return win->get_decoration_view_id(type);
+  return std::nullopt;
+}
+
+std::vector<BrowserWindow *>
+WindowActionRouter::get_relevant_windows(std::optional<WindowId> win_id) {
+  const std::lock_guard<std::mutex> lock(window_map_mutex);
+  std::vector<BrowserWindow *> windows;
+
+  if (!win_id.has_value()) {
+    for (auto &win_pair : window_map)
+      windows.push_back(win_pair.second);
+  } else if (win_id.value() == 0) {
+    for (auto &win_pair : window_map) {
+      if (win_pair.second->isActiveWindow())
+        windows.push_back(win_pair.second);
+    }
+  } else if (win_id.value() > 0 && window_map.contains(win_id.value())) {
+    windows.push_back(window_map.at(win_id.value()));
+  }
+
+  return windows;
 }

@@ -18,12 +18,12 @@ public:
 
   DEFINE_GETTER(get_id, win_id)
   DEFINE_SETTER(set_id, win_id)
-  DELEGATE(webview_stack, has_webview, has_webview)
+  // DELEGATE(webview_stack, has_webview, has_webview)
   DELEGATE(webview_stack, current_webview_id, current_webview_id)
   DELEGATE(webview_stack, get_webview_list, get_webview_list)
   DELEGATE(webview_stack, set_search_text, set_search_text)
   DELEGATE(webview_stack, open_devtools, open_devtools)
-  DELEGATE(webview_stack, open_url, open_url)
+  // DELEGATE(webview_stack, open_url, open_url)
   DELEGATE(webview_stack, webview_history_back, history_back)
   DELEGATE(webview_stack, webview_history_forward, history_forward)
   DELEGATE(webview_stack, close, close_webview)
@@ -33,6 +33,18 @@ public:
   DELEGATE(webview_stack, scroll_to_bottom, scroll_to_bottom)
   DELEGATE(decorations, set_enabled, set_decoration_enabled)
   DELEGATE(decorations, get_enabled, get_decoration_enabled)
+  DELEGATE(decorations, get_view_id, get_decoration_view_id)
+
+  bool has_webview(WebViewId webview_id) {
+    return webview_stack->has_webview(webview_id) || decorations->has_webview(webview_id);
+  }
+
+  void open_url(const QUrl &url, OpenType open_type, WebViewId webview_id) {
+    if (decorations->has_webview(webview_id))
+      decorations->open_url(url, webview_id);
+    else
+      webview_stack->open_url(url, open_type, webview_id);
+  }
 
   bool on_window_key_event(QKeyEvent *event);
 
