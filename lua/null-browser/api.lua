@@ -281,13 +281,29 @@ function web.view.scroll_to_bottom(view_id) return __internals.view_scroll_to_bo
 
 --- Decoration api
 ---
+--- @class DecorationOpts
+--- @field win? number
+---
+--- @class Decoration
+--- @field enable fun(opts?: DecorationOpts): nil
+--- @field disable fun(opts?: DecorationOpts): nil
+--- @field set_enabled fun(enabled: boolean, opts?: DecorationOpts): nil
+--- @field is_enabled fun(opts?: DecorationOpts): boolean
+---
 --- @alias DecorationType number
 ---
 --- @param type DecorationType
+--- @return Decoration
 local function create_decoration_api(type)
+  local set_enabled = function(enabled, opts)
+    __internals.decorations_set_enabled(type, enabled, (opts or {}).win)
+  end;
   return {
-    enable = function() __internals.decorations_set_enabled(type, true) end,
-    disable = function() __internals.decorations_set_enabled(type, false) end,
+    enable = function(opts) set_enabled(true, opts) end,
+    disable = function(opts) set_enabled(false, opts) end,
+    is_enabled = function(opts)
+      return __internals.decorations_get_enabled(type, (opts or {}).win)
+    end,
   }
 end
 

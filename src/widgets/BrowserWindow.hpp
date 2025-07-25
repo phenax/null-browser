@@ -32,6 +32,7 @@ public:
   DELEGATE(webview_stack, scroll_to_top, scroll_to_top)
   DELEGATE(webview_stack, scroll_to_bottom, scroll_to_bottom)
   DELEGATE(decorations, set_enabled, set_decoration_enabled)
+  DELEGATE(decorations, get_enabled, get_decoration_enabled)
 
   bool on_window_key_event(QKeyEvent *event);
 

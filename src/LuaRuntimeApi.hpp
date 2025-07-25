@@ -1,10 +1,13 @@
 #pragma once
 
 #include <lua.hpp>
+#include <optional>
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
 #include "events/Event.hpp"
+#include "lua.h"
+#include "widgets/BrowserWindow.hpp"
 #include "widgets/Decorations.hpp"
 
 int lua_api_view_set_url(lua_State *state) {
@@ -269,10 +272,20 @@ int lua_api_view_scroll_bottom(lua_State *state) {
 int lua_api_decorations_set_enabled(lua_State *state) {
   auto type = (DecorationType)lua_tointeger(state, 1);
   bool enabled = lua_toboolean(state, 2);
-  qDebug() << type << enabled;
+  std::optional<WindowId> win_id =
+      lua_isnoneornil(state, 3) ? std::nullopt : std::make_optional(lua_tointeger(state, 3));
   auto &runtime = LuaRuntime::instance();
-  emit runtime.decoration_set_enabled(type, enabled);
+  emit runtime.decoration_set_enabled(type, enabled, win_id);
   lua_pushnil(state);
+  return 1;
+}
+
+int lua_api_decorations_get_enabled(lua_State *state) {
+  auto type = (DecorationType)lua_tointeger(state, 1);
+  WindowId win_id = lua_isnoneornil(state, 2) ? lua_tointeger(state, 2) : 0;
+  auto &router = WindowActionRouter::instance();
+  auto value = router.fetch_is_decoration_enabled(type, win_id);
+  lua_pushboolean(state, value);
   return 1;
 }
 
@@ -301,5 +314,6 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"search_previous", &lua_api_search_previous},
     luaL_Reg{"search_next", &lua_api_search_next},
     luaL_Reg{"decorations_set_enabled", &lua_api_decorations_set_enabled},
+    luaL_Reg{"decorations_get_enabled", &lua_api_decorations_get_enabled},
     luaL_Reg{nullptr, nullptr},
 };

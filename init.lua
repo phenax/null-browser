@@ -61,18 +61,18 @@ web.event.add_listener('NotificationReceived', {
   end,
 })
 
--- EVENT for window creation for setting up decorations
--- web.decorations.top.enable()
--- web.decorations.bottom.enable()
+web.event.add_listener('WinCreated', {
+  callback = function(event)
+    web.decorations.bottom.enable({ win = event.win_id })
+  end,
+})
 
 web.keymap.set('n', '<space>gg', function()
-  web.decorations.top.enable()
-  web.decorations.bottom.enable()
-end)
-
-web.keymap.set('n', '<space>gt', function()
-  web.decorations.top.disable()
-  web.decorations.bottom.disable()
+  if web.decorations.bottom.is_enabled({ win = 0 }) then
+    web.decorations.bottom.disable({ win = 0 })
+  else
+    web.decorations.bottom.enable({ win = 0 })
+  end
 end)
 
 print('ending...')

@@ -1,5 +1,6 @@
 #include <QWidget>
 #include <QtCore>
+#include <optional>
 #include <unordered_map>
 
 #include "LuaRuntime.hpp"
@@ -94,11 +95,12 @@ void WindowActionRouter::initialize(Configuration *config) {
           [this](WebViewId webview_id) {
             WITH_WEBVIEW_WINDOW(webview_id, window, { window->scroll_to_bottom(webview_id); });
           });
+
+  // Decoration
   connect(&runtime, &LuaRuntime::decoration_set_enabled, this,
-          [this](DecorationType type, bool enabled) {
-            qDebug() << "routing" << type << enabled << window_map.size();
-            for (auto &win_match : window_map)
-              win_match.second->set_decoration_enabled(type, enabled);
+          [this](DecorationType type, bool enabled, std::optional<WindowId> win_id) {
+            for (auto *win : get_windows_for_optional_win_id(win_id))
+              win->set_decoration_enabled(type, enabled);
           });
 }
 
@@ -164,4 +166,11 @@ QList<WebViewData> WindowActionRouter::fetch_webview_data_list(WindowId win_id) 
 
 KeyMode WindowActionRouter::fetch_current_mode() const {
   return KeymapEvaluator::instance().get_current_mode();
+}
+
+bool WindowActionRouter::fetch_is_decoration_enabled(DecorationType type, WindowId win_id) {
+  auto windows = get_windows_for_optional_win_id(std::make_optional(win_id));
+  for (auto *win : windows)
+    return win->get_decoration_enabled(type);
+  return false;
 }

@@ -3,10 +3,12 @@
 #include <QtCore>
 #include <functional>
 #include <lua.hpp>
+#include <optional>
 
 #include "AsyncEventLoop.hpp"
 #include "lua.h"
 #include "utils.hpp"
+#include "widgets/BrowserWindow.hpp"
 #include "widgets/Decorations.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -60,7 +62,7 @@ signals:
   void webview_scroll_requested(WebViewId webview_id, int deltax, int deltay);
   void webview_scroll_top_requested(WebViewId webview_id);
   void webview_scroll_bottom_requested(WebViewId webview_id);
-  void decoration_set_enabled(DecorationType type, bool enabled);
+  void decoration_set_enabled(DecorationType type, bool enabled, std::optional<WindowId> win_id);
 
 protected:
   LuaRuntime();

@@ -20,6 +20,7 @@ public:
   Decorations(QWidget *content_widget, QWebEngineProfile *profile, QWidget *parent = nullptr);
 
   void set_enabled(DecorationType type, bool enabled);
+  bool get_enabled(DecorationType type);
 
 private:
   EdgeDecoration *decoration_top;

@@ -45,10 +45,14 @@ Decorations::Decorations(QWidget *content_widget, QWebEngineProfile *profile, QW
 }
 
 void Decorations::set_enabled(DecorationType type, bool enabled) {
-  std::optional<EdgeDecoration *> decoration = get_decoration_widget(type);
-
+  auto decoration = get_decoration_widget(type);
   if (decoration.has_value())
     decoration.value()->set_enabled(enabled);
+}
+
+bool Decorations::get_enabled(DecorationType type) {
+  auto decoration = get_decoration_widget(type);
+  return decoration.has_value() && decoration.value()->is_enabled();
 }
 
 std::optional<EdgeDecoration *> Decorations::get_decoration_widget(DecorationType type) {

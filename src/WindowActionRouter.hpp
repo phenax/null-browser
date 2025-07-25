@@ -5,11 +5,14 @@
 #include <cstdint>
 #include <functional>
 #include <mutex>
+#include <optional>
+#include <vector>
 
 #include "EventQueue.hpp"
 #include "keymap/KeymapEvaluator.hpp"
 #include "utils.hpp"
 #include "widgets/BrowserWindow.hpp"
+#include "widgets/Decorations.hpp"
 #include "widgets/WebViewStack.hpp"
 
 #define WITH_WEBVIEW_WINDOW(WEBVIEW_ID, IDENT, BLOCK)                                              \
@@ -38,12 +41,31 @@ public:
   QList<WebViewData> fetch_webview_data_list(WindowId win_id = 0);
   QVariant fetch_config_value(const QString &key);
   KeyMode fetch_current_mode() const;
+  bool fetch_is_decoration_enabled(DecorationType type, WindowId win_id);
 
   DEFINE_GETTER(fetch_current_search_text, current_search_text)
   DEFINE_SETTER(set_current_search_text, current_search_text)
 
   DELEGATE(&event_queue, dispatch_event, dispatch_event)
   DELEGATE(&event_queue, register_event, register_event)
+
+  std::vector<BrowserWindow *> get_windows_for_optional_win_id(std::optional<WindowId> win_id) {
+    std::vector<BrowserWindow *> windows;
+
+    if (!win_id.has_value()) {
+      for (auto &win_pair : window_map)
+        windows.push_back(win_pair.second);
+    } else if (win_id.value() == 0) {
+      for (auto &win_pair : window_map) {
+        if (win_pair.second->isActiveWindow())
+          windows.push_back(win_pair.second);
+      }
+    } else if (win_id.value() > 0 && window_map.contains(win_id.value())) {
+      windows.push_back(window_map.at(win_id.value()));
+    }
+
+    return windows;
+  }
 
 protected:
   WindowActionRouter() = default;

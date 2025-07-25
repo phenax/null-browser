@@ -6,6 +6,7 @@
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
 #include "events/NotificationReceivedEvent.hpp"
+#include "events/WinCreatedEvent.hpp"
 #include "widgets/BrowserWindow.hpp"
 
 #include "widgets/BrowserApp.hpp"
@@ -59,6 +60,10 @@ BrowserWindow *BrowserApp::create_window(const QStringList &urls) {
   WindowActionRouter::instance().add_window(window);
 
   window->show();
+
+  auto *event = new WinCreatedEvent(window->get_id());
+  WindowActionRouter::instance().dispatch_event(event);
+
   return window;
 }
 

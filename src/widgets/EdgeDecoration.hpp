@@ -7,6 +7,7 @@
 #include <qwebengineprofile.h>
 #include <qwebengineview.h>
 
+#include "utils.hpp"
 #include "widgets/WebView.hpp"
 
 class EdgeDecoration : public QWidget {
@@ -18,6 +19,8 @@ public:
   void set_size(uint16_t size_value);
   void set_html(const QString &content);
   void set_enabled(bool enabled_value);
+
+  DEFINE_GETTER(is_enabled, enabled)
 
 private:
   bool vertical;
