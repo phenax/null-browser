@@ -13,6 +13,9 @@ web.decorations = web.decorations or {}
 
 require 'null-browser.utils'
 
+--- @param fn fun(): nil  Schedule a function to be called on next tick (qt+libuv event loop)
+function web.schedule(fn) __internals.schedule(fn) end
+
 --- Add a keymap
 ---
 --- @param mode   string           Keymap mode ("i", "n", ...)

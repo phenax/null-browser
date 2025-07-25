@@ -106,6 +106,9 @@ void WindowActionRouter::initialize(Configuration *config) {
             for (auto *win : get_relevant_windows(win_id))
               win->set_decoration_enabled(type, enabled);
           });
+
+  connect(&runtime, &LuaRuntime::schedule_for_next_tick, this,
+          [](const std::function<void()> &action) { LuaRuntime::instance().queue_task(action); });
 }
 
 void WindowActionRouter::find_current_search_text(WebViewId webview_id, bool forward) {

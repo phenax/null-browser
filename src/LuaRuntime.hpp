@@ -64,6 +64,7 @@ signals:
   void webview_scroll_bottom_requested(WebViewId webview_id);
   void decoration_set_enabled(DecorationType type, bool enabled, std::optional<WindowId> win_id);
   void set_view_html(const QString &html, WebViewId view_id);
+  void schedule_for_next_tick(const std::function<void()> &action);
 
 protected:
   LuaRuntime();

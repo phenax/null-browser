@@ -76,6 +76,13 @@ end
 web.event.add_listener('WinCreated', {
   callback = function(event)
     web.decorations.bottom.enable({ win = event.win_id })
+
+    -- View id will only be available asynchronously after enable
+    web.schedule(function()
+      local view = web.decorations.bottom.view({ win = event.win_id })
+      print('>>>> view', view)
+    end)
+
     start_clock(event.win_id)
   end,
 })

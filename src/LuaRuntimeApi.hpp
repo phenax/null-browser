@@ -10,6 +10,27 @@
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/Decorations.hpp"
 
+int lua_api_schedule_fn(lua_State *state) {
+  lua_pushvalue(state, 1);
+  const int function_ref = luaL_ref(state, LUA_REGISTRYINDEX);
+  auto action = [state, function_ref]() {
+    preserve_top(state, {
+      lua_rawgeti(state, LUA_REGISTRYINDEX, function_ref);
+      if (lua_pcall(state, 0, 0, 0) != LUA_OK) {
+        const char *error = lua_tostring(state, -1);
+        qDebug() << "Error calling Lua function:" << error;
+      }
+      luaL_unref(state, LUA_REGISTRYINDEX, function_ref);
+    })
+  };
+
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.schedule_for_next_tick(action);
+
+  lua_pushnil(state);
+  return 1;
+}
+
 int lua_api_view_set_url(lua_State *state) {
   const char *url = lua_tostring(state, 1);
   WebViewId view_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
@@ -78,6 +99,7 @@ int lua_api_keymap_set(lua_State *state) {
   auto &runtime = LuaRuntime::instance();
   emit runtime.keymap_add_requested(mode, keyseq, action);
 
+  lua_pushnil(state);
   return 1;
 }
 
@@ -337,5 +359,6 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"decorations_set_enabled", &lua_api_decorations_set_enabled},
     luaL_Reg{"decorations_get_enabled", &lua_api_decorations_get_enabled},
     luaL_Reg{"decorations_get_view", &lua_api_decorations_get_view},
+    luaL_Reg{"schedule", &lua_api_schedule_fn},
     luaL_Reg{nullptr, nullptr},
 };
