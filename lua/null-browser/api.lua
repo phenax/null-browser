@@ -111,6 +111,21 @@ function web.view.select(view_id) return __internals.view_select(view_id) end
 --- ```
 function web.view.set_url(url, view_id) return __internals.view_set_url(url, view_id) end
 
+--- @class SetHTMLOpts
+--- @field view? number View id
+
+--- Set html in a given view
+---
+--- @param html string        HTML string
+--- @param opts? SetHTMLOpts  Options
+---
+--- @example
+--- ```lua
+--- web.view.set_html('<h2>HJello</h2>')
+--- web.view.set_html('<h2>HJello</h2>', 3) -- Set html for view with id 3
+--- ```
+function web.view.set_html(html, opts) return __internals.view_set_html(html, (opts or {}).view) end
+
 --- Open devtools window for the view
 ---
 --- @param view_id? number    Id of the view

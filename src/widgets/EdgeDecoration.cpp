@@ -15,7 +15,7 @@ QString default_html_layout = R"HTML(
     :where(html, body) {
       margin: 0;
       padding: 0;
-      background: black;
+      background: #333;
       color: white;
       overflow: hidden;
     }
@@ -30,8 +30,8 @@ EdgeDecoration::EdgeDecoration(bool vertical, QWebEngineProfile *profile, QWidge
   setLayout(vbox);
 }
 
-void EdgeDecoration::set_html(const QString &content) {
-  html_content = content;
+void EdgeDecoration::set_enabled(bool enabled_value) {
+  enabled = enabled_value;
   setup_webview();
 }
 
@@ -40,8 +40,8 @@ void EdgeDecoration::set_size(u_int16_t size_value) {
   setup_webview();
 }
 
-void EdgeDecoration::set_enabled(bool enabled_value) {
-  enabled = enabled_value;
+void EdgeDecoration::set_html(const QString &content) {
+  html_content = content;
   setup_webview();
 }
 
@@ -52,7 +52,7 @@ void EdgeDecoration::setup_webview() {
       layout()->addWidget(webview.value());
     }
 
-    webview.value()->setHtml(default_html_layout.replace("{{body}}", html_content));
+    webview.value()->setHtml(QString(default_html_layout).replace("{{body}}", html_content));
     if (vertical)
       webview.value()->setFixedWidth(size);
     else

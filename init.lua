@@ -61,21 +61,25 @@ web.event.add_listener('NotificationReceived', {
   end,
 })
 
+local start_clock = function(win_id)
+  local timer = web.uv.new_timer()
+  timer:start(500, 500, function()
+    local view = web.decorations.bottom.view({ win = win_id })
+    if view ~= nil then
+      local time = os.date("%X", os.time())
+      web.view.set_html('Time: ' .. time, { view = view })
+    end
+  end)
+end
+
 -- Decorations config
 web.event.add_listener('WinCreated', {
   callback = function(event)
     web.decorations.bottom.enable({ win = event.win_id })
-    local timer = web.uv.new_timer()
-    timer:start(100, 0, function()
-      local view = web.decorations.bottom.view({ win = event.win_id })
-      print('>>> view', view)
-      if view ~= nil then
-        web.view.set_url('https://google.com', view)
-      end
-      timer:close()
-    end)
+    start_clock(event.win_id)
   end,
 })
+
 web.keymap.set('n', '<space>gg', function()
   if web.decorations.bottom.is_enabled({ win = 0 }) then
     web.decorations.bottom.disable({ win = 0 })

@@ -46,6 +46,13 @@ public:
       webview_stack->open_url(url, open_type, webview_id);
   }
 
+  void set_html(const QString &html, WebViewId webview_id) {
+    if (decorations->has_webview(webview_id))
+      decorations->set_html(html, webview_id);
+    else
+      webview_stack->set_html(html, webview_id);
+  }
+
   bool on_window_key_event(QKeyEvent *event);
 
   void closeEvent(QCloseEvent * /*event*/) override { emit closed(); };

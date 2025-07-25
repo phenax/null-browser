@@ -18,6 +18,14 @@ int lua_api_view_set_url(lua_State *state) {
   return 1;
 }
 
+int lua_api_view_set_html(lua_State *state) {
+  const char *html = lua_tostring(state, 1);
+  WebViewId view_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.set_view_html(html, view_id);
+  return 1;
+}
+
 int lua_api_view_create(lua_State *state) {
   const char *url = luaL_optstring(state, 1, "");
   auto &runtime = LuaRuntime::instance();
@@ -315,6 +323,7 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"view_list", &lua_view_list},
     luaL_Reg{"view_select", &lua_view_select},
     luaL_Reg{"view_set_url", &lua_api_view_set_url},
+    luaL_Reg{"view_set_html", &lua_api_view_set_html},
     luaL_Reg{"view_open_devtools", &lua_api_view_open_devtools},
     luaL_Reg{"view_scroll", &lua_api_view_scroll},
     luaL_Reg{"view_scroll_to_top", &lua_api_view_scroll_top},

@@ -44,6 +44,15 @@ public:
     }
   }
 
+  void set_html(const QString &html, WebViewId view_id) {
+    for (auto *decoration : decorations()) {
+      if (decoration->get_view_id() == view_id) {
+        decoration->set_html(html);
+        return;
+      }
+    }
+  }
+
 private:
   EdgeDecoration *decoration_top;
   EdgeDecoration *decoration_bottom;

@@ -318,3 +318,13 @@ void WebViewStack::scroll_to_bottom(WebViewId webview_id) {
 
   webview->scroll_to_bottom();
 }
+
+void WebViewStack::set_html(const QString &html, WebViewId webview_id) {
+  auto *webview = get_webview(webview_id);
+  if (webview == nullptr) {
+    qDebug() << "Webview does not exist";
+    return;
+  }
+
+  webview->setHtml(html);
+}

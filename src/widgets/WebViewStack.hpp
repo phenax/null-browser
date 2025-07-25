@@ -72,6 +72,7 @@ public slots:
   void scroll(WebViewId webview_id, int deltax, int deltay);
   void scroll_to_top(WebViewId webview_id);
   void scroll_to_bottom(WebViewId webview_id);
+  void set_html(const QString &html, WebViewId webview_id = 0);
 
 protected slots:
   void on_new_webview_request(QWebEngineNewWindowRequest &request);

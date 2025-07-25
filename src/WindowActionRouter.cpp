@@ -59,6 +59,10 @@ void WindowActionRouter::initialize(Configuration *config) {
             WITH_WEBVIEW_WINDOW(webview_id, window,
                                 { window->open_url(url, open_type, webview_id); });
           });
+  connect(&runtime, &LuaRuntime::set_view_html, this,
+          [this](const QString &html, WebViewId webview_id) {
+            WITH_WEBVIEW_WINDOW(webview_id, window, { window->set_html(html, webview_id); });
+          });
   connect(&runtime, &LuaRuntime::webview_closed, this, [this](WebViewId webview_id) {
     WITH_WEBVIEW_WINDOW(webview_id, window, { window->close_webview(webview_id); });
   });
