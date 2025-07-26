@@ -41,7 +41,8 @@ function tabline.tabs_html()
     local text = index .. ': ' .. view.title .. ' (' .. view.url .. ')'
     local classes = 'tab'
     if web.view.current() == view.id then classes = classes .. ' current' end
-    local html = '<div class="' .. classes .. '">' .. text .. '</div>'
+    local onclick = '__nullbrowser.tab_select({ view: ' .. view.id .. ' })'
+    local html = '<div class="' .. classes .. '" onclick="' .. onclick .. '">' .. text .. '</div>'
     views_html = views_html .. html
   end
 

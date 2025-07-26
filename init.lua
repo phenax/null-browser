@@ -68,12 +68,12 @@ end
 require 'null-browser.extras.tabline'.init()
 
 -- Decorations config
-web.event.add_listener('WinCreated', {
-  callback = function(event)
-    web.decorations.bottom.enable({ win = event.win_id })
-    start_clock(event.win_id)
-  end,
-})
+-- web.event.add_listener('WinCreated', {
+--   callback = function(event)
+--     web.decorations.bottom.enable({ win = event.win_id })
+--     start_clock(event.win_id)
+--   end,
+-- })
 
 web.keymap.set('n', '<space>gg', function()
   if web.decorations.bottom.is_enabled({ win = 0 }) then

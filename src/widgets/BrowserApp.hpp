@@ -19,7 +19,7 @@ protected:
 private:
   Configuration &configuration;
   QWebEngineProfile default_profile{"default"};
-  QList<QWebEngineProfile *> profiles{&default_profile};
 
+  QList<QWebEngineProfile *> profiles() { return {&default_profile}; }
   void setup_profile(QWebEngineProfile *profile);
 };

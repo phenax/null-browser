@@ -4,13 +4,26 @@
 #include <qlabel.h>
 #include <qwebengineview.h>
 
+#include "LuaRuntime.hpp"
 #include "widgets/WebView.hpp"
 #include "widgets/WebViewStack.hpp"
 
 #include "widgets/EdgeDecoration.hpp"
 
 QString default_html_layout = R"HTML(
-  {{body}}
+  <script>
+    window.__nullbrowser ||= (() => {
+      const invoke = (action, opts = {}) => {
+        const urlParams = new URLSearchParams(opts);
+        const url = `nullrpc://${action}?${urlParams.toString()}`;
+        return fetch(url).then(r => r.json().catch(_ => null));
+      };
+      const api = new Proxy({}, {
+        get: (_, action) => (options = {}) => invoke(action, options),
+      });
+      return api;
+    })();
+  </script>
   <style>
     :where(html, body) {
       margin: 0;
@@ -20,6 +33,8 @@ QString default_html_layout = R"HTML(
       overflow: hidden;
     }
   </style>
+
+  {{body}}
 )HTML";
 
 EdgeDecoration::EdgeDecoration(bool vertical, QWebEngineProfile *profile, QWidget *parent)
@@ -50,9 +65,14 @@ void EdgeDecoration::setup_webview() {
     if (!webview.has_value()) {
       webview = new WebView(WebViewStack::next_webview_id++, profile, this);
       layout()->addWidget(webview.value());
+      webview.value()->enable_rpc_api();
+      webview.value()->expose_rpc_function("tab_select", [](RpcArgs args) {
+        LuaRuntime::instance().webview_selected(args.at("view").toInt());
+      });
     }
 
-    webview.value()->setHtml(QString(default_html_layout).replace("{{body}}", html_content));
+    webview.value()->setHtml(QString(default_html_layout).replace("{{body}}", html_content),
+                             QUrl("nullrpc://noop"));
     if (vertical)
       webview.value()->setFixedWidth(size);
     else

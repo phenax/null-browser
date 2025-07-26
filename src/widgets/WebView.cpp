@@ -1,7 +1,12 @@
 #include <QMainWindow>
+#include <QWebEngineUrlRequestInterceptor>
 #include <QWebEngineView>
 #include <QtCore>
+#include <qwebenginepage.h>
+#include <qwebengineprofile.h>
 
+#include "LuaRuntime.hpp"
+#include "schemes/NullRpcSchemeHandler.hpp"
 #include "widgets/WebView.hpp"
 
 WebView::WebView(uint32_t webview_id, QWebEngineProfile *profile, QWidget *parent_node)
@@ -23,10 +28,10 @@ void WebView::open_devtools() {
 }
 
 void WebView::scroll_increment(int deltax, int deltay) {
-  auto code = QString(R"((() => {
+  auto code = QString(R"JS((() => {
     const $el = document.scrollingElement;
     $el.scrollTo($el.scrollLeft + %1, $el.scrollTop + %2);
-  })())")
+  })())JS")
                   .arg(deltax)
                   .arg(deltay);
 
@@ -34,12 +39,35 @@ void WebView::scroll_increment(int deltax, int deltay) {
 }
 
 void WebView::scroll_to_top() {
-  auto code = QString(R"(document.scrollingElement.scrollTo(0, 0))");
+  auto code = QString(R"JS(document.scrollingElement.scrollTo(0, 0))JS");
   page()->runJavaScript(code);
 }
 
 void WebView::scroll_to_bottom() {
-  auto code =
-      QString(R"(document.scrollingElement.scrollTo(0, document.scrollingElement.scrollHeight))");
+  auto code = QString(
+      R"JS(document.scrollingElement.scrollTo(0, document.scrollingElement.scrollHeight))JS");
   page()->runJavaScript(code);
+}
+
+void WebView::enable_rpc_api() {
+  auto &nullrpc = NullRPCSchemeHandler::instance();
+  connect(&nullrpc, &NullRPCSchemeHandler::message_received, this, &WebView::on_rpc_message);
+}
+
+void WebView::expose_rpc_function(const QString &name, const RpcFunc &action) {
+  exposed_functions.insert({name, action});
+}
+
+void WebView::on_rpc_message(const QString &action, const QUrlQuery &params) {
+  if (!exposed_functions.contains(action)) {
+    qDebug() << "function not defined:" << action;
+    return;
+  }
+
+  RpcArgs args;
+  for (auto pair : params.queryItems())
+    args.insert(pair);
+
+  auto func = exposed_functions.at(action);
+  func(args);
 }

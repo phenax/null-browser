@@ -7,6 +7,7 @@
 #include "WindowActionRouter.hpp"
 #include "events/NotificationReceivedEvent.hpp"
 #include "events/WinCreatedEvent.hpp"
+#include "schemes/NullRpcSchemeHandler.hpp"
 #include "widgets/BrowserWindow.hpp"
 
 #include "widgets/BrowserApp.hpp"
@@ -36,7 +37,7 @@ BrowserApp::BrowserApp(Configuration &configuration) : configuration(configurati
   }
 
   // Initializes profile
-  for (auto *profile : profiles) {
+  for (auto *profile : profiles()) {
     setup_profile(profile);
   }
 
@@ -52,6 +53,7 @@ void BrowserApp::setup_profile(QWebEngineProfile *profile) {
     WindowActionRouter::instance().dispatch_event(event);
   });
   profile->setPersistentPermissionsPolicy(configuration.permission_persistance_policy());
+  profile->installUrlSchemeHandler("nullrpc", &NullRPCSchemeHandler::instance());
 }
 
 BrowserWindow *BrowserApp::create_window(const QStringList &urls) {
