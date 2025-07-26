@@ -20,17 +20,7 @@ enum KeyMatchType : uint8_t {
 
 class KeySeqParser {
 public:
-  static KeyMatchType key_sequence_match(const KeySequence &target, const KeySequence &current) {
-    for (int i = 0; i < target.length(); i++) {
-      if (current.length() <= i)
-        return KeyMatchType::Pending;
-
-      if (target[i].key != current[i].key || !target[i].mod.testFlags(current[i].mod))
-        return KeyMatchType::NoMatch;
-    }
-
-    return KeyMatchType::Match;
-  }
+  static KeyMatchType key_sequence_match(const KeySequence &target, const KeySequence &current);
 
   KeySeqParser() = default;
   KeySequence parse(QString key_sequence);

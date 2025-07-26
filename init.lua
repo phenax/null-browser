@@ -1,12 +1,5 @@
 print('hello starting up...')
 
--- web.set('new_view_url', 'https://lite.duckduckgo.com')
--- web.set('close_window_when_no_views', true)
--- web.set('user_agent',
---   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36')
--- web.set('downloads_dir', os.getenv('HOME') .. '/Downloads/firefox')
--- web.set('permissions_persistance', 'never')
-
 web.opts.downloads_dir = os.getenv('HOME') .. '/Downloads/firefox'
 web.opts.permissions_persistance = 'never'
 web.opts.user_agent =
@@ -63,7 +56,7 @@ web.event.add_listener('NotificationReceived', {
 
 local start_clock = function(win_id)
   local timer = web.uv.new_timer()
-  timer:start(500, 500, function()
+  timer:start(500, 1000, function()
     local view = web.decorations.bottom.view({ win = win_id })
     if view ~= nil then
       local time = os.date("%X", os.time())
@@ -72,17 +65,12 @@ local start_clock = function(win_id)
   end)
 end
 
+require 'null-browser.extras.tabline'.init()
+
 -- Decorations config
 web.event.add_listener('WinCreated', {
   callback = function(event)
     web.decorations.bottom.enable({ win = event.win_id })
-
-    -- View id will only be available asynchronously after enable
-    web.schedule(function()
-      local view = web.decorations.bottom.view({ win = event.win_id })
-      print('>>>> view', view)
-    end)
-
     start_clock(event.win_id)
   end,
 })

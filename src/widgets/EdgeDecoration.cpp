@@ -65,3 +65,13 @@ void EdgeDecoration::setup_webview() {
     }
   }
 }
+
+void EdgeDecoration::set_url(const QUrl &url) {
+  if (!webview.has_value())
+    return;
+  webview.value()->setUrl(url);
+}
+
+std::optional<WebViewId> EdgeDecoration::get_view_id() {
+  return webview.has_value() ? std::make_optional(webview.value()->get_id()) : std::nullopt;
+}

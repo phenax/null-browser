@@ -1,12 +1,14 @@
 #pragma once
 
+#include "WebViewData.hpp"
 #include "widgets/EdgeDecoration.hpp"
-#include "widgets/WebViewStack.hpp"
+#include "widgets/IWebViewMediator.hpp"
 #include <QWidget>
 #include <QtCore>
 #include <optional>
 #include <qwebengineprofile.h>
 
+/// @see DecorationType in ./lua/null-browser/api.lua
 enum DecorationType : uint8_t {
   DecorationTop = 1,
   DecorationBottom = 2,
@@ -14,7 +16,7 @@ enum DecorationType : uint8_t {
   DecorationRight = 4,
 };
 
-class Decorations : public QWidget {
+class Decorations : public QWidget, public IWebViewMediator {
   Q_OBJECT
 
 public:
@@ -23,35 +25,10 @@ public:
   void set_enabled(DecorationType type, bool enabled);
   bool get_enabled(DecorationType type);
 
-  std::optional<WebViewId> get_view_id(DecorationType type) {
-    auto decoration = get_decoration_widget(type);
-    return decoration.has_value() ? decoration.value()->get_view_id() : std::nullopt;
-  }
-
-  bool has_webview(WebViewId view_id) {
-    for (auto *decoration : decorations())
-      if (decoration->get_view_id() == view_id)
-        return true;
-    return false;
-  }
-
-  void open_url(const QUrl &url, WebViewId view_id) {
-    for (auto *decoration : decorations()) {
-      if (decoration->get_view_id() == view_id) {
-        decoration->set_url(url);
-        return;
-      }
-    }
-  }
-
-  void set_html(const QString &html, WebViewId view_id) {
-    for (auto *decoration : decorations()) {
-      if (decoration->get_view_id() == view_id) {
-        decoration->set_html(html);
-        return;
-      }
-    }
-  }
+  std::optional<WebViewId> get_view_id(DecorationType type);
+  bool has_webview(WebViewId view_id) override;
+  void open_url(const QUrl &url, OpenType /*unused*/, WebViewId view_id) override;
+  void set_html(const QString &html, WebViewId view_id) override;
 
 private:
   EdgeDecoration *decoration_top;
@@ -67,5 +44,6 @@ private:
         decoration_right,
     };
   }
-  std::optional<EdgeDecoration *> get_decoration_widget(DecorationType type);
+  std::optional<EdgeDecoration *> get_decoration_widget_type(DecorationType type);
+  std::optional<EdgeDecoration *> get_decoration_widget_by_view_id(WebViewId view_id);
 };

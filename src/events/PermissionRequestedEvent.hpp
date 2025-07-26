@@ -40,8 +40,7 @@ public:
   }
 
   void lua_push(lua_State *state) const override {
-    lua_newtable(state);
-    SET_FIELD("type", string, kind.toStdString().c_str())
+    Event::lua_push(state);
     SET_FIELD("permission_type", string, permission_type())
     SET_FIELD("view_id", integer, webview_id)
     SET_FIELD("win_id", integer, win_id)

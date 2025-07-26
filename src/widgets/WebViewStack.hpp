@@ -7,24 +7,12 @@
 #include <vector>
 
 #include "Configuration.hpp"
+#include "WebViewData.hpp"
+#include "utils.hpp"
+#include "widgets/IWebViewMediator.hpp"
 #include "widgets/WebView.hpp"
 
-using WebViewId = qsizetype;
-
-enum OpenType : uint8_t {
-  OpenUrl,
-  OpenUrlInView,
-  OpenUrlInBgView,
-  OpenUrlInWindow,
-};
-
-struct WebViewData {
-  WebViewId id;
-  QString url;
-  QString title;
-};
-
-class WebViewStack : public QWidget {
+class WebViewStack : public QWidget, public IWebViewMediator {
   Q_OBJECT
 
 public:
@@ -33,6 +21,8 @@ public:
   WebViewStack(const Configuration *configuration,
                QWebEngineProfile *profile = new QWebEngineProfile, QWidget *parent = nullptr);
 
+  DEFINE_GETTER(get_profile, profile)
+
   QList<WebViewData> get_webview_list();
   WebView *current_webview();
   WebViewId current_webview_id();
@@ -40,9 +30,7 @@ public:
   QUrl current_url();
   void set_webview_url(const QUrl &url, WebViewId webview_id);
 
-  bool has_webview(WebViewId webview_id);
-
-  QWebEngineProfile *get_profile() { return profile; }
+  bool has_webview(WebViewId webview_id) override;
 
   /// @deprecated TODO: Remove
   std::vector<QUrl> urls();
@@ -62,7 +50,8 @@ protected:
   void on_download_request(QWebEngineDownloadRequest *download);
 
 public slots:
-  void open_url(const QUrl &url, OpenType open_type = OpenType::OpenUrl, WebViewId webview_id = 0);
+  void open_url(const QUrl &url, OpenType open_type = OpenType::OpenUrl,
+                WebViewId webview_id = 0) override;
   void webview_history_back(WebViewId webview_id, qsizetype history_index);
   void webview_history_forward(WebViewId webview_id, qsizetype history_index);
   void close(WebViewId webview_id);
@@ -72,7 +61,7 @@ public slots:
   void scroll(WebViewId webview_id, int deltax, int deltay);
   void scroll_to_top(WebViewId webview_id);
   void scroll_to_bottom(WebViewId webview_id);
-  void set_html(const QString &html, WebViewId webview_id = 0);
+  void set_html(const QString &html, WebViewId webview_id = 0) override;
 
 protected slots:
   void on_new_webview_request(QWebEngineNewWindowRequest &request);

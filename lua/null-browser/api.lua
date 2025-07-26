@@ -318,6 +318,7 @@ local function create_decoration_api(type)
     __internals.decorations_set_enabled(type, enabled, (opts or {}).win)
   end;
   return {
+    type = function() return type end,
     enable = function(opts) set_enabled(true, opts) end,
     disable = function(opts) set_enabled(false, opts) end,
     is_enabled = function(opts)

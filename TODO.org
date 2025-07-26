@@ -1,13 +1,16 @@
 ** Usable
+- [X] Decorations api (just for statusline)
+- [X] web.schedule
+- [X] Create view with html (web.view.set_html())
 - [-] Tests for api
-- [ ] Fullscreen
 - [ ] Run JS in page (web.view.eval_js())
+- [ ] Expose JS <-> lua in page (web.view.expose_js())
+- [ ] web.decorations.*.set_size()
 - [ ] f-key navigation
+- [ ] Fullscreen
 - [ ] Zoom in/out
 - [ ] Use table for all internals api options?
-- [ ] Permission management (list/allow/deny) lua api
 - [ ] Generate docs for api
-- [ ] Decorations api (just for statusline)
 
 ** Bugs
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
@@ -16,6 +19,7 @@
 - [ ] web.view apis in `-e` flag from "clients" (non-servers calls) don't work
 
 ** Next
+- [ ] Permission management (list/allow/deny) lua api
 - [ ] Tests for window
 - [ ] More tests for stack
 - [ ] Tests for router
@@ -42,7 +46,6 @@
 - [X] vendor web.inspect with build
 - [ ] Right click context menu items
 - [ ] Listen to renderprocesstermination signal
-- [ ] Create view with html (web.view.set_html())
 - [ ] Change instance manager command format
 
 ** Later later

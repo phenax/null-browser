@@ -16,8 +16,7 @@ public:
   }
 
   void lua_push(lua_State *state) const override {
-    lua_newtable(state);
-    SET_FIELD("type", string, kind.toStdString().c_str())
+    Event::lua_push(state);
     SET_FIELD("title", string, notification->title().toStdString().c_str())
     SET_FIELD("message", string, notification->message().toStdString().c_str())
     SET_FIELD("tag", string, notification->tag().toStdString().c_str())

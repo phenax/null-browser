@@ -3,9 +3,9 @@
 #include <QtCore>
 #include <lua.hpp>
 
+#include "WebViewData.hpp"
 #include "events/Event.hpp"
 #include "widgets/BrowserWindow.hpp"
-#include "widgets/WebViewStack.hpp"
 
 class UrlChangedEvent : public Event {
 public:

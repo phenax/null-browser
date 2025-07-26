@@ -23,7 +23,7 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, QWebEngineProfi
   layout->setSpacing(0);
   centralWidget()->setLayout(layout);
 
-  // Stack of web views
+  // Stack of web views + decorations
   webview_stack = new WebViewStack(&configuration, profile, this);
   decorations = new Decorations(webview_stack, profile, this);
   layout->addWidget(decorations);
@@ -78,4 +78,22 @@ void BrowserWindow::update_permissions_persistance(const QString &persistance) {
   auto *profile = webview_stack->get_profile();
   auto persistance_policy = Configuration::to_permission_persistance_policy(persistance);
   profile->setPersistentPermissionsPolicy(persistance_policy);
+}
+
+IWebViewMediator *BrowserWindow::get_webview_mediator(WebViewId webview_id) {
+  if (decorations->has_webview(webview_id))
+    return decorations;
+  return webview_stack;
+}
+
+bool BrowserWindow::has_webview(WebViewId webview_id) {
+  return webview_stack->has_webview(webview_id) || decorations->has_webview(webview_id);
+}
+
+void BrowserWindow::open_url(const QUrl &url, OpenType open_type, WebViewId webview_id) {
+  get_webview_mediator(webview_id)->open_url(url, open_type, webview_id);
+}
+
+void BrowserWindow::set_html(const QString &html, WebViewId webview_id) {
+  get_webview_mediator(webview_id)->set_html(html, webview_id);
 }

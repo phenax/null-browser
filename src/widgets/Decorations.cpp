@@ -6,6 +6,7 @@
 #include <qwidget.h>
 
 #include "Decorations.hpp"
+#include "WebViewData.hpp"
 #include "widgets/EdgeDecoration.hpp"
 
 Decorations::Decorations(QWidget *content_widget, QWebEngineProfile *profile, QWidget *parent)
@@ -36,17 +37,17 @@ Decorations::Decorations(QWidget *content_widget, QWebEngineProfile *profile, QW
 }
 
 void Decorations::set_enabled(DecorationType type, bool enabled) {
-  auto decoration = get_decoration_widget(type);
+  auto decoration = get_decoration_widget_type(type);
   if (decoration.has_value())
     decoration.value()->set_enabled(enabled);
 }
 
 bool Decorations::get_enabled(DecorationType type) {
-  auto decoration = get_decoration_widget(type);
+  auto decoration = get_decoration_widget_type(type);
   return decoration.has_value() && decoration.value()->is_enabled();
 }
 
-std::optional<EdgeDecoration *> Decorations::get_decoration_widget(DecorationType type) {
+std::optional<EdgeDecoration *> Decorations::get_decoration_widget_type(DecorationType type) {
   switch (type) {
   case DecorationType::DecorationTop:
     return decoration_top;
@@ -58,4 +59,32 @@ std::optional<EdgeDecoration *> Decorations::get_decoration_widget(DecorationTyp
     return decoration_right;
   }
   return nullptr;
+}
+
+std::optional<EdgeDecoration *> Decorations::get_decoration_widget_by_view_id(WebViewId view_id) {
+  for (auto *decoration : decorations())
+    if (decoration->get_view_id() == view_id)
+      return std::make_optional(decoration);
+  return std::nullopt;
+}
+
+bool Decorations::has_webview(WebViewId view_id) {
+  return get_decoration_widget_by_view_id(view_id).has_value();
+}
+
+void Decorations::open_url(const QUrl &url, OpenType /*unused*/, WebViewId view_id) {
+  auto decoration = get_decoration_widget_by_view_id(view_id);
+  if (decoration.has_value())
+    decoration.value()->set_url(url);
+}
+
+void Decorations::set_html(const QString &html, WebViewId view_id) {
+  auto decoration = get_decoration_widget_by_view_id(view_id);
+  if (decoration.has_value())
+    decoration.value()->set_html(html);
+}
+
+std::optional<WebViewId> Decorations::get_view_id(DecorationType type) {
+  auto decoration = get_decoration_widget_type(type);
+  return decoration.has_value() ? decoration.value()->get_view_id() : std::nullopt;
 }
