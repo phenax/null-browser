@@ -16,10 +16,10 @@ public:
 
   void requestStarted(QWebEngineUrlRequestJob *job) override {
     auto url = job->requestUrl();
-    qDebug() << "REQ" << url << "From: " << job->initiator();
-    // TODO: Validate origin
+    auto origin = job->initiator();
+    qDebug() << "REQ" << url << " | From: " << job->initiator();
 
-    if (url.host().isEmpty() || url.host() == "noop") {
+    if (origin.scheme() != "nullrpc" || url.host().isEmpty() || url.host() == "noop") {
       job->reply("text/html", new QBuffer(job));
       return;
     }
