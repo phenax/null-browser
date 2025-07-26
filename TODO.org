@@ -2,9 +2,9 @@
 - [X] Decorations api (just for statusline)
 - [X] web.schedule
 - [X] Create view with html (web.view.set_html())
+- [X] Expose JS <-> lua in page (web.view.expose())
 - [-] Tests for api
 - [ ] Run JS in page (web.view.eval_js())
-- [ ] Expose JS <-> lua in page (web.view.expose_js())
 - [ ] web.decorations.*.set_size()
 - [ ] f-key navigation
 - [ ] Fullscreen

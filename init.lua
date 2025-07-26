@@ -54,33 +54,10 @@ web.event.add_listener('NotificationReceived', {
   end,
 })
 
-local start_clock = function(win_id)
-  local timer = web.uv.new_timer()
-  timer:start(500, 1000, function()
-    local view = web.decorations.bottom.view({ win = win_id })
-    if view ~= nil then
-      local time = os.date("%X", os.time())
-      web.view.set_html('Time: ' .. time, { view = view })
-    end
-  end)
-end
-
+-- Tabline
 require 'null-browser.extras.tabline'.init()
 
--- Decorations config
--- web.event.add_listener('WinCreated', {
---   callback = function(event)
---     web.decorations.bottom.enable({ win = event.win_id })
---     start_clock(event.win_id)
---   end,
--- })
-
-web.keymap.set('n', '<space>gg', function()
-  if web.decorations.bottom.is_enabled({ win = 0 }) then
-    web.decorations.bottom.disable({ win = 0 })
-  else
-    web.decorations.bottom.enable({ win = 0 })
-  end
-end)
+-- Statusline
+require 'null-browser.extras.statusline'.init()
 
 print('ending...')

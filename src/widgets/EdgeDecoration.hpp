@@ -32,7 +32,7 @@ private:
   QWebEngineProfile *profile;
   bool enabled = false;
   QString html_content = "";
-  uint16_t size = 24;
+  uint16_t size = 20;
 
   void setup_webview();
 };

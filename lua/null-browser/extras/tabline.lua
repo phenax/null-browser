@@ -1,6 +1,5 @@
 local tabline = {}
 
--- TODO: click interaction
 -- TODO: vertical tabs
 function tabline.init(opts)
   local decoration = (opts or {}).decoration or web.decorations.top
@@ -50,7 +49,7 @@ function tabline.tabs_html()
     local classes = 'tab'
     if web.view.current() == view.id then classes = classes .. ' current' end
     local onclick = '__nullbrowser.tab_select({ view: ' .. view.id .. ' })'
-    local html = '<div class="' .. classes .. '" onclick="' .. onclick .. '">' .. text .. '</div>'
+    local html = '<button class="' .. classes .. '" onclick="' .. onclick .. '">' .. text .. '</button>'
     views_html = views_html .. html
   end
 
@@ -69,13 +68,17 @@ function tabline.css()
       height: 100vh;
     }
     .tab {
+      all: unset;
       flex: 1;
       width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
       text-wrap: nowrap;
+      text-align: left;
       min-width: 0;
       border-left: 1px solid white;
+      vertical-align: middle;
+      padding: 0 8px;
     }
     .tab.current {
       background: #333;

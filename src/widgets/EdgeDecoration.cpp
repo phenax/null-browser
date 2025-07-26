@@ -4,7 +4,6 @@
 #include <qlabel.h>
 #include <qwebengineview.h>
 
-#include "LuaRuntime.hpp"
 #include "widgets/WebView.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -28,9 +27,11 @@ QString default_html_layout = R"HTML(
     :where(html, body) {
       margin: 0;
       padding: 0;
-      background: #333;
+      background: #111;
       color: white;
       overflow: hidden;
+      text-size: 12px;
+      font-family: monospace;
     }
   </style>
 

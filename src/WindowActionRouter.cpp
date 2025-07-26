@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "LuaRuntime.hpp"
+#include "events/ModeChangedEvent.hpp"
 #include "keymap/KeymapEvaluator.hpp"
 #include "widgets/BrowserWindow.hpp"
 
@@ -19,8 +20,11 @@ void WindowActionRouter::initialize(Configuration *config) {
   configuration = config;
 
   connect(&runtime, &LuaRuntime::keymap_add_requested, this, &WindowActionRouter::add_keymap);
-  connect(&runtime, &LuaRuntime::keymap_mode_update_requested, this,
-          [](const QString &mode) { KeymapEvaluator::instance().set_current_mode(mode); });
+  connect(&runtime, &LuaRuntime::keymap_mode_update_requested, this, [](const QString &mode) {
+    KeymapEvaluator::instance().set_current_mode(mode);
+    auto *event = new ModeChangedEvent(mode);
+    WindowActionRouter::instance().dispatch_event(event);
+  });
 
   // Configuration
   connect(&runtime, &LuaRuntime::config_updated, configuration, &Configuration::set_config);
