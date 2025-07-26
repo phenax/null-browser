@@ -97,3 +97,8 @@ void BrowserWindow::open_url(const QUrl &url, OpenType open_type, WebViewId webv
 void BrowserWindow::set_html(const QString &html, WebViewId webview_id) {
   get_webview_mediator(webview_id)->set_html(html, webview_id);
 }
+
+void BrowserWindow::expose_rpc_function(const QString &name, const RpcFunc &action,
+                                        WebViewId webview_id) {
+  get_webview_mediator(webview_id)->expose_rpc_function(name, action, webview_id);
+}

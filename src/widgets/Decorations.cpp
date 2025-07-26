@@ -88,3 +88,10 @@ std::optional<WebViewId> Decorations::get_view_id(DecorationType type) {
   auto decoration = get_decoration_widget_type(type);
   return decoration.has_value() ? decoration.value()->get_view_id() : std::nullopt;
 }
+
+void Decorations::expose_rpc_function(const QString &name, const RpcFunc &action,
+                                      WebViewId view_id) {
+  auto decoration = get_decoration_widget_by_view_id(view_id);
+  if (decoration.has_value())
+    decoration.value()->expose_rpc_function(name, action);
+}

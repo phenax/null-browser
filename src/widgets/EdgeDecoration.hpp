@@ -22,6 +22,7 @@ public:
   void set_enabled(bool enabled_value);
   void set_url(const QUrl &url);
   std::optional<WebViewId> get_view_id();
+  void expose_rpc_function(const QString &name, const RpcFunc &action);
 
   DEFINE_GETTER(is_enabled, enabled)
 

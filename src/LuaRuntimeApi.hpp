@@ -9,6 +9,7 @@
 #include "lua.h"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/Decorations.hpp"
+#include "widgets/WebView.hpp"
 
 int lua_api_schedule_fn(lua_State *state) {
   lua_pushvalue(state, 1);
@@ -43,7 +44,7 @@ int lua_api_view_set_html(lua_State *state) {
   const char *html = lua_tostring(state, 1);
   WebViewId view_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
   auto &runtime = LuaRuntime::instance();
-  emit runtime.set_view_html(html, view_id);
+  emit runtime.webview_html_set_requested(html, view_id);
   return 1;
 }
 
@@ -331,6 +332,37 @@ int lua_api_decorations_get_view(lua_State *state) {
   return 1;
 }
 
+// :: string -> (table -> nil) -> WebViewId -> nil
+int lua_api_view_expose(lua_State *state) {
+  const char *name = lua_tostring(state, 1);
+  WebViewId view_id = lua_isnoneornil(state, 3) ? 0 : lua_tointeger(state, 3);
+
+  lua_pushvalue(state, 2);
+  const int function_ref = luaL_ref(state, LUA_REGISTRYINDEX);
+  auto action = [state, function_ref](const RpcArgs &args) {
+    preserve_top(state, {
+      lua_rawgeti(state, LUA_REGISTRYINDEX, function_ref);
+      lua_newtable(state);
+      for (auto &pair : args) {
+        lua_pushstring(state, pair.first.toStdString().c_str());
+        lua_pushstring(state, pair.second.toString().toStdString().c_str());
+        lua_settable(state, -3);
+      }
+      if (lua_pcall(state, 1, 0, 0) != LUA_OK) {
+        const char *error = lua_tostring(state, -1);
+        qDebug() << "Error calling Lua function:" << error;
+      }
+    })
+  };
+  // TODO: Check if we need to cleanup function ref after webview done?
+
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.webview_rpc_action_defined(name, action, view_id);
+
+  lua_pushnil(state);
+  return 1;
+}
+
 // NOLINTNEXTLINE
 static luaL_Reg internals_api[] = {
     luaL_Reg{"event_add_listener", &lua_event_register},
@@ -350,6 +382,7 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"view_scroll", &lua_api_view_scroll},
     luaL_Reg{"view_scroll_to_top", &lua_api_view_scroll_top},
     luaL_Reg{"view_scroll_to_bottom", &lua_api_view_scroll_bottom},
+    luaL_Reg{"view_expose", &lua_api_view_expose},
     luaL_Reg{"history_back", &lua_history_back},
     luaL_Reg{"history_forward", &lua_history_forward},
     luaL_Reg{"search_get_text", &lua_api_search_get_text},

@@ -66,9 +66,9 @@ void EdgeDecoration::setup_webview() {
       webview = new WebView(WebViewStack::next_webview_id++, profile, this);
       layout()->addWidget(webview.value());
       webview.value()->enable_rpc_api();
-      webview.value()->expose_rpc_function("tab_select", [](RpcArgs args) {
-        LuaRuntime::instance().webview_selected(args.at("view").toInt());
-      });
+      // expose_rpc_function("tab_select", [](RpcArgs args) {
+      //   LuaRuntime::instance().webview_selected(args.at("view").toInt());
+      // });
     }
 
     webview.value()->setHtml(QString(default_html_layout).replace("{{body}}", html_content),
@@ -94,4 +94,10 @@ void EdgeDecoration::set_url(const QUrl &url) {
 
 std::optional<WebViewId> EdgeDecoration::get_view_id() {
   return webview.has_value() ? std::make_optional(webview.value()->get_id()) : std::nullopt;
+}
+
+void EdgeDecoration::expose_rpc_function(const QString &name, const RpcFunc &action) {
+  if (!webview.has_value())
+    return;
+  webview.value()->expose_rpc_function(name, action);
 }

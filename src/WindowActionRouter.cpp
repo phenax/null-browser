@@ -6,7 +6,6 @@
 #include "LuaRuntime.hpp"
 #include "keymap/KeymapEvaluator.hpp"
 #include "widgets/BrowserWindow.hpp"
-#include "widgets/WebViewStack.hpp"
 
 #include "WindowActionRouter.hpp"
 
@@ -59,7 +58,7 @@ void WindowActionRouter::initialize(Configuration *config) {
             WITH_WEBVIEW_WINDOW(webview_id, window,
                                 { window->open_url(url, open_type, webview_id); });
           });
-  connect(&runtime, &LuaRuntime::set_view_html, this,
+  connect(&runtime, &LuaRuntime::webview_html_set_requested, this,
           [this](const QString &html, WebViewId webview_id) {
             WITH_WEBVIEW_WINDOW(webview_id, window, { window->set_html(html, webview_id); });
           });
@@ -69,6 +68,11 @@ void WindowActionRouter::initialize(Configuration *config) {
   connect(&runtime, &LuaRuntime::webview_selected, this, [this](WebViewId webview_id) {
     WITH_WEBVIEW_WINDOW(webview_id, window, { window->select_webview(webview_id); });
   });
+  connect(&runtime, &LuaRuntime::webview_rpc_action_defined, this,
+          [this](const QString &name, const RpcFunc &action, WebViewId webview_id) {
+            WITH_WEBVIEW_WINDOW(webview_id, window,
+                                { window->expose_rpc_function(name, action, webview_id); });
+          });
 
   // Search
   connect(&runtime, &LuaRuntime::search_requested, this,

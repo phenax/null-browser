@@ -27,8 +27,10 @@ public:
 
   std::optional<WebViewId> get_view_id(DecorationType type);
   bool has_webview(WebViewId view_id) override;
-  void open_url(const QUrl &url, OpenType /*unused*/, WebViewId view_id) override;
+  void open_url(const QUrl &url, OpenType open_type, WebViewId view_id) override;
   void set_html(const QString &html, WebViewId view_id) override;
+  void expose_rpc_function(const QString &name, const RpcFunc &action,
+                           WebViewId webview_id) override;
 
 private:
   EdgeDecoration *decoration_top;

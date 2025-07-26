@@ -10,6 +10,7 @@
 #include "utils.hpp"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/Decorations.hpp"
+#include "widgets/WebView.hpp"
 #include "widgets/WebViewStack.hpp"
 
 #ifndef PROJECT_LUA_PATH
@@ -47,6 +48,7 @@ signals:
   void evaluation_completed(QVariant value);
   void evaluation_failed(QString value);
 
+  // TODO: Figure out consistent naming for these signals
   void history_back_requested(WebViewId webview_id, qsizetype history_index);
   void history_forward_requested(WebViewId webview_id, qsizetype history_index);
   void keymap_add_requested(QString mode, QString keyseq, std::function<void()> action);
@@ -63,8 +65,9 @@ signals:
   void webview_scroll_top_requested(WebViewId webview_id);
   void webview_scroll_bottom_requested(WebViewId webview_id);
   void decoration_set_enabled(DecorationType type, bool enabled, std::optional<WindowId> win_id);
-  void set_view_html(const QString &html, WebViewId view_id);
+  void webview_html_set_requested(const QString &html, WebViewId view_id);
   void schedule_for_next_tick(const std::function<void()> &action);
+  void webview_rpc_action_defined(const QString &name, const RpcFunc &action, WebViewId view_id);
 
 protected:
   LuaRuntime();

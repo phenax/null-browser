@@ -27,9 +27,17 @@ function tabline.show_tabs_in_window(win_id, decoration)
     callback = function()
       if not decoration.is_enabled({ win = win_id }) then return end
 
-      web.view.set_html(tabline.tabs_html(), {
-        view = decoration.view({ win = win_id }),
-      })
+      local view = decoration.view({ win = win_id })
+
+      web.view.expose('tab_select', function(args)
+        print(web.inspect(args))
+        local view_id = args and args.view and tonumber(args.view)
+        if view_id then
+          web.view.select(view_id)
+        end
+      end, { view = view })
+
+      web.view.set_html(tabline.tabs_html(), { view = view })
     end,
   })
 end

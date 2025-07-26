@@ -328,3 +328,8 @@ void WebViewStack::set_html(const QString &html, WebViewId webview_id) {
 
   webview->setHtml(html);
 }
+
+void WebViewStack::expose_rpc_function(const QString &name, const RpcFunc & /* unused */,
+                                       WebViewId /* unused */) {
+  qDebug() << "expose_rpc_function: NOT IMPLEMENTED" << name;
+}

@@ -129,6 +129,27 @@ function web.view.set_url(url, view_id) return __internals.view_set_url(url, vie
 --- ```
 function web.view.set_html(html, opts) return __internals.view_set_html(html, (opts or {}).view) end
 
+--- @class ExposeOpts
+--- @field view? number View id
+
+--- Expose a lua function inside a view (Only works with decorations)
+---
+--- @param name string             Func name
+--- @param action fun(table):nil   Action to call when function is invoked in view
+--- @param opts? ExposeOpts        Options
+---
+--- @example
+--- ```lua
+--- web.view.expose('tab_select', function(args)
+---   web.view.select(tonumber(args.view))
+--- end)
+--- ```
+--- then in js
+--- ```js
+--- __nullbrowser.tab_select({ view: 5 })
+--- ```
+function web.view.expose(name, action, opts) return __internals.view_expose(name, action, (opts or {}).view) end
+
 --- Open devtools window for the view
 ---
 --- @param view_id? number    Id of the view

@@ -5,11 +5,11 @@
 
 void register_nullrpc_scheme() {
   QWebEngineUrlScheme scheme("nullrpc");
-  scheme.setFlags(
-      QWebEngineUrlScheme::SecureScheme | QWebEngineUrlScheme::LocalScheme |
-      QWebEngineUrlScheme::LocalAccessAllowed | QWebEngineUrlScheme::ServiceWorkersAllowed |
-      QWebEngineUrlScheme::ContentSecurityPolicyIgnored | QWebEngineUrlScheme::FetchApiAllowed);
   scheme.setSyntax(QWebEngineUrlScheme::Syntax::Path);
+  scheme.setFlags(QWebEngineUrlScheme::SecureScheme | QWebEngineUrlScheme::LocalScheme |
+                  QWebEngineUrlScheme::LocalAccessAllowed |
+                  QWebEngineUrlScheme::ContentSecurityPolicyIgnored |
+                  QWebEngineUrlScheme::FetchApiAllowed);
   QWebEngineUrlScheme::registerScheme(scheme);
 }
 
