@@ -41,6 +41,11 @@ BrowserApp::BrowserApp(Configuration &configuration) : configuration(configurati
     setup_profile(profile);
   }
 
+  // Default keymaps
+  auto &keymap = KeymapEvaluator::instance();
+  keymap.define_mode("n", {.passthrough = false});
+  keymap.define_mode("i", {.passthrough = true});
+
   connect(&window_action_router, &WindowActionRouter::new_window_requested, this,
           [this](const QUrl &url) { create_window({url.toString()}); });
 };

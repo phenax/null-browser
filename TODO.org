@@ -13,6 +13,7 @@
 - [ ] Generate docs for api
 
 ** Bugs
+- [ ] Managing focus in decorations?
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
 - [ ] INVESTIGATE: Segfault on close sometimes
 - [ ] API's don't validate types. (type conversion segfaults)

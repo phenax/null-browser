@@ -112,3 +112,48 @@ LuaRuntime::~LuaRuntime() {
   lua_close(state);
   state = nullptr;
 }
+
+std::vector<QString> LuaRuntime::lua_tostringlist(lua_State *state) {
+  std::vector<QString> values;
+  if (!lua_istable(state, -1))
+    return values;
+
+  lua_pushnil(state); // First key for lua_next()
+  while (lua_next(state, -2) != 0) {
+    if (lua_isstring(state, -1))
+      values.emplace_back(lua_tostring(state, -1));
+    lua_pop(state, 1);
+  }
+  lua_pop(state, 1);
+
+  return values;
+}
+
+void LuaRuntime::inspect_lua_stack(lua_State *state) {
+  int top = lua_gettop(state);
+  qDebug() << "--- Lua Stack (top: " << top << ") ---\n";
+
+  for (int i = 1; i <= top; i++) {
+    int type = lua_type(state, i);
+    qDebug() << "  " << i << ": " << lua_typename(state, type);
+  }
+
+  qDebug() << "---------------------------\n";
+  lua_settop(state, top);
+}
+
+QVariant LuaRuntime::get_lua_value(lua_State *state, int idx, QVariant default_value) {
+  if (lua_isnoneornil(state, idx))
+    return default_value;
+
+  if (lua_isstring(state, idx))
+    return lua_tostring(state, idx);
+
+  if (lua_isboolean(state, idx))
+    return lua_toboolean(state, idx);
+
+  if (lua_isnumber(state, idx))
+    return lua_tonumber(state, idx);
+
+  return lua_tostring(state, idx);
+}

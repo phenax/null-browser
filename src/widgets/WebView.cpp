@@ -5,8 +5,8 @@
 #include <qwebenginepage.h>
 #include <qwebengineprofile.h>
 
-#include "LuaRuntime.hpp"
 #include "schemes/NullRpcSchemeHandler.hpp"
+
 #include "widgets/WebView.hpp"
 
 WebView::WebView(uint32_t webview_id, QWebEngineProfile *profile, QWidget *parent_node)
@@ -50,6 +50,7 @@ void WebView::scroll_to_bottom() {
 }
 
 void WebView::enable_rpc_api() {
+  rpc_enabled = true;
   auto &nullrpc = NullRPCSchemeHandler::instance();
   connect(&nullrpc, &NullRPCSchemeHandler::message_received, this, &WebView::on_rpc_message);
 }
@@ -58,16 +59,14 @@ void WebView::expose_rpc_function(const QString &name, const RpcFunc &action) {
   exposed_functions.insert({name, action});
 }
 
-void WebView::on_rpc_message(const QString &action, const QUrlQuery &params) {
-  if (!exposed_functions.contains(action)) {
-    qDebug() << "function not defined:" << action;
+void WebView::on_rpc_message(const NullRPCMessage &message) {
+  if (!rpc_enabled || !exposed_functions.contains(message.name))
     return;
-  }
 
   RpcArgs args;
-  for (auto pair : params.queryItems())
+  for (auto pair : message.params.queryItems())
     args.insert(pair);
 
-  auto func = exposed_functions.at(action);
+  auto func = exposed_functions.at(message.name);
   func(args);
 }

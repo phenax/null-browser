@@ -6,7 +6,6 @@
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
 #include "events/Event.hpp"
-#include "lua.h"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/Decorations.hpp"
 #include "widgets/WebView.hpp"

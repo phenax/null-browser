@@ -6,12 +6,10 @@
 #include <optional>
 
 #include "AsyncEventLoop.hpp"
-#include "lua.h"
 #include "utils.hpp"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/Decorations.hpp"
 #include "widgets/WebView.hpp"
-#include "widgets/WebViewStack.hpp"
 
 #ifndef PROJECT_LUA_PATH
 #define PROJECT_LUA_PATH ""
@@ -79,50 +77,8 @@ private:
   lua_State *state;
   AsyncEventLoop *event_loop = nullptr;
 
-  // TEMP
 public:
-  static void inspect_lua_stack(lua_State *state) {
-    int top = lua_gettop(state);
-    qDebug() << "--- Lua Stack (top: " << top << ") ---\n";
-
-    for (int i = 1; i <= top; i++) {
-      int type = lua_type(state, i);
-      qDebug() << "  " << i << ": " << lua_typename(state, type);
-    }
-
-    qDebug() << "---------------------------\n";
-    lua_settop(state, top);
-  }
-
-  static std::vector<QString> lua_tostringlist(lua_State *state) {
-    std::vector<QString> values;
-    if (!lua_istable(state, -1))
-      return values;
-
-    lua_pushnil(state); // First key for lua_next()
-    while (lua_next(state, -2) != 0) {
-      if (lua_isstring(state, -1))
-        values.emplace_back(lua_tostring(state, -1));
-      lua_pop(state, 1);
-    }
-    lua_pop(state, 1);
-
-    return values;
-  }
-
-  static QVariant get_lua_value(lua_State *state, int idx, QVariant default_value = 0) {
-    if (lua_isnoneornil(state, idx))
-      return default_value;
-
-    if (lua_isstring(state, idx))
-      return lua_tostring(state, idx);
-
-    if (lua_isboolean(state, idx))
-      return lua_toboolean(state, idx);
-
-    if (lua_isnumber(state, idx))
-      return lua_tonumber(state, idx);
-
-    return lua_tostring(state, idx);
-  }
+  static void inspect_lua_stack(lua_State *state);
+  static std::vector<QString> lua_tostringlist(lua_State *state);
+  static QVariant get_lua_value(lua_State *state, int idx, QVariant default_value = 0);
 };

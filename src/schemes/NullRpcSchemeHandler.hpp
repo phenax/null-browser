@@ -5,6 +5,11 @@
 #include <QtCore>
 #include <qurlquery.h>
 
+struct NullRPCMessage {
+  QString name;
+  QUrlQuery params;
+};
+
 class NullRPCSchemeHandler : public QWebEngineUrlSchemeHandler {
   Q_OBJECT
 
@@ -30,8 +35,11 @@ public:
       return;
     }
 
-    QUrlQuery query(url.query());
-    emit message_received(url.host(), query);
+    NullRPCMessage message{
+        .name = url.host(),
+        .params = QUrlQuery(url.query()),
+    };
+    emit message_received(message);
 
     // TODO: responses managed with request ids
     QByteArray data = "{}";
@@ -42,7 +50,7 @@ public:
   }
 
 signals:
-  void message_received(const QString &action, QUrlQuery params);
+  void message_received(NullRPCMessage message);
 
 private:
   NullRPCSchemeHandler() = default;

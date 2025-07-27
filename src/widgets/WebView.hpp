@@ -12,6 +12,7 @@
 #include <qurlquery.h>
 #include <unordered_map>
 
+#include "schemes/NullRpcSchemeHandler.hpp"
 #include "utils.hpp"
 #include "widgets/DevtoolsWindow.hpp"
 
@@ -36,6 +37,7 @@ private:
   uint32_t id;
   DevtoolsWindow *devtools_window = nullptr;
   std::unordered_map<QString, RpcFunc> exposed_functions;
+  bool rpc_enabled = false;
 
-  void on_rpc_message(const QString &action, const QUrlQuery &params);
+  void on_rpc_message(const NullRPCMessage &message);
 };

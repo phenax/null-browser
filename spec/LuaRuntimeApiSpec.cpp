@@ -1,10 +1,15 @@
 #include <QtCore>
+#include <optional>
+#include <unordered_map>
+#include <utility>
 #include <uv.h>
+#include <vector>
 
 #include "LuaRuntime.hpp"
 #include "WindowActionRouter.hpp"
 #include "events/Event.hpp"
 #include "testUtils.h"
+#include "widgets/WebView.hpp"
 
 class TestEvent1 : public Event {
 public:
@@ -33,16 +38,16 @@ private slots:
       auto &lua = LuaRuntime::instance();
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
-      lua.evaluate(R"(
+      lua.evaluate(R"LUA(
         return web.event.add_listener({ 'Hello', 'World' }, {
           patterns = { 'p1', 'p2' },
           callback = function() print("Called") end,
         });
-      )");
+      )LUA");
       evaluation_completed_spy.wait();
 
       QCOMPARE(evaluation_completed_spy.count(), 1);
-      QVariant result = evaluation_completed_spy.takeFirst().at(0);
+      QVariant result = evaluation_completed_spy.first()[0];
       QCOMPARE(result, true);
     }
 
@@ -51,16 +56,16 @@ private slots:
       auto &lua = LuaRuntime::instance();
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
-      lua.evaluate(R"(
+      lua.evaluate(R"LUA(
         return web.event.add_listener('Hello', {
           patterns = { 'p1', 'p2' },
           callback = function() print("Called") end,
         });
-      )");
+      )LUA");
       evaluation_completed_spy.wait();
 
       QCOMPARE(evaluation_completed_spy.count(), 1);
-      QVariant result = evaluation_completed_spy.takeFirst().at(0);
+      QVariant result = evaluation_completed_spy.takeFirst()[0];
       QCOMPARE(result, true);
     }
 
@@ -69,15 +74,15 @@ private slots:
       auto &lua = LuaRuntime::instance();
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
-      lua.evaluate(R"(
+      lua.evaluate(R"LUA(
         return web.event.add_listener({ 'Hello', 'World' }, {
           callback = function() print("Called") end,
         });
-      )");
+      )LUA");
       evaluation_completed_spy.wait();
 
       QCOMPARE(evaluation_completed_spy.count(), 1);
-      QVariant result = evaluation_completed_spy.takeFirst().at(0);
+      QVariant result = evaluation_completed_spy.takeFirst()[0];
       QCOMPARE(result, true);
     }
 
@@ -86,12 +91,12 @@ private slots:
       auto &lua = LuaRuntime::instance();
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
-      lua.evaluate(R"(
+      lua.evaluate(R"LUA(
         return web.event.add_listener(nil, {
           patterns = { 'p1', 'p2' },
           callback = function() print("Called") end,
         });
-      )");
+      )LUA");
       evaluation_completed_spy.wait();
 
       QCOMPARE(evaluation_completed_spy.count(), 1);
@@ -104,11 +109,11 @@ private slots:
       auto &lua = LuaRuntime::instance();
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
 
-      lua.evaluate(R"(
+      lua.evaluate(R"LUA(
         return web.event.add_listener({'Ev'}, {
           patterns = { 'p1', 'p2' },
         });
-      )");
+      )LUA");
       evaluation_completed_spy.wait();
 
       QCOMPARE(evaluation_completed_spy.count(), 1);
@@ -118,13 +123,13 @@ private slots:
   }
 
   void test_web_event_dispatching() {
-    describe("web.event.add_listener (event dispatch)");
+    describe("web.event.add_listener (event dispatch)LUA");
 
-    context("when dispatching a registered event (without pattern)");
+    context("when dispatching a registered event (without pattern)LUA");
     it("calls the registered event handler") {
       auto &lua = LuaRuntime::instance();
       QSignalSpy evaluation_completed_spy(&lua, &LuaRuntime::evaluation_completed);
-      lua.evaluate(R"(
+      lua.evaluate(R"LUA(
         _G.event1_called = false;
         _G.event1_called_with = nil;
         web.event.add_listener('TestEvent1', {
@@ -137,7 +142,7 @@ private slots:
         web.event.add_listener('TestEvent2', {
           callback = function(opts) _G.event2_called = true end,
         });
-      )");
+      )LUA");
       evaluation_completed_spy.wait();
 
       TestEvent1 event(42);
@@ -149,17 +154,17 @@ private slots:
     }
   }
 
-  void lua_api_view_set_url() {
-    describe("web.search.set_url");
+  void test_lua_api_view_set_url() {
+    describe("web.view.set_url");
 
     context("when called with a url and view id");
     it("emits url_opened for the given view id") {
       auto &lua = LuaRuntime::instance();
       QSignalSpy url_opened(&lua, &LuaRuntime::url_opened);
 
-      lua.evaluate(R"(
+      lua.evaluate(R"LUA(
         web.view.set_url("https://updated-url.com", 42)
-      )");
+      )LUA");
 
       QVERIFY(url_opened.wait());
       QCOMPARE(url_opened.first()[0], "https://updated-url.com");
@@ -172,9 +177,9 @@ private slots:
       auto &lua = LuaRuntime::instance();
       QSignalSpy url_opened(&lua, &LuaRuntime::url_opened);
 
-      lua.evaluate(R"(
+      lua.evaluate(R"LUA(
         web.view.set_url("https://updated-url.com")
-      )");
+      )LUA");
 
       QVERIFY(url_opened.wait());
       QCOMPARE(url_opened.first()[0], "https://updated-url.com");
@@ -187,9 +192,9 @@ private slots:
       auto &lua = LuaRuntime::instance();
       QSignalSpy url_opened(&lua, &LuaRuntime::url_opened);
 
-      lua.evaluate(R"(
+      lua.evaluate(R"LUA(
         web.view.set_url()
-      )");
+      )LUA");
 
       QVERIFY(url_opened.wait());
       QCOMPARE(url_opened.first()[0], "");
@@ -198,7 +203,7 @@ private slots:
     }
   }
 
-  void lua_api_search_set_text() {
+  void test_lua_api_search_set_text() {
     describe("web.search.set_text");
 
     context("when called with just the search text");
@@ -226,7 +231,7 @@ private slots:
     }
   }
 
-  void lua_api_search_next() {
+  void test_lua_api_search_next() {
     describe("web.search.next");
 
     context("when called without view id");
@@ -252,7 +257,7 @@ private slots:
     }
   }
 
-  void lua_api_search_previous() {
+  void test_lua_api_search_previous() {
     describe("web.search.previous");
 
     context("when called without view id");
@@ -278,7 +283,7 @@ private slots:
     }
   }
 
-  void lua_api_search_get_text() {
+  void test_lua_api_search_get_text() {
     describe("web.search.get_text");
 
     it("returns the current search text") {
@@ -294,7 +299,7 @@ private slots:
     }
   }
 
-  void lua_api_view_open_devtools() {
+  void test_lua_api_view_open_devtools() {
     describe("web.view.open_devtools");
 
     context("when called with view id");
@@ -306,6 +311,213 @@ private slots:
 
       QVERIFY(devtools_requested.wait());
       QCOMPARE(devtools_requested.first().first(), 42);
+    }
+  }
+
+  void test_lua_api_view_expose() {
+    describe("web.view.expose");
+
+    context("when called without a view id");
+    it("defines the rpc for the current webview") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy webview_rpc_action_defined(&lua, &LuaRuntime::webview_rpc_action_defined);
+
+      lua.evaluate(R"LUA(
+        web.view.expose('myfunction', function() end)
+      )LUA");
+
+      QVERIFY(webview_rpc_action_defined.wait());
+      QCOMPARE(webview_rpc_action_defined.first()[0], "myfunction");
+      auto func_raw = webview_rpc_action_defined.first()[1];
+      QVERIFY(func_raw.canConvert<RpcFunc>());
+      QCOMPARE(webview_rpc_action_defined.first()[2], 0);
+    }
+
+    context("when called with a view id");
+    it("defines the rpc for the given webview") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy webview_rpc_action_defined(&lua, &LuaRuntime::webview_rpc_action_defined);
+
+      lua.evaluate(R"LUA(
+        web.view.expose('myfunction', function() end, { view = 5 })
+      )LUA");
+
+      QVERIFY(webview_rpc_action_defined.wait());
+      QCOMPARE(webview_rpc_action_defined.first()[0], "myfunction");
+      auto func_raw = webview_rpc_action_defined.first()[1];
+      QVERIFY(func_raw.canConvert<RpcFunc>());
+      QCOMPARE(webview_rpc_action_defined.first()[2], 5);
+    }
+
+    context("when the defined function is called with args");
+    it("calls the lua function with the given args") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy webview_rpc_action_defined(&lua, &LuaRuntime::webview_rpc_action_defined);
+      lua.evaluate(R"LUA(
+        web.view.expose('myfunction', function(args)
+          _G.myfunction_was_called_with = args.prop
+        end, { view = 5 })
+      )LUA");
+      QVERIFY(webview_rpc_action_defined.wait());
+
+      auto func_raw = webview_rpc_action_defined.first()[1];
+      QVERIFY(func_raw.canConvert<RpcFunc>());
+      RpcArgs args{{"prop", "Test value"}};
+      func_raw.value<RpcFunc>()(args);
+
+      QVERIFY(wait_for_lua_to_be_true("return _G.myfunction_was_called_with == 'Test value'"));
+    }
+  }
+
+  void test_lua_api_view_set_html() {
+    describe("web.view.set_html");
+
+    context("when called without view id");
+    it("emits webview_html_set_requested for the given view id") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy webview_html_set_requested(&lua, &LuaRuntime::webview_html_set_requested);
+
+      lua.evaluate(R"LUA(
+        web.view.set_html('<h1>foobar</h1>')
+      )LUA");
+
+      QVERIFY(webview_html_set_requested.wait());
+      QCOMPARE(webview_html_set_requested.first()[0], "<h1>foobar</h1>");
+      QCOMPARE(webview_html_set_requested.first()[1], 0);
+    }
+
+    context("when called with html and view id");
+    it("emits webview_html_set_requested for the given view id") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy webview_html_set_requested(&lua, &LuaRuntime::webview_html_set_requested);
+
+      lua.evaluate(R"LUA(
+        web.view.set_html('<h1>foobar</h1>', { view = 42 })
+      )LUA");
+
+      QVERIFY(webview_html_set_requested.wait());
+      QCOMPARE(webview_html_set_requested.first()[0], "<h1>foobar</h1>");
+      QCOMPARE(webview_html_set_requested.first()[1], 42);
+    }
+  }
+
+  void test_lua_api_decorations_set_enabled() {
+    describe("web.decorations.*.enable");
+
+    context("when called without view id");
+    it("emits webview_html_set_requested without window id (nullopt)") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy decorations_set_enabled(&lua, &LuaRuntime::decoration_set_enabled);
+
+      lua.evaluate(R"LUA(
+        web.decorations.left.enable()
+      )LUA");
+
+      QVERIFY(decorations_set_enabled.wait());
+      auto call = decorations_set_enabled.first();
+      QCOMPARE(call[0], 3);
+      QCOMPARE(call[1], true);
+      QCOMPARE(call[2].value<std::optional<int>>(), std::nullopt);
+    }
+
+    context("when called with window id");
+    it("emits webview_html_set_requested for the given window id") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy decorations_set_enabled(&lua, &LuaRuntime::decoration_set_enabled);
+
+      lua.evaluate(R"LUA(
+        web.decorations.left.enable({ win = 42 })
+      )LUA");
+
+      QVERIFY(decorations_set_enabled.wait());
+      auto call = decorations_set_enabled.first();
+      QCOMPARE(call[0], 3);
+      QCOMPARE(call[1], true);
+      QCOMPARE(call[2].value<std::optional<WindowId>>(), std::make_optional(42));
+    }
+
+    context("for all decoration types");
+    it("emits webview_html_set_requested for the given window id") {
+      std::vector<std::pair<int, QString>> decoration_types{
+          {1, "top"},
+          {2, "bottom"},
+          {3, "left"},
+          {4, "right"},
+      };
+      for (auto &dir : decoration_types) {
+        auto &lua = LuaRuntime::instance();
+        QSignalSpy decorations_set_enabled(&lua, &LuaRuntime::decoration_set_enabled);
+
+        lua.evaluate(QString(R"LUA(
+           web.decorations.%1.enable({ win = 42 })
+         )LUA")
+                         .arg(dir.second));
+
+        QVERIFY(decorations_set_enabled.wait());
+        auto call = decorations_set_enabled.first();
+        QCOMPARE(call[0], dir.first);
+        QCOMPARE(call[1], true);
+        QCOMPARE(call[2].value<std::optional<WindowId>>(), std::make_optional(42));
+      }
+    }
+
+    describe("web.decorations.*.disable");
+
+    context("when called without view id");
+    it("emits webview_html_set_requested without window id (nullopt)") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy decorations_set_enabled(&lua, &LuaRuntime::decoration_set_enabled);
+
+      lua.evaluate(R"LUA(
+        web.decorations.left.disable()
+      )LUA");
+
+      QVERIFY(decorations_set_enabled.wait());
+      auto call = decorations_set_enabled.first();
+      QCOMPARE(call[0], 3);
+      QCOMPARE(call[1], false);
+      QCOMPARE(call[2].value<std::optional<int>>(), std::nullopt);
+    }
+
+    context("when called with window id");
+    it("emits webview_html_set_requested for the given window id") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy decorations_set_enabled(&lua, &LuaRuntime::decoration_set_enabled);
+
+      lua.evaluate(R"LUA(
+        web.decorations.left.disable({ win = 42 })
+      )LUA");
+
+      QVERIFY(decorations_set_enabled.wait());
+      auto call = decorations_set_enabled.first();
+      QCOMPARE(call[0], 3);
+      QCOMPARE(call[1], false);
+      QCOMPARE(call[2].value<std::optional<WindowId>>(), std::make_optional(42));
+    }
+
+    context("for all decoration types");
+    it("emits webview_html_set_requested for the given window id") {
+      std::vector<std::pair<int, QString>> decoration_types{
+          {1, "top"},
+          {2, "bottom"},
+          {3, "left"},
+          {4, "right"},
+      };
+      for (auto &dir : decoration_types) {
+        auto &lua = LuaRuntime::instance();
+        QSignalSpy decorations_set_enabled(&lua, &LuaRuntime::decoration_set_enabled);
+
+        lua.evaluate(QString(R"LUA(
+           web.decorations.%1.disable({ win = 42 })
+         )LUA")
+                         .arg(dir.second));
+
+        QVERIFY(decorations_set_enabled.wait());
+        auto call = decorations_set_enabled.first();
+        QCOMPARE(call[0], dir.first);
+        QCOMPARE(call[1], false);
+        QCOMPARE(call[2].value<std::optional<WindowId>>(), std::make_optional(42));
+      }
     }
   }
 };

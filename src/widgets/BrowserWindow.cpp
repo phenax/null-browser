@@ -37,11 +37,6 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, QWebEngineProfi
     }
   }
 
-  // Default keymaps
-  auto &keymap = KeymapEvaluator::instance();
-  keymap.define_mode("n", {.passthrough = false});
-  keymap.define_mode("i", {.passthrough = true});
-
   // Update window title when webview changes
   connect(webview_stack, &WebViewStack::current_webview_title_changed, this, [this](int index) {
     auto webviews = webview_stack->get_webview_list();
