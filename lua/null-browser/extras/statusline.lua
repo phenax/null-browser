@@ -1,6 +1,6 @@
 local statusline = {}
 
-local mode_labels = { n = "NORMAL", i = "INSERT" }
+local mode_labels = { n = 'NORMAL', i = 'INSERT' }
 
 function statusline.init(opts)
   local decoration = (opts or {}).decoration or web.decorations.bottom
@@ -29,34 +29,46 @@ function statusline.show_status_in_window(win_id, decoration)
   end
 
   web.schedule(function() show_statusline() end)
-  web.event.add_listener('ModeChanged', {
+  web.event.add_listener({ 'ModeChanged', 'UrlChanged' }, {
     callback = function(_) show_statusline() end,
   })
 end
 
 local mode_styles = {
-  n = "background-color: #007070; color: white;",
-  i = "background-color: #e06c75; color: white;",
+  n = 'background-color: #007070; color: white;',
+  i = 'background-color: #e06c75; color: white;',
 }
+
+function statusline.current_url()
+  local current_view = web.view.current();
+  for _, view in ipairs(web.view.list()) do
+    if view.id == current_view then
+      return view.url
+    end
+  end
+  return ""
+end
 
 function statusline.html()
   local mode = web.keymap.get_mode()
+  local url = statusline.current_url()
   local mode_label = mode_labels[mode] or mode
   local styles = '<style>' .. statusline.css() .. '</style>'
-  local mode_style = mode_styles[mode] or ""
-  local html = '<div class="status">' ..
+  local mode_style = mode_styles[mode] or ''
+  local html = '<div class="statusline">' ..
       '<div class="mode" style="' .. mode_style .. '">' .. mode_label .. '</div>' ..
+      '<div class="url">' .. url .. '</div>' ..
       '</div>'
   return styles .. html
 end
 
 function statusline.css()
   return [[
-  .status {
+  .statusline {
     width: 100%;
     height: 100vh;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: stretch;
     background-color: #000;
   }
@@ -67,6 +79,12 @@ function statusline.css()
     padding: 0 8px;
     font-weight: bold;
     background-color: #888;
+  }
+  .url {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 8px;
   }
   ]]
 end
