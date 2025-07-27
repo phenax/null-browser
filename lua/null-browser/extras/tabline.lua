@@ -23,7 +23,7 @@ function tabline.init(opts)
 end
 
 function tabline.show_tabs_in_window(win_id, decoration)
-  web.event.add_listener('UrlChanged', {
+  web.event.add_listener({ 'UrlChanged', 'ViewSelected', 'ViewCreated', 'ViewClosed' }, {
     callback = function()
       if not decoration.is_enabled({ win = win_id }) then return end
 

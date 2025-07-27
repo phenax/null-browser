@@ -38,7 +38,7 @@ function statusline.show_status_in_window(win_id, decoration)
       show_statusline()
     end
   end)
-  web.event.add_listener({ 'ModeChanged', 'UrlChanged' }, {
+  web.event.add_listener({ 'ModeChanged', 'UrlChanged', 'ViewSelected', 'ViewClosed', 'ViewCreated' }, {
     callback = function(_) show_statusline() end,
   })
 end

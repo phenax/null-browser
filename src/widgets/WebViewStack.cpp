@@ -12,6 +12,9 @@
 #include "WindowActionRouter.hpp"
 #include "events/PermissionRequestedEvent.hpp"
 #include "events/UrlChangedEvent.hpp"
+#include "events/ViewClosedEvent.hpp"
+#include "events/ViewCreatedEvent.hpp"
+#include "events/ViewSelectedEvent.hpp"
 
 #include "widgets/WebViewStack.hpp"
 
@@ -73,6 +76,10 @@ WebView *WebViewStack::create_new_webview(const QUrl &url, bool focus) {
     focus_webview(webview->get_id());
 
   emit current_webview_title_changed(layout->currentIndex());
+
+  // TODO: Add window id
+  auto *event = new ViewCreatedEvent(webview->get_id(), 0);
+  WindowActionRouter::instance().dispatch_event(event);
 
   return webview;
 }
@@ -152,6 +159,9 @@ void WebViewStack::close(WebViewId webview_id) {
       create_new_webview(configuration->new_view_url(), true);
     }
   }
+
+  auto *event = new ViewClosedEvent(webview_id, 0);
+  WindowActionRouter::instance().dispatch_event(event);
 }
 
 void WebViewStack::webview_history_back(WebViewId webview_id, qsizetype history_index) {
@@ -209,6 +219,9 @@ void WebViewStack::focus_webview(WebViewId webview_id) {
   auto webview_index = get_webview_index(webview_id);
   if (webview_index >= 0)
     layout->setCurrentIndex((int)webview_index);
+
+  auto *event = new ViewSelectedEvent(webview_id, 0);
+  WindowActionRouter::instance().dispatch_event(event);
 }
 
 void WebViewStack::open_devtools(WebViewId webview_id) {
