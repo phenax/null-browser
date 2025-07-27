@@ -11,7 +11,8 @@
 
 QString default_html_layout = R"HTML(
   <script>
-    window.__nullbrowser ||= (() => {
+    window._nullbrowser ||= {};
+    window._nullbrowser.rpc ||= (() => {
       const invoke = (action, opts = {}) => {
         const urlParams = new URLSearchParams(opts);
         const url = `nullrpc://${action}?${urlParams.toString()}`;
@@ -91,6 +92,12 @@ void EdgeDecoration::set_url(const QUrl &url) {
   if (!webview.has_value())
     return;
   webview.value()->setUrl(url);
+}
+
+void EdgeDecoration::run_javascript(const QString &js_code) {
+  if (!webview.has_value())
+    return;
+  webview.value()->run_javascript(js_code);
 }
 
 std::optional<WebViewId> EdgeDecoration::get_view_id() {

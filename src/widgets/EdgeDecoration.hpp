@@ -21,6 +21,7 @@ public:
   void set_html(const QString &content);
   void set_enabled(bool enabled_value);
   void set_url(const QUrl &url);
+  void run_javascript(const QString &js_code);
   std::optional<WebViewId> get_view_id();
   void expose_rpc_function(const QString &name, const RpcFunc &action);
 

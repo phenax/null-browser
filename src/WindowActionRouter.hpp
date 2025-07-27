@@ -13,7 +13,6 @@
 #include "utils.hpp"
 #include "widgets/BrowserWindow.hpp"
 #include "widgets/Decorations.hpp"
-#include "widgets/WebViewStack.hpp"
 
 #define WITH_WEBVIEW_WINDOW(WEBVIEW_ID, IDENT, BLOCK)                                              \
   for (auto &win_match : window_map) {                                                             \

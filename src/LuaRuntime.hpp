@@ -64,6 +64,7 @@ signals:
   void webview_scroll_bottom_requested(WebViewId webview_id);
   void decoration_set_enabled(DecorationType type, bool enabled, std::optional<WindowId> win_id);
   void webview_html_set_requested(const QString &html, WebViewId view_id);
+  void webview_js_eval_requested(const QString &js_code, WebViewId view_id);
   void schedule_for_next_tick(const std::function<void()> &action);
   void webview_rpc_action_defined(const QString &name, const RpcFunc &action, WebViewId view_id);
 

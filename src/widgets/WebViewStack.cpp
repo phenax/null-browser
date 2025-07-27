@@ -342,6 +342,16 @@ void WebViewStack::set_html(const QString &html, WebViewId webview_id) {
   webview->setHtml(html);
 }
 
+void WebViewStack::run_javascript(const QString &js_code, WebViewId webview_id) {
+  auto *webview = get_webview(webview_id);
+  if (webview == nullptr) {
+    qDebug() << "Webview does not exist";
+    return;
+  }
+
+  webview->run_javascript(js_code);
+}
+
 void WebViewStack::expose_rpc_function(const QString &name, const RpcFunc & /* unused */,
                                        WebViewId /* unused */) {
   qDebug() << "expose_rpc_function: NOT IMPLEMENTED" << name;

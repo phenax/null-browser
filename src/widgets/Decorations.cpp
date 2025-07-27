@@ -84,6 +84,12 @@ void Decorations::set_html(const QString &html, WebViewId view_id) {
     decoration.value()->set_html(html);
 }
 
+void Decorations::run_javascript(const QString &js_code, WebViewId view_id) {
+  auto decoration = get_decoration_widget_by_view_id(view_id);
+  if (decoration.has_value())
+    decoration.value()->run_javascript(js_code);
+}
+
 std::optional<WebViewId> Decorations::get_view_id(DecorationType type) {
   auto decoration = get_decoration_widget_type(type);
   return decoration.has_value() ? decoration.value()->get_view_id() : std::nullopt;

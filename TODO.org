@@ -3,7 +3,7 @@
 - [X] web.schedule
 - [X] Create view with html (web.view.set_html())
 - [X] Expose JS <-> lua in page (web.view.expose())
-- [-] Tests for api
+- [X] Tests for api
 - [ ] Run JS in page (web.view.eval_js())
 - [ ] web.decorations.*.set_size()
 - [ ] f-key navigation
@@ -117,7 +117,7 @@ web.event.add_listener({ 'TabOpen', 'TabClose' }, {
     local views = web.view.list()
     for index, view in ipairs(web.view.list()) do
       local text = index..': '..view.title..' ('..view.url..')'
-      local tab = '<span onclick="__nullbrowser__.openTab('..view.id..')">' .. text .. '</span>')
+      local tab = '<span onclick="_nullbrowser.rpc.openTab('..view.id..')">' .. text .. '</span>')
       tabs_html = tabs_html .. tab
     end
     web.view.set_html(tabs_html, { view = web.decorations.top.view() })

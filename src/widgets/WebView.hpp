@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QWebEnginePage>
 #include <QWebEngineUrlRequestInterceptor>
 #include <QWebEngineUrlRequestJob>
 #include <QWebEngineUrlSchemeHandler>
@@ -31,6 +32,7 @@ public:
   void enable_rpc_api();
   void expose_rpc_function(const QString &name, const RpcFunc &action);
 
+  DELEGATE(page(), runJavaScript, run_javascript)
   DEFINE_GETTER(get_id, id)
 
 private:

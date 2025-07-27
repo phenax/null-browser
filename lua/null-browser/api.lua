@@ -129,6 +129,21 @@ function web.view.set_url(url, view_id) return __internals.view_set_url(url, vie
 --- ```
 function web.view.set_html(html, opts) return __internals.view_set_html(html, (opts or {}).view) end
 
+--- @class RunJSOpts
+--- @field view? number View id
+
+--- Set html in a given view
+---
+--- @param js string        HTML string
+--- @param opts? RunJSOpts  Options
+---
+--- @example
+--- ```lua
+--- web.view.run_js('console.log(42)')
+--- web.view.run_js('console.log(42)', 3) -- Set html for view with id 3
+--- ```
+function web.view.run_js(js, opts) return __internals.view_run_js(js, (opts or {}).view) end
+
 --- @class ExposeOpts
 --- @field view? number View id
 
@@ -146,7 +161,7 @@ function web.view.set_html(html, opts) return __internals.view_set_html(html, (o
 --- ```
 --- then in js
 --- ```js
---- __nullbrowser.tab_select({ view: 5 })
+--- _nullbrowser.rpc.tab_select({ view: 5 })
 --- ```
 function web.view.expose(name, action, opts) return __internals.view_expose(name, action, (opts or {}).view) end
 

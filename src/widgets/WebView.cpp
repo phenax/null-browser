@@ -28,25 +28,28 @@ void WebView::open_devtools() {
 }
 
 void WebView::scroll_increment(int deltax, int deltay) {
-  auto code = QString(R"JS((() => {
-    const $el = document.scrollingElement;
-    $el.scrollTo($el.scrollLeft + %1, $el.scrollTop + %2);
-  })())JS")
-                  .arg(deltax)
-                  .arg(deltay);
-
-  page()->runJavaScript(code);
+  // clang-format off
+  run_javascript(
+    QString(R"JS(
+      (() => {
+        const $el = document.scrollingElement;
+        $el.scrollTo($el.scrollLeft + %1, $el.scrollTop + %2);
+      })()
+    )JS").arg(deltax).arg(deltay)
+  );
+  // clang-format on
 }
 
 void WebView::scroll_to_top() {
-  auto code = QString(R"JS(document.scrollingElement.scrollTo(0, 0))JS");
-  page()->runJavaScript(code);
+  run_javascript(R"JS(
+    document.scrollingElement.scrollTo(0, 0)
+  )JS");
 }
 
 void WebView::scroll_to_bottom() {
-  auto code = QString(
-      R"JS(document.scrollingElement.scrollTo(0, document.scrollingElement.scrollHeight))JS");
-  page()->runJavaScript(code);
+  run_javascript(R"JS(
+    document.scrollingElement.scrollTo(0, document.scrollingElement.scrollHeight)
+  )JS");
 }
 
 void WebView::enable_rpc_api() {

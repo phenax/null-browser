@@ -47,7 +47,7 @@ function tabline.tabs_html()
   for index, view in ipairs(web.view.list()) do
     local tab = html.button({
       class = 'tab' .. (web.view.current() == view.id and ' current' or ''),
-      onclick = '__nullbrowser.tab_select({ view: ' .. view.id .. ' })',
+      onclick = '_nullbrowser.rpc.tab_select({ view: ' .. view.id .. ' })',
     }, {
       index .. ': ' .. view.title .. ' (' .. view.url .. ')',
     })
