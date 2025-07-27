@@ -1,3 +1,4 @@
+local html = require 'null-browser.extras.html'
 local tabline = {}
 
 -- TODO: vertical tabs
@@ -42,19 +43,23 @@ function tabline.show_tabs_in_window(win_id, decoration)
 end
 
 function tabline.tabs_html()
-  local views_html = ''
+  local tab_list = {}
   for index, view in ipairs(web.view.list()) do
-    -- TODO: Sanitize this stuff
-    local text = index .. ': ' .. view.title .. ' (' .. view.url .. ')'
-    local classes = 'tab'
-    if web.view.current() == view.id then classes = classes .. ' current' end
-    local onclick = '__nullbrowser.tab_select({ view: ' .. view.id .. ' })'
-    local html = '<button class="' .. classes .. '" onclick="' .. onclick .. '">' .. text .. '</button>'
-    views_html = views_html .. html
+    local tab = html.button({
+      class = 'tab' .. (web.view.current() == view.id and ' current' or ''),
+      onclick = '__nullbrowser.tab_select({ view: ' .. view.id .. ' })',
+    }, {
+      index .. ': ' .. view.title .. ' (' .. view.url .. ')',
+    })
+    table.insert(tab_list, tab)
   end
 
-  return '<style>' .. tabline.css() .. '</style>' ..
-      '<div class="tabs">' .. views_html .. '</div>'
+  local tabs_html = html.div({}, {
+    html.style({}, { html.raw(tabline.css()) }),
+    html.div({ class = 'tabs' }, tab_list)
+  })
+
+  return html.to_string(tabs_html)
 end
 
 function tabline.css()
@@ -76,12 +81,15 @@ function tabline.css()
       text-wrap: nowrap;
       text-align: left;
       min-width: 0;
-      border-left: 1px solid white;
       vertical-align: middle;
       padding: 0 8px;
+      border-left: 1px solid #555;
+    }
+    .tab:first-child {
+      border: none;
     }
     .tab.current {
-      background: #333;
+      background: #007070;
     }
   ]]
 end

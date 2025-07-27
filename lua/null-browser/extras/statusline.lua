@@ -1,3 +1,4 @@
+local html = require 'null-browser.extras.html'
 local statusline = {}
 
 local mode_labels = { n = 'NORMAL', i = 'INSERT' }
@@ -28,7 +29,15 @@ function statusline.show_status_in_window(win_id, decoration)
     web.view.set_html(statusline.html(), { view = view })
   end
 
-  web.schedule(function() show_statusline() end)
+  web.schedule(function()
+    local view = decoration.view({ win = win_id })
+    -- FIXME: web.schedule doesn't guarantee that view will be available
+    if not view then
+      web.schedule(function() show_statusline() end)
+    else
+      show_statusline()
+    end
+  end)
   web.event.add_listener({ 'ModeChanged', 'UrlChanged' }, {
     callback = function(_) show_statusline() end,
   })
@@ -52,40 +61,48 @@ end
 function statusline.html()
   local mode = web.keymap.get_mode()
   local url = statusline.current_url()
-  local mode_label = mode_labels[mode] or mode
-  local styles = '<style>' .. statusline.css() .. '</style>'
-  local mode_style = mode_styles[mode] or ''
-  local html = '<div class="statusline">' ..
-      '<div class="mode" style="' .. mode_style .. '">' .. mode_label .. '</div>' ..
-      '<div class="url">' .. url .. '</div>' ..
-      '</div>'
-  return styles .. html
+  local html_elem = html.div({}, {
+    html.style({}, { html.raw(statusline.css()) }),
+    html.div({ class = 'statusline' }, {
+      html.div({ class = 'mode', style = mode_styles[mode] or '' }, {
+        mode_labels[mode] or mode,
+      }),
+      html.div({ class = 'url' }, { url }),
+    })
+  })
+  return html.to_string(html_elem)
 end
 
 function statusline.css()
   return [[
-  .statusline {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    background-color: #000;
-  }
-  .mode {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0 8px;
-    font-weight: bold;
-    background-color: #888;
-  }
-  .url {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0 8px;
-  }
+    html, body {
+      background: #000;
+    }
+    .statusline {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+    }
+    .mode {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 8px;
+      font-weight: bold;
+      background-color: #888;
+    }
+    .url {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 0 8px;
+      max-width: 50vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-wrap: nowrap;
+    }
   ]]
 end
 
