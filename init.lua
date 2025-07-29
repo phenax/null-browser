@@ -58,6 +58,8 @@ web.event.add_listener('NotificationReceived', {
 require 'null-browser.extras.tabline'.init()
 
 -- Statusline
-require 'null-browser.extras.statusline'.init()
+require 'null-browser.extras.statusline'.init {
+  decoration = web.decorations.bottom,
+}
 
 print('ending...')

@@ -1,19 +1,48 @@
 local html = require 'null-browser.extras.html'
-local statusline = {}
+local statusline = {
+  config = {
+    decoration = web.decorations.bottom,
+    mode_labels = {
+      n = 'NORMAL',
+      i = 'INSERT',
+      f = 'FIND',
+    },
+    mode_styles = {
+      n = 'background-color: #007070; color: white;',
+      i = 'background-color: #e06c75; color: white;',
+      f = 'background-color: #51e980; color: #333;',
+    },
+    segments = {
+      left = {
+        { name = 'mode' },
+        { name = 'url' },
+      },
+      right = {
+        { name = 'views-count' },
+      }
+    },
+  },
+}
 
-local mode_labels = { n = 'NORMAL', i = 'INSERT' }
+function statusline.setup(config)
+  for key, value in pairs(config) do
+    statusline.config[key] = value
+  end
+end
 
-function statusline.init(opts)
-  local decoration = (opts or {}).decoration or web.decorations.bottom
+function statusline.init(config)
+  statusline.setup(config)
 
   web.event.add_listener('WinCreated', {
     callback = function(event)
+      local decoration = statusline.config.decoration
       decoration.enable({ win = event.win_id })
       statusline.show_status_in_window(event.win_id, decoration)
     end,
   })
 
   web.keymap.set('n', '<space>gg', function()
+    local decoration = statusline.config.decoration
     if decoration.is_enabled({ win = 0 }) then
       decoration.disable({ win = 0 })
     else
@@ -38,39 +67,64 @@ function statusline.show_status_in_window(win_id, decoration)
       show_statusline()
     end
   end)
-  web.event.add_listener({ 'ModeChanged', 'UrlChanged', 'ViewSelected', 'ViewClosed', 'ViewCreated' }, {
+
+  web.event.add_listener({
+    'ModeChanged',
+    'UrlChanged',
+    'ViewSelected',
+    'ViewClosed',
+    'ViewCreated',
+  }, {
     callback = function(_) show_statusline() end,
   })
 end
 
-local mode_styles = {
-  n = 'background-color: #007070; color: white;',
-  i = 'background-color: #e06c75; color: white;',
-}
-
 function statusline.current_url()
-  local current_view = web.view.current();
-  for _, view in ipairs(web.view.list()) do
-    if view.id == current_view then
-      return view.url
+  local views = web.view.list()
+  local view = views[web.view.current_index()]
+  return view and view.url or ""
+end
+
+local function segment_html(segment)
+  local segments_ui = {
+    mode = function()
+      local mode = web.keymap.get_mode()
+      return html.div({ class = 'mode', style = statusline.config.mode_styles[mode] or '' }, {
+        statusline.config.mode_labels[mode] or mode,
+      })
+    end,
+    url = function()
+      return html.div({ class = 'url' }, { statusline.current_url() })
+    end,
+    ['views-count'] = function()
+      return html.div({ class = 'tab-info' }, {
+        web.view.current_index() .. '/' .. #web.view.list(),
+      })
     end
+  }
+  return segments_ui[segment.name] and segments_ui[segment.name]() or ''
+end
+
+local function map(ls, fn)
+  local res = {}
+  for _, x in ipairs(ls) do
+    table.insert(res, fn(x))
   end
-  return ""
+  return res
 end
 
 function statusline.html()
-  local mode = web.keymap.get_mode()
-  local url = statusline.current_url()
-  local html_elem = html.div({}, {
-    html.style({}, { html.raw(statusline.css()) }),
-    html.div({ class = 'statusline' }, {
-      html.div({ class = 'mode', style = mode_styles[mode] or '' }, {
-        mode_labels[mode] or mode,
-      }),
-      html.div({ class = 'url' }, { url }),
+  return html.to_string(
+    html.div({}, {
+      html.style({}, { html.raw(statusline.css()) }),
+      html.div({ class = 'statusline' }, {
+        html.div({ class = 'statusline-segment statusline-left' },
+          map(statusline.config.segments.left, segment_html)),
+        html.div({ class = 'statusline-segment statusline-right' },
+          map(statusline.config.segments.right, segment_html)),
+      })
     })
-  })
-  return html.to_string(html_elem)
+  )
 end
 
 function statusline.css()
@@ -84,24 +138,42 @@ function statusline.css()
       display: flex;
       justify-content: space-between;
       align-items: stretch;
+      overflow: hidden;
     }
-    .mode {
+    .statusline-segment {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0 8px;
-      font-weight: bold;
-      background-color: #888;
+      align-items: stretch;
+      max-width: 50vw;
+      overflow: hidden;
+      width: 100%;
     }
-    .url {
+    .statusline-segment > * {
       display: flex;
       justify-content: flex-start;
       align-items: center;
       padding: 0 8px;
-      max-width: 50vw;
-      overflow: hidden;
+    }
+    .statusline-left {
+      justify-content: flex-start;
+    }
+    .statusline-right {
+      justify-content: flex-end;
+    }
+
+    .mode {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      font-weight: bold;
+      background-color: #888;
+    }
+    .url {
       text-overflow: ellipsis;
       text-wrap: nowrap;
+    }
+    .tab-info {
+      background-color: #333;
     }
   ]]
 end
