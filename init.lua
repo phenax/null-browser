@@ -62,4 +62,9 @@ require 'null-browser.extras.statusline'.init {
   decoration = web.decorations.bottom,
 }
 
+local hints = require 'null-browser.extras.hints'
+hints.init()
+web.keymap.set('n', 'f', function() hints.start('a[href], button', false) end)
+web.keymap.set('n', '<s-f>', function() hints.start('a[href], button', true) end)
+
 print('ending...')

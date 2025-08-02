@@ -41,7 +41,7 @@ public:
   void run_javascript(const QString &js_code, WebViewId webview_id);
   void expose_rpc_function(const QString &name, const RpcFunc &action, WebViewId webview_id);
 
-  bool on_window_key_event(QKeyEvent *event);
+  bool on_window_key_event(QObject *target, QKeyEvent *event);
 
   void closeEvent(QCloseEvent * /*event*/) override { emit closed(); };
 

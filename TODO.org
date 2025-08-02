@@ -4,13 +4,20 @@
 - [X] Create view with html (web.view.set_html())
 - [X] Expose JS <-> lua in page (web.view.expose())
 - [X] Tests for api
-- [ ] Run JS in page (web.view.eval_js())
+- [X] Run JS in page (web.view.run_js())
+- [X] KeyPressed event
+- [X] f-key navigation
+- [ ] On finder stop, exit find mode
 - [ ] web.decorations.*.set_size()
-- [ ] f-key navigation
+- [ ] web.keymap.configure_mode(modename, { passthrough = false })
+- [ ] web.view.reload
+- [ ] Load assets directory into build
 - [ ] Fullscreen
 - [ ] Zoom in/out
 - [ ] Use table for all internals api options?
 - [ ] Generate docs for api
+- [ ] Show number of tabs in statusline
+- [ ] web.view.reload()
 
 ** Bugs
 - [ ] Managing focus in decorations?
@@ -20,6 +27,7 @@
 - [ ] web.view apis in `-e` flag from "clients" (non-servers calls) don't work
 
 ** Next
+- [ ] Granular updates in statusline plugin instead of set_html multiple times
 - [ ] Permission management (list/allow/deny) lua api
 - [ ] Tests for window
 - [ ] More tests for stack

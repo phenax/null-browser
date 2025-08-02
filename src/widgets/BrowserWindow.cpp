@@ -4,9 +4,13 @@
 #include <QStackedLayout>
 #include <QVBoxLayout>
 #include <QtCore>
+#include <qcoreevent.h>
 
 #include "Configuration.hpp"
+#include "WindowActionRouter.hpp"
+#include "events/KeyPressedEvent.hpp"
 #include "keymap/KeymapEvaluator.hpp"
+#include "widgets/BrowserApp.hpp"
 #include "widgets/Decorations.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -52,9 +56,15 @@ BrowserWindow::BrowserWindow(const Configuration &configuration, QWebEngineProfi
           &BrowserWindow::close_window_requested);
 }
 
-bool BrowserWindow::on_window_key_event(QKeyEvent *event) {
+bool BrowserWindow::on_window_key_event(QObject *target, QKeyEvent *event) {
   auto &keymap_evaluator = KeymapEvaluator::instance();
   const bool should_skip = keymap_evaluator.evaluate(event->modifiers(), (Qt::Key)event->key());
+
+  // TODO: Fix this logic to find the right "target" for event
+  if (event->type() == QEvent::KeyPress && dynamic_cast<WebView *>(target->parent())) {
+    auto *lua_event = KeyPressedEvent::from_qkeyevent(event);
+    WindowActionRouter::instance().dispatch_event(lua_event);
+  }
 
   return should_skip;
 }

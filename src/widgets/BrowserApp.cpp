@@ -84,7 +84,7 @@ bool BrowserApp::eventFilter(QObject *target, QEvent *event) {
 
     if (auto *target_widget = dynamic_cast<QWidget *>(target); win->isAncestorOf(target_widget)) {
       auto *key_event = static_cast<QKeyEvent *>(event);
-      const bool should_skip = win->on_window_key_event(key_event);
+      const bool should_skip = win->on_window_key_event(target, key_event);
       return should_skip;
     }
   }
