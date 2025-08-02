@@ -65,6 +65,7 @@ public slots:
   void run_javascript(const QString &js_code, WebViewId webview_id) override;
   void expose_rpc_function(const QString &name, const RpcFunc &action,
                            WebViewId webview_id) override;
+  void reload(WebViewId webview_id) override;
 
 protected slots:
   void on_new_webview_request(QWebEngineNewWindowRequest &request);

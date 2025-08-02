@@ -356,3 +356,13 @@ void WebViewStack::expose_rpc_function(const QString &name, const RpcFunc & /* u
                                        WebViewId /* unused */) {
   qDebug() << "expose_rpc_function: NOT IMPLEMENTED" << name;
 }
+
+void WebViewStack::reload(WebViewId webview_id) {
+  auto *webview = get_webview(webview_id);
+  if (webview == nullptr) {
+    qDebug() << "Webview does not exist";
+    return;
+  }
+
+  webview->reload();
+}

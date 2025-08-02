@@ -82,6 +82,9 @@ void WindowActionRouter::initialize(Configuration *config) {
             WITH_WEBVIEW_WINDOW(webview_id, window,
                                 { window->run_javascript(js_code, webview_id); });
           });
+  connect(&runtime, &LuaRuntime::webview_reload_requested, this, [this](WebViewId webview_id) {
+    WITH_WEBVIEW_WINDOW(webview_id, window, { window->reload(webview_id); });
+  });
 
   // Search
   connect(&runtime, &LuaRuntime::search_requested, this,

@@ -67,6 +67,7 @@ signals:
   void webview_js_eval_requested(const QString &js_code, WebViewId view_id);
   void schedule_for_next_tick(const std::function<void()> &action);
   void webview_rpc_action_defined(const QString &name, const RpcFunc &action, WebViewId view_id);
+  void webview_reload_requested(WebViewId webview_id);
 
 protected:
   LuaRuntime();

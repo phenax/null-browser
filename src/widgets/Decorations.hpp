@@ -32,6 +32,7 @@ public:
   void run_javascript(const QString &js_code, WebViewId webview_id) override;
   void expose_rpc_function(const QString &name, const RpcFunc &action,
                            WebViewId webview_id) override;
+  void reload(WebViewId webview_id) override;
 
 private:
   EdgeDecoration *decoration_top;

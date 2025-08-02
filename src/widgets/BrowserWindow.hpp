@@ -40,6 +40,7 @@ public:
   void set_html(const QString &html, WebViewId webview_id);
   void run_javascript(const QString &js_code, WebViewId webview_id);
   void expose_rpc_function(const QString &name, const RpcFunc &action, WebViewId webview_id);
+  void reload(WebViewId webview_id);
 
   bool on_window_key_event(QObject *target, QKeyEvent *event);
 

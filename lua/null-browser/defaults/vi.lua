@@ -26,6 +26,10 @@ function M.initialize()
   web.keymap.set('n', 'gg', function() web.view.scroll_to_top() end)
   web.keymap.set('n', '<s-g>', function() web.view.scroll_to_bottom() end)
 
+  -- Reload page
+  web.keymap.set('n', '<c-r>', function() web.view.reload() end)
+  web.keymap.set('n', 'r', function() web.view.reload() end)
+
   -- Open in new view
   web.keymap.set('n', 'o', function()
     config.menu:select(config.history.list(), { prompt = 'Open view:' }, function(err, result)

@@ -101,3 +101,5 @@ void Decorations::expose_rpc_function(const QString &name, const RpcFunc &action
   if (decoration.has_value())
     decoration.value()->expose_rpc_function(name, action);
 }
+
+void Decorations::reload(WebViewId /* unused */) { qDebug() << "TODO: Impl"; }

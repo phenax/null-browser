@@ -339,6 +339,14 @@ int lua_api_decorations_get_view(lua_State *state) {
   return 1;
 }
 
+int lua_api_view_reload(lua_State *state) {
+  WebViewId webview_id = lua_isnoneornil(state, 1) ? 0 : lua_tointeger(state, 1);
+  auto &runtime = LuaRuntime::instance();
+  emit runtime.webview_reload_requested(webview_id);
+  lua_pushnil(state);
+  return 1;
+}
+
 // :: string -> (table -> nil) -> WebViewId -> nil
 int lua_api_view_expose(lua_State *state) {
   const char *name = lua_tostring(state, 1);
@@ -390,6 +398,7 @@ static luaL_Reg internals_api[] = {
     luaL_Reg{"view_scroll", &lua_api_view_scroll},
     luaL_Reg{"view_scroll_to_top", &lua_api_view_scroll_top},
     luaL_Reg{"view_scroll_to_bottom", &lua_api_view_scroll_bottom},
+    luaL_Reg{"view_reload", &lua_api_view_reload},
     luaL_Reg{"view_expose", &lua_api_view_expose},
     luaL_Reg{"history_back", &lua_history_back},
     luaL_Reg{"history_forward", &lua_history_forward},

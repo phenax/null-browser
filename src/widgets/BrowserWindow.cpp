@@ -10,7 +10,6 @@
 #include "WindowActionRouter.hpp"
 #include "events/KeyPressedEvent.hpp"
 #include "keymap/KeymapEvaluator.hpp"
-#include "widgets/BrowserApp.hpp"
 #include "widgets/Decorations.hpp"
 #include "widgets/WebViewStack.hpp"
 
@@ -110,4 +109,8 @@ void BrowserWindow::run_javascript(const QString &js_code, WebViewId webview_id)
 void BrowserWindow::expose_rpc_function(const QString &name, const RpcFunc &action,
                                         WebViewId webview_id) {
   get_webview_mediator(webview_id)->expose_rpc_function(name, action, webview_id);
+}
+
+void BrowserWindow::reload(WebViewId webview_id) {
+  get_webview_mediator(webview_id)->reload(webview_id);
 }

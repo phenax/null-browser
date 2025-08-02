@@ -132,7 +132,7 @@ function web.view.set_html(html, opts) return __internals.view_set_html(html, (o
 --- @class RunJSOpts
 --- @field view? number View id
 
---- Set html in a given view
+--- Run js in a given view
 ---
 --- @param js string        HTML string
 --- @param opts? RunJSOpts  Options
@@ -143,6 +143,20 @@ function web.view.set_html(html, opts) return __internals.view_set_html(html, (o
 --- web.view.run_js('console.log(42)', 3) -- Set html for view with id 3
 --- ```
 function web.view.run_js(js, opts) return __internals.view_run_js(js, (opts or {}).view) end
+
+--- @class ReloadOpts
+--- @field view? number View id
+
+--- Relaod a given view
+---
+--- @param opts? RunJSOpts  Options
+---
+--- @example
+--- ```lua
+--- web.view.reload()
+--- web.view.reload({ view = 3 }) -- Reload view with id 3
+--- ```
+function web.view.reload(opts) return __internals.view_reload((opts or {}).view) end
 
 --- @class ExposeOpts
 --- @field view? number View id
