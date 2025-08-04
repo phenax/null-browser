@@ -41,7 +41,7 @@
     });
   });
 
-  const finder = {
+  const hints = {
     /** @type {string} */
     keys: '',
     /** @type {Array<Match>} */
@@ -52,9 +52,9 @@
     openInNewView: false,
 
     stop() {
-      finder.matches = [];
-      finder.keys = '';
-      [...(finder.labelsRoot?.children ?? [])].forEach(child => {
+      hints.matches = [];
+      hints.keys = '';
+      [...(hints.labelsRoot?.children ?? [])].forEach(child => {
         child.remove();
       });
     },
@@ -64,45 +64,65 @@
      * @param new_view {boolean}
      */
     start(selector, new_view) {
-      finder.stop()
-      finder.labelsRoot ??= addRoot();
-      finder.createMatches(selector);
-      finder.openInNewView = new_view;
+      hints.stop()
+      hints.labelsRoot ??= addRoot();
+      hints.createMatches(selector);
+      hints.openInNewView = new_view;
     },
 
-    /** @param char {string} */
+    /**
+     * @param {string} char
+     * @return {boolean}
+     */
     filterOutByKey(char) {
-      if (!/[0-9]+/.test(char)) return; // NOTE: temporary
+      if (!/[0-9]+/.test(char)) return false;
 
-      finder.keys = finder.keys + char;
-      finder.matches = finder.matches.filter(m => {
-        const isMatch = m.key.startsWith(finder.keys);
+      hints.keys = hints.keys + char;
+      hints.matches = hints.matches.filter(m => {
+        const isMatch = m.key.startsWith(hints.keys);
         if (!isMatch) {
           m.labelElem?.remove();
-          return false;
+          return false
         }
-        return true;
+        if (m.labelElem) {
+          const text = m.labelElem.textContent
+          const start = text.slice(0, hints.keys.length)
+          const end = text.slice(hints.keys.length)
+          m.labelElem.innerHTML = `<span style="color: red;">${start}</span><span>${end}</span>`
+        }
+        return true
       });
-      if (finder.matches.length <= 1) {
-        const match = finder.matches[0]
-        finder.stop();
-        if (match) {
-          if (match.elem?.href) {
-            if (finder.openInNewView) {
-              window.open(match.elem?.href)
-            } else {
-              location.href = match.elem?.href
-            }
-          } else {
-            match.elem?.click()
-          }
-        }
+
+      if (hints.matches.length === 0) {
+        hints.stop()
+        return true
       }
+
+      if (hints.matches.length === 1) {
+        const match = hints.matches[0]
+        hints.stop();
+        if (!match) {
+          console.log(hints.matches);
+          return true;
+        }
+        if (match.elem?.href) {
+          if (hints.openInNewView) {
+            window.open(match.elem?.href)
+          } else {
+            location.href = match.elem?.href
+          }
+        } else {
+          match.elem?.click()
+        }
+        return true
+      }
+
+      return false
     },
 
     /** @param selector {string} */
     createMatches(selector) {
-      finder.matches = [];
+      hints.matches = [];
       const elements = document.querySelectorAll(selector);
 
       const matches = [...elements].map(async (elem, index) => {
@@ -120,13 +140,13 @@
         matches.forEach(result => {
           if (result.status !== 'fulfilled') return;
           if (result.value.labelElem)
-            finder.labelsRoot.appendChild(result.value.labelElem)
-          finder.matches.push(result.value)
+            hints.labelsRoot.appendChild(result.value.labelElem)
+          hints.matches.push(result.value)
         });
       });
     },
   };
 
   window._nullbrowser ||= {};
-  window._nullbrowser.finder ||= finder;
+  window._nullbrowser.hints ||= hints;
 })();

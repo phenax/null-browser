@@ -9,7 +9,7 @@ local statusline = {
     },
     mode_styles = {
       n = 'background-color: #007070; color: white;',
-      i = 'background-color: #e06c75; color: white;',
+      i = 'background-color: #f04750; color: white;',
       f = 'background-color: #51e980; color: #333;',
     },
     segments = {

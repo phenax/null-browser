@@ -7,15 +7,15 @@ local hints = {
 local js_setup_code = ''
 
 function hints.init(on_ready)
-  hints.load_finder_js(function()
-    web.keymap.set(hints.config.mode, '<Esc>', function()
-      hints.stop()
-    end)
+  web.keymap.set(hints.config.mode, '<Esc>', function()
+    hints.stop()
+  end)
 
+  hints._load_hints_js(function()
     web.event.add_listener('KeyPressed', {
       callback = function(event)
         if web.keymap.get_mode() == hints.config.mode then
-          hints.filter_key(event.key)
+          hints._filter_key(event.key)
         end
       end,
     })
@@ -28,7 +28,7 @@ function hints.start(selector, new_view)
   local open_in_new_view = new_view and 'true' or 'false'
   web.view.run_js(
     js_setup_code ..
-    ";_nullbrowser.finder.start('" ..
+    ";_nullbrowser.hints.start('" ..
     selector ..
     "', " ..
     open_in_new_view ..
@@ -40,17 +40,21 @@ function hints.start(selector, new_view)
   end)
 end
 
-function hints.filter_key(key)
-  web.view.run_js("_nullbrowser.finder.filterOutByKey('" .. key .. "')")
+function hints._filter_key(key)
+  web.view.run_js("_nullbrowser.hints.filterOutByKey('" .. key .. "')", {
+    on_result = function(end_of_matches)
+      if end_of_matches then hints.stop() end
+    end,
+  })
 end
 
 function hints.stop()
   web.keymap.set_mode('n')
-  web.view.run_js('_nullbrowser.finder.stop()')
+  web.view.run_js('_nullbrowser.hints.stop()')
 end
 
-function hints.load_finder_js(on_ready)
-  web.uv.fs_open('./assets/javascript/finder.js', 'r', 438, function(err, file)
+function hints._load_hints_js(on_ready)
+  web.uv.fs_open('./assets/javascript/hints.js', 'r', 438, function(err, file)
     if err then return end
     if not file then return {} end
     local stat = assert(web.uv.fs_fstat(file))

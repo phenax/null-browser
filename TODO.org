@@ -7,49 +7,54 @@
 - [X] Run JS in page (web.view.run_js())
 - [X] KeyPressed event
 - [X] f-key navigation
-- [ ] On finder stop, exit find mode
+- [X] web.view.reload
+- [X] Load assets directory into build
+- [X] Show number of tabs in statusline
+- [X] On finder stop, exit find mode
+- [X] Callback for result of run_js
+- [ ] Generate docs for api
+- [ ] Embed docs in app (`null:/docs`)
+- [ ] Update all api to use opts table pattern
 - [ ] web.decorations.*.set_size()
 - [ ] web.keymap.configure_mode(modename, { passthrough = false })
-- [ ] web.view.reload
-- [ ] Load assets directory into build
 - [ ] Fullscreen
-- [ ] Zoom in/out
-- [ ] Use table for all internals api options?
-- [ ] Generate docs for api
-- [ ] Show number of tabs in statusline
-- [ ] web.view.reload()
+- [ ] Zoom in/out/reset
+- [ ] Remove unwanted "async"-ness in lua calls
+- [ ] Api for enabling rpc api in view
+- [ ] Make the asset/config/lua paths readable via lua
 
 ** Bugs
-- [ ] Managing focus in decorations?
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
 - [ ] INVESTIGATE: Segfault on close sometimes
-- [ ] API's don't validate types. (type conversion segfaults)
+- [ ] API's don't validate types. (invalid type conversion segfaults)
 - [ ] web.view apis in `-e` flag from "clients" (non-servers calls) don't work
+- [ ] Managing focus in decorations?
 
 ** Next
-- [ ] Granular updates in statusline plugin instead of set_html multiple times
+- [ ] User scripts (greasemonkey?)
+- [ ] User stylesheets (per site and global?)
+- [ ] Log stdout, errors and results from lua somewhere
+- [ ] Move view to a different window (`web.view.move_to_window(view, win)`)
+- [ ] web.win.* apis (list, current_id)
 - [ ] Permission management (list/allow/deny) lua api
+- [ ] Granular updates in statusline plugin instead of set_html multiple times
+- [ ] Use table for all internals api options?
 - [ ] Tests for window
 - [ ] More tests for stack
 - [ ] Tests for router
-- [ ] Read page contents via lua
 - [ ] User data/profiles management
 - [ ] Create window with new profile
 - [ ] Configuration validation
-- [ ] web.win.* apis (list, current_id)
 - [ ] Allow toggling devtools
 - [X] Set search text as the user is typing (dmenu -r)
-- [ ] Log stdout, errors and results from lua somewhere
 - [ ] Conflict in keymap (keymap already exists)
 - [ ] Allow pattern filtering for event listeners
-- [ ] Allow tab_id, win_id filtering for event listeners
+- [ ] Allow view_id, win_id filtering for event listeners
 - [ ] Handle resource cleanup + signal disconnecting
 - [ ] Private window (in-memory profile)
 
 ** Later
 - [ ] Bookmarking
-- [ ] User scripts (greasemonkey?)
-- [ ] User stylesheets (per site and global?)
 - [ ] Support multiple modes for keymap.set: `web.keymap.set({'n','i'}, ...)`
 - [ ] static linking for qt
 - [X] vendor web.inspect with build
