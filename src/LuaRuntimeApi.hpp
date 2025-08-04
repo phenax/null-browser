@@ -49,9 +49,30 @@ int lua_api_view_set_html(lua_State *state) {
 
 int lua_api_view_run_js(lua_State *state) {
   const char *js_code = lua_tostring(state, 1);
-  WebViewId view_id = lua_isnoneornil(state, 2) ? 0 : lua_tointeger(state, 2);
+
+  lua_getfield(state, 2, "view");
+  WebViewId view_id = lua_isnoneornil(state, 3) ? 0 : lua_tointeger(state, 3);
+  lua_pop(state, 1);
+
+  lua_getfield(state, 2, "on_result");
+  JsOnResultFunc action = [](auto &) {};
+  if (lua_isfunction(state, 3)) {
+    lua_pushvalue(state, 3);
+    const int function_ref = luaL_ref(state, LUA_REGISTRYINDEX);
+    action = [state, function_ref](const std::optional<QVariant> &value) {
+      preserve_top(state, {
+        lua_rawgeti(state, LUA_REGISTRYINDEX, function_ref);
+        LuaRuntime::push_qvariant(state, value);
+        lua_pcall(state, 1, 0, 0);
+        luaL_unref(state, LUA_REGISTRYINDEX, function_ref);
+      })
+    };
+  }
+  lua_pop(state, 1);
+
   auto &runtime = LuaRuntime::instance();
-  emit runtime.webview_js_eval_requested(js_code, view_id);
+  emit runtime.webview_js_eval_requested(js_code, view_id, action);
+
   return 1;
 }
 

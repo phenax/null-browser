@@ -62,7 +62,8 @@ public slots:
   void scroll_to_top(WebViewId webview_id);
   void scroll_to_bottom(WebViewId webview_id);
   void set_html(const QString &html, WebViewId webview_id = 0) override;
-  void run_javascript(const QString &js_code, WebViewId webview_id) override;
+  void run_javascript(const QString &js_code, WebViewId webview_id,
+                      const JsOnResultFunc &on_result) override;
   void expose_rpc_function(const QString &name, const RpcFunc &action,
                            WebViewId webview_id) override;
   void reload(WebViewId webview_id) override;

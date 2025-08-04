@@ -64,7 +64,8 @@ signals:
   void webview_scroll_bottom_requested(WebViewId webview_id);
   void decoration_set_enabled(DecorationType type, bool enabled, std::optional<WindowId> win_id);
   void webview_html_set_requested(const QString &html, WebViewId view_id);
-  void webview_js_eval_requested(const QString &js_code, WebViewId view_id);
+  void webview_js_eval_requested(const QString &js_code, WebViewId view_id,
+                                 const JsOnResultFunc &on_result);
   void schedule_for_next_tick(const std::function<void()> &action);
   void webview_rpc_action_defined(const QString &name, const RpcFunc &action, WebViewId view_id);
   void webview_reload_requested(WebViewId webview_id);
@@ -83,4 +84,5 @@ public:
   static void inspect_lua_stack(lua_State *state);
   static std::vector<QString> lua_tostringlist(lua_State *state);
   static QVariant get_lua_value(lua_State *state, int idx, QVariant default_value = 0);
+  static void push_qvariant(lua_State *state, std::optional<QVariant> opt);
 };

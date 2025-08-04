@@ -3,6 +3,7 @@
 #include "WebViewData.hpp"
 #include "widgets/EdgeDecoration.hpp"
 #include "widgets/IWebViewMediator.hpp"
+#include "widgets/WebView.hpp"
 #include <QWidget>
 #include <QtCore>
 #include <optional>
@@ -29,7 +30,8 @@ public:
   bool has_webview(WebViewId view_id) override;
   void open_url(const QUrl &url, OpenType open_type, WebViewId view_id) override;
   void set_html(const QString &html, WebViewId view_id) override;
-  void run_javascript(const QString &js_code, WebViewId webview_id) override;
+  void run_javascript(const QString &js_code, WebViewId webview_id,
+                      const JsOnResultFunc &on_result) override;
   void expose_rpc_function(const QString &name, const RpcFunc &action,
                            WebViewId webview_id) override;
   void reload(WebViewId webview_id) override;

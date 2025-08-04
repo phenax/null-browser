@@ -94,10 +94,10 @@ void EdgeDecoration::set_url(const QUrl &url) {
   webview.value()->setUrl(url);
 }
 
-void EdgeDecoration::run_javascript(const QString &js_code) {
+void EdgeDecoration::run_javascript(const QString &js_code, const JsOnResultFunc &on_result) {
   if (!webview.has_value())
     return;
-  webview.value()->run_javascript(js_code);
+  webview.value()->run_javascript(js_code, on_result);
 }
 
 std::optional<WebViewId> EdgeDecoration::get_view_id() {

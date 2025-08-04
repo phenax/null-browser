@@ -78,9 +78,9 @@ void WindowActionRouter::initialize(Configuration *config) {
                                 { window->expose_rpc_function(name, action, webview_id); });
           });
   connect(&runtime, &LuaRuntime::webview_js_eval_requested, this,
-          [this](const QString &js_code, WebViewId webview_id) {
+          [this](const QString &js_code, WebViewId webview_id, const JsOnResultFunc &on_result) {
             WITH_WEBVIEW_WINDOW(webview_id, window,
-                                { window->run_javascript(js_code, webview_id); });
+                                { window->run_javascript(js_code, webview_id, on_result); });
           });
   connect(&runtime, &LuaRuntime::webview_reload_requested, this, [this](WebViewId webview_id) {
     WITH_WEBVIEW_WINDOW(webview_id, window, { window->reload(webview_id); });

@@ -20,6 +20,8 @@
 using RpcArgs = std::unordered_map<QString, QVariant>;
 using RpcFunc = std::function<void(RpcArgs)>;
 
+using JsOnResultFunc = std::function<void(const std::optional<QVariant> &value)>;
+
 class WebView : public QWebEngineView {
   Q_OBJECT
 
@@ -31,6 +33,7 @@ public:
   void scroll_to_bottom();
   void enable_rpc_api();
   void expose_rpc_function(const QString &name, const RpcFunc &action);
+  // void run_javascript(const QString &code, const JsOnResultFunc &on_result);
 
   DELEGATE(page(), runJavaScript, run_javascript)
   DEFINE_GETTER(get_id, id)

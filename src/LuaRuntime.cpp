@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <lua.hpp>
+#include <optional>
 #include <qvariant.h>
 extern "C" {
 #include <luv/luv.h>
@@ -156,4 +157,40 @@ QVariant LuaRuntime::get_lua_value(lua_State *state, int idx, QVariant default_v
     return lua_tonumber(state, idx);
 
   return lua_tostring(state, idx);
+}
+
+void LuaRuntime::push_qvariant(lua_State *state, std::optional<QVariant> opt) {
+  if (!opt.has_value()) {
+    lua_pushnil(state);
+    return;
+  }
+
+  auto type = QString(opt.value().typeName());
+  // qDebug() << type << opt.value();
+
+  // TODO: QVariantMap
+  // TODO: QVariantList
+
+  if (type == "") {
+    lua_pushnil(state);
+    return;
+  }
+
+  if (type == "bool") {
+    lua_pushboolean(state, opt.value().toBool());
+    return;
+  }
+
+  if (type == "int") {
+    lua_pushinteger(state, opt.value().toInt());
+    return;
+  }
+
+  if (type == "double") {
+    lua_pushnumber(state, opt.value().toDouble());
+    return;
+  }
+
+  // String default
+  lua_pushstring(state, opt.value().toString().toStdString().c_str());
 }

@@ -102,8 +102,9 @@ void BrowserWindow::set_html(const QString &html, WebViewId webview_id) {
   get_webview_mediator(webview_id)->set_html(html, webview_id);
 }
 
-void BrowserWindow::run_javascript(const QString &js_code, WebViewId webview_id) {
-  get_webview_mediator(webview_id)->run_javascript(js_code, webview_id);
+void BrowserWindow::run_javascript(const QString &js_code, WebViewId webview_id,
+                                   const JsOnResultFunc &on_result) {
+  get_webview_mediator(webview_id)->run_javascript(js_code, webview_id, on_result);
 }
 
 void BrowserWindow::expose_rpc_function(const QString &name, const RpcFunc &action,

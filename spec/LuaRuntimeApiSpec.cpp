@@ -401,7 +401,7 @@ private slots:
     }
   }
 
-  void test_lua_api_decorations_set_enabled() {
+  void test_lua_api_decorations_enable() {
     describe("web.decorations.*.enable");
 
     context("when called without view id");
@@ -460,7 +460,9 @@ private slots:
         QCOMPARE(call[2].value<std::optional<WindowId>>(), std::make_optional(42));
       }
     }
+  }
 
+  void test_lua_api_decorations_disable() {
     describe("web.decorations.*.disable");
 
     context("when called without view id");
@@ -518,6 +520,59 @@ private slots:
         QCOMPARE(call[1], false);
         QCOMPARE(call[2].value<std::optional<WindowId>>(), std::make_optional(42));
       }
+    }
+  }
+
+  void test_lua_api_view_run_js() {
+    describe("web.view.run_js");
+
+    context("when called without opts");
+    it("runs js in current view") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy view_run_js(&lua, &LuaRuntime::webview_js_eval_requested);
+
+      lua.evaluate(R"LUA( web.view.run_js("dostuff(200)") )LUA");
+
+      QVERIFY(view_run_js.wait());
+      auto call = view_run_js.first();
+      QCOMPARE(call[0], "dostuff(200)");
+      QCOMPARE(call[1], 0);
+      QVERIFY(call[2].canConvert<JsOnResultFunc>()); // Noop function
+    }
+
+    context("when called with opts.view");
+    it("runs js in given view") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy view_run_js(&lua, &LuaRuntime::webview_js_eval_requested);
+
+      lua.evaluate(R"LUA( web.view.run_js("dostuff(200)", { view = 42 }) )LUA");
+
+      QVERIFY(view_run_js.wait());
+      auto call = view_run_js.first();
+      QCOMPARE(call[0], "dostuff(200)");
+      QCOMPARE(call[1], 42);
+      QVERIFY(call[2].canConvert<JsOnResultFunc>());
+    }
+
+    context("when called with opts.on_result");
+    it("runs js in given view and calls on_result with the result") {
+      auto &lua = LuaRuntime::instance();
+      QSignalSpy view_run_js(&lua, &LuaRuntime::webview_js_eval_requested);
+
+      lua.evaluate(R"LUA(
+        _G.on_result_called_with = null
+        web.view.run_js("dostuff(200)", { view = 42, on_result = function(value)
+          _G.on_result_called_with = value
+        end })
+      )LUA");
+
+      QVERIFY(view_run_js.wait());
+      auto call = view_run_js.first();
+      QCOMPARE(call[0], "dostuff(200)");
+      QCOMPARE(call[1], 42);
+      QVERIFY(call[2].canConvert<JsOnResultFunc>());
+      call[2].value<JsOnResultFunc>()(9921.29);
+      QVERIFY(wait_for_lua_to_be_true(R"LUA( return _G.on_result_called_with == 9921.29 )LUA"));
     }
   }
 };

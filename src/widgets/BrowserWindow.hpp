@@ -38,7 +38,8 @@ public:
   bool has_webview(WebViewId webview_id);
   void open_url(const QUrl &url, OpenType open_type, WebViewId webview_id);
   void set_html(const QString &html, WebViewId webview_id);
-  void run_javascript(const QString &js_code, WebViewId webview_id);
+  void run_javascript(const QString &js_code, WebViewId webview_id,
+                      const JsOnResultFunc &on_result);
   void expose_rpc_function(const QString &name, const RpcFunc &action, WebViewId webview_id);
   void reload(WebViewId webview_id);
 

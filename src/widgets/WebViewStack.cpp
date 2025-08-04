@@ -342,14 +342,15 @@ void WebViewStack::set_html(const QString &html, WebViewId webview_id) {
   webview->setHtml(html);
 }
 
-void WebViewStack::run_javascript(const QString &js_code, WebViewId webview_id) {
+void WebViewStack::run_javascript(const QString &js_code, WebViewId webview_id,
+                                  const JsOnResultFunc &on_result) {
   auto *webview = get_webview(webview_id);
   if (webview == nullptr) {
     qDebug() << "Webview does not exist";
     return;
   }
 
-  webview->run_javascript(js_code);
+  webview->run_javascript(js_code, on_result);
 }
 
 void WebViewStack::expose_rpc_function(const QString &name, const RpcFunc & /* unused */,

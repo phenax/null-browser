@@ -1,7 +1,9 @@
 #include <QtCore>
+#include <qtestcase.h>
 #include <uv.h>
 
 #include "LuaRuntime.hpp"
+#include "lua.h"
 #include "testUtils.h"
 
 // NOLINTBEGIN
@@ -122,6 +124,58 @@ private slots:
       QVERIFY(evaluation_completed_spy.wait());
 
       QVERIFY(wait_for_lua_to_be_true("return _G.spawn_exit_code == 0"));
+    }
+  }
+
+  void test_push_qvariant() {
+    describe("LuaRuntime::push_qvariant");
+
+    context("when called with a QString");
+    it("pushes lua string") {
+      auto &lua = LuaRuntime::instance();
+      auto *state = lua.get_state();
+
+      LuaRuntime::push_qvariant(state, QString("hello"));
+
+      QVERIFY(lua_isstring(state, 1));
+      QCOMPARE(lua_tostring(state, 1), "hello");
+      lua_pop(state, 1);
+    }
+
+    context("when called with a QVariant int");
+    it("pushes lua number") {
+      auto &lua = LuaRuntime::instance();
+      auto *state = lua.get_state();
+
+      LuaRuntime::push_qvariant(state, QVariant(42));
+
+      QVERIFY(lua_isnumber(state, 1));
+      QCOMPARE(lua_tointeger(state, 1), 42);
+      lua_pop(state, 1);
+    }
+
+    context("when called with a QVariant double");
+    it("pushes lua number") {
+      auto &lua = LuaRuntime::instance();
+      auto *state = lua.get_state();
+
+      LuaRuntime::push_qvariant(state, QVariant(42.69));
+
+      QVERIFY(lua_isnumber(state, 1));
+      QCOMPARE(lua_tonumber(state, 1), 42.69);
+      lua_pop(state, 1);
+    }
+
+    context("when called with a QVariant bool");
+    it("pushes lua boolean") {
+      auto &lua = LuaRuntime::instance();
+      auto *state = lua.get_state();
+
+      LuaRuntime::push_qvariant(state, QVariant(true));
+
+      QVERIFY(lua_isboolean(state, 1));
+      QCOMPARE(lua_toboolean(state, 1), true);
+      lua_pop(state, 1);
     }
   }
 };

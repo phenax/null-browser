@@ -125,14 +125,15 @@ function web.view.set_url(url, view_id) return __internals.view_set_url(url, vie
 --- @example
 --- ```lua
 --- web.view.set_html('<h2>HJello</h2>')
---- web.view.set_html('<h2>HJello</h2>', 3) -- Set html for view with id 3
+--- web.view.set_html('<h2>HJello</h2>', { view = 3 }) -- Set html for view with id 3
 --- ```
 function web.view.set_html(html, opts) return __internals.view_set_html(html, (opts or {}).view) end
 
 --- @class RunJSOpts
 --- @field view? number View id
+--- @field on_result fun(v: any): nil Callback when
 
---- Run js in a given view
+--- Run js in a view
 ---
 --- @param js string        HTML string
 --- @param opts? RunJSOpts  Options
@@ -140,9 +141,9 @@ function web.view.set_html(html, opts) return __internals.view_set_html(html, (o
 --- @example
 --- ```lua
 --- web.view.run_js('console.log(42)')
---- web.view.run_js('console.log(42)', 3) -- Set html for view with id 3
+--- web.view.run_js('console.log(42)', { view = 3 }) -- Set html for view with id 3
 --- ```
-function web.view.run_js(js, opts) return __internals.view_run_js(js, (opts or {}).view) end
+function web.view.run_js(js, opts) return __internals.view_run_js(js, opts or {}) end
 
 --- @class ReloadOpts
 --- @field view? number View id
