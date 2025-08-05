@@ -3,8 +3,10 @@
 # null-browser [WIP]
 A simple, fast web browser built using [qtwebengine (chromium)](https://wiki.qt.io/QtWebEngine), that is configured and extended using lua.
 
+
 ## What does it do?
 This web browser is just a stack of web views that can be controlled using lua. Don't expect a full featured web browser, expect the **opposite**.
+
 
 ## What does it not do? How can I do it?
 - **No url bar**
@@ -37,13 +39,28 @@ This web browser is just a stack of web views that can be controlled using lua. 
 
 Any feature you want, you implement yourself. Either from scratch or build on top of a built-in module.
 
+
+## Built-in modules
+- Vi-style keybindings
+- Hints: f-key search for links
+- Plain-text history
+- Statusline showing the current keymode, url and tabs count
+- Tabline showing a list of tabs
+
+Using the builtin modules, you can get something like this:
+![screenshot defaults](./media/screenshot.jpg)
+
+Or do your own thing, I don't care.
+
+
 ## Who is it for?
 I built this for myself and people like me who enjoy tinkering with their tools.
 Out of the box, it is almost unusable... by design.
 
+
 ## Install
 ### Nix flake
-- Add this repo to nixos flake config: `inputs.null-browser.url = "github:phenax/null-browser";`
+- Add this repo to your flake: `github:phenax/null-browser`
 - Or build it in a directory: `nix build github:phenax/null-browser`
 - Or run it without installing: `nix run github:phenax/null-browser`
 - Or add to profile: `nix profile install github:phenax/null-browser`
@@ -52,6 +69,7 @@ Out of the box, it is almost unusable... by design.
 - Clone
 - Run `make build` to build it
 - `sudo make install PREFIX=/usr/local` to install it
+
 
 ## Configuring
 WIP
