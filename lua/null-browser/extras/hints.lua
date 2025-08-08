@@ -2,7 +2,10 @@ local hints = {
   config = {
     mode = 'f',
   },
+  action = {},
 }
+
+local state = { action = nil }
 
 local js_setup_code = ''
 
@@ -24,15 +27,11 @@ function hints.init(on_ready)
   end)
 end
 
-function hints.start(selector, new_view)
-  local open_in_new_view = new_view and 'true' or 'false'
+function hints.start(selector, action)
+  state.action = action or hints.action.open_in_view
   web.view.run_js(
     js_setup_code ..
-    ";_nullbrowser.hints.start('" ..
-    selector ..
-    "', " ..
-    open_in_new_view ..
-    ")"
+    ";_nullbrowser.hints.start('" .. selector .. "')"
   )
   web.schedule(function()
     -- Trigger f mode after tick to avoid the trigger key (f) to get captured in event
@@ -42,8 +41,11 @@ end
 
 function hints._filter_key(key)
   web.view.run_js("_nullbrowser.hints.filterOutByKey('" .. key .. "')", {
-    on_result = function(end_of_matches)
-      if end_of_matches then hints.stop() end
+    on_result = function(find_status)
+      if find_status ~= nil then hints.stop() end
+      if find_status and state.action then
+        state.action()
+      end
     end,
   })
 end
@@ -64,6 +66,39 @@ function hints._load_hints_js(on_ready)
 
     on_ready()
   end)
+end
+
+function hints.action.open_in_new_view()
+  web.view.run_js [[
+    const match = _nullbrowser.hints.currentMatch;
+    if (match.elem?.href) {
+      window.open(match.elem.href)
+    } else {
+      match.elem?.click()
+    }
+  ]]
+end
+
+function hints.action.open_in_view()
+  web.view.run_js [[
+    const match = _nullbrowser.hints.currentMatch;
+    if (match.elem?.href) {
+      location.href = match.elem.href
+    } else {
+      match.elem?.click()
+    }
+  ]]
+end
+
+function hints.action.copy_link()
+  web.view.run_js([[_nullbrowser.hints.currentMatch.elem?.href]], {
+    on_result = function(url)
+      local pipe = io.popen('xclip -selection clipboard', 'w')
+      if not pipe then return end
+      pipe:write(url)
+      pipe:close()
+    end,
+  })
 end
 
 return hints

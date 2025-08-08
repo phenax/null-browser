@@ -50,6 +50,8 @@
     labelsRoot: null,
     /** @type {boolean} */
     openInNewView: false,
+    /** @type {Match | null} */
+    currentMatch: null,
 
     stop() {
       hints.matches = [];
@@ -95,29 +97,16 @@
 
       if (hints.matches.length === 0) {
         hints.stop()
-        return true
+        return false
       }
 
       if (hints.matches.length === 1) {
-        const match = hints.matches[0]
+        hints.currentMatch = hints.matches[0]
         hints.stop();
-        if (!match) {
-          console.log(hints.matches);
-          return true;
-        }
-        if (match.elem?.href) {
-          if (hints.openInNewView) {
-            window.open(match.elem?.href)
-          } else {
-            location.href = match.elem?.href
-          }
-        } else {
-          match.elem?.click()
-        }
         return true
       }
 
-      return false
+      return null
     },
 
     /** @param selector {string} */

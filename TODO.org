@@ -13,11 +13,11 @@
 - [X] On finder stop, exit find mode
 - [X] Callback for result of run_js
 - [X] Generate docs for api
-- [ ] Any hint action/generic (currently only url open)
+- [X] Any hint action/generic (currently only url open)
 - [ ] Document events and event opts
 - [ ] Embed docs in app (`null:/docs`)
 - [ ] Update all api to use opts table pattern
-- [ ] web.decorations.*.set_size()
+- [X] web.decorations.*.set_size()
 - [ ] web.keymap.configure_mode(modename, { passthrough = false })
 - [X] Vertical tabline ui
 - [ ] Fullscreen
@@ -25,6 +25,7 @@
 - [ ] Remove unwanted "async"-ness in lua calls
 - [ ] Api for enabling rpc api in view
 - [ ] Make the asset/config/lua paths readable via lua
+- [ ] json encode/decode
 
 ** Bugs
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
