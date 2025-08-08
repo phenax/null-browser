@@ -19,7 +19,7 @@
 - [ ] Update all api to use opts table pattern
 - [ ] web.decorations.*.set_size()
 - [ ] web.keymap.configure_mode(modename, { passthrough = false })
-- [ ] Vertical tabline ui
+- [X] Vertical tabline ui
 - [ ] Fullscreen
 - [ ] Zoom in/out/reset
 - [ ] Remove unwanted "async"-ness in lua calls

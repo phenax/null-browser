@@ -85,7 +85,7 @@ end
 --- @param value any
 --- @return boolean
 function web.utils.table_contains(tbl, value)
-  for _, tbl_val in ipairs(tbl) do
+  for _, tbl_val in pairs(tbl) do
     if tbl_val == value then
       return true
     end
