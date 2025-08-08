@@ -33,6 +33,7 @@ public:
   DELEGATE(decorations, set_enabled, set_decoration_enabled)
   DELEGATE(decorations, get_enabled, get_decoration_enabled)
   DELEGATE(decorations, get_view_id, get_decoration_view_id)
+  DELEGATE(decorations, set_size, set_decoration_size)
 
   IWebViewMediator *get_webview_mediator(WebViewId webview_id);
   bool has_webview(WebViewId webview_id);

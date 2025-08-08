@@ -63,6 +63,7 @@ signals:
   void webview_scroll_top_requested(WebViewId webview_id);
   void webview_scroll_bottom_requested(WebViewId webview_id);
   void decoration_set_enabled(DecorationType type, bool enabled, std::optional<WindowId> win_id);
+  void decoration_set_size(DecorationType type, uint16_t size, std::optional<WindowId> win_id);
   void webview_html_set_requested(const QString &html, WebViewId view_id);
   void webview_js_eval_requested(const QString &js_code, WebViewId view_id,
                                  const JsOnResultFunc &on_result);

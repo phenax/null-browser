@@ -3,6 +3,7 @@
 #include <optional>
 #include <qboxlayout.h>
 #include <qlabel.h>
+#include <qlogging.h>
 #include <qwidget.h>
 
 #include "Decorations.hpp"
@@ -82,6 +83,13 @@ void Decorations::set_html(const QString &html, WebViewId view_id) {
   auto decoration = get_decoration_widget_by_view_id(view_id);
   if (decoration.has_value())
     decoration.value()->set_html(html);
+}
+
+void Decorations::set_size(DecorationType type, uint16_t size) {
+  qDebug() << "::deco" << type << size;
+  auto decoration = get_decoration_widget_type(type);
+  if (decoration.has_value())
+    decoration.value()->set_size(size);
 }
 
 void Decorations::run_javascript(const QString &js_code, WebViewId view_id,

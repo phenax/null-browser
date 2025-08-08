@@ -324,6 +324,7 @@ function web.view.scroll_to_bottom(view_id) return __internals.view_scroll_to_bo
 --- @field set_enabled fun(enabled: boolean, opts?: DecorationOpts): nil
 --- @field is_enabled fun(opts?: DecorationOpts): boolean
 --- @field view fun(opts?: DecorationOpts): number|nil
+--- @field set_size fun(size: number, opts?: DecorationOpts): nil
 
 --- @class DecorationType: number
 
@@ -345,6 +346,7 @@ local function create_decoration_api(type)
     view = function(opts)
       return __internals.decorations_get_view(type, (opts or {}).win)
     end,
+    set_size = function(size, opts) __internals.decorations_set_size(type, size, (opts or {}).win) end,
   }
 end
 

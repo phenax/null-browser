@@ -25,6 +25,7 @@ public:
 
   void set_enabled(DecorationType type, bool enabled);
   bool get_enabled(DecorationType type);
+  void set_size(DecorationType type, uint16_t size_value);
 
   std::optional<WebViewId> get_view_id(DecorationType type);
   bool has_webview(WebViewId view_id) override;

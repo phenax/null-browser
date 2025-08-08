@@ -56,8 +56,14 @@ web.event.add_listener('NotificationReceived', {
 
 -- Tabline
 require 'null-browser.extras.tabline'.init {
-  decoration = web.decorations.top,
+  decoration = web.decorations.left,
 }
+
+web.event.add_listener('WinCreated', {
+  callback = function(event)
+    web.decorations.left.set_size(200, { win = event.win_id })
+  end,
+})
 
 -- Statusline
 require 'null-browser.extras.statusline'.init {
