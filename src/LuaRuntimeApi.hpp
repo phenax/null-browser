@@ -342,7 +342,6 @@ int lua_api_decorations_set_enabled(lua_State *state) {
 int lua_api_decorations_set_size(lua_State *state) {
   auto type = (DecorationType)lua_tointeger(state, 1);
   uint16_t size = lua_tointeger(state, 2);
-  qDebug() << "::api" << type << size;
   std::optional<WindowId> win_id =
       lua_isnoneornil(state, 3) ? std::nullopt : std::make_optional(lua_tointeger(state, 3));
   auto &runtime = LuaRuntime::instance();

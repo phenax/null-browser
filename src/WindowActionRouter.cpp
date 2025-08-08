@@ -124,7 +124,6 @@ void WindowActionRouter::initialize(Configuration *config) {
           });
   connect(&runtime, &LuaRuntime::decoration_set_size, this,
           [this](DecorationType type, uint16_t size, std::optional<WindowId> win_id) {
-            qDebug() << "::win" << type << size;
             for (auto *win : get_relevant_windows(win_id))
               win->set_decoration_size(type, size);
           });

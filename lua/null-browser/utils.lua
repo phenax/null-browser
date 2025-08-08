@@ -17,6 +17,11 @@ local inspector = require 'null-browser.inspect'
 --- @return string
 web.inspect = inspector.inspect
 
+web.json = web.json or {}
+local json = require 'null-browser.json'
+web.json.encode = json.encode
+web.json.decode = json.decode
+
 --- Trim whitespace from start and end of a string
 --- @param str string
 --- @return string
