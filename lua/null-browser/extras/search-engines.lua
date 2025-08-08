@@ -18,7 +18,11 @@ function M.transform_url_input(input)
   return M.substitute(M.default, url)
 end
 
-function M.is_url(str) return string.match(str, "^https?://") end
+function M.is_url(str)
+  local protocol = string.gsub(str, '://.*$', '')
+  local patterns = { 'https', 'http', 'file', 'null' }
+  return web.utils.table_contains(patterns, protocol)
+end
 
 function M.substitute(search_name, value)
   local res, _ = string.gsub(M.urls[search_name], '{}', value)
