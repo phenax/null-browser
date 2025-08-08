@@ -8,6 +8,7 @@
 #include "events/NotificationReceivedEvent.hpp"
 #include "events/WinCreatedEvent.hpp"
 #include "schemes/NullRpcSchemeHandler.hpp"
+#include "schemes/NullSchemeHandler.hpp"
 #include "widgets/BrowserWindow.hpp"
 
 #include "widgets/BrowserApp.hpp"
@@ -59,6 +60,7 @@ void BrowserApp::setup_profile(QWebEngineProfile *profile) {
   });
   profile->setPersistentPermissionsPolicy(configuration.permission_persistance_policy());
   profile->installUrlSchemeHandler("nullrpc", &NullRPCSchemeHandler::instance());
+  profile->installUrlSchemeHandler("null", &NullSchemeHandler::instance());
 }
 
 BrowserWindow *BrowserApp::create_window(const QStringList &urls) {

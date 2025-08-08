@@ -13,4 +13,15 @@ void register_nullrpc_scheme() {
   QWebEngineUrlScheme::registerScheme(scheme);
 }
 
-void register_all_schemes() { register_nullrpc_scheme(); }
+void register_null_scheme() {
+  QWebEngineUrlScheme scheme("null");
+  scheme.setSyntax(QWebEngineUrlScheme::Syntax::Host);
+  scheme.setFlags(QWebEngineUrlScheme::SecureScheme | QWebEngineUrlScheme::LocalScheme |
+                  QWebEngineUrlScheme::LocalAccessAllowed);
+  QWebEngineUrlScheme::registerScheme(scheme);
+}
+
+void register_all_schemes() {
+  register_nullrpc_scheme();
+  register_null_scheme();
+}

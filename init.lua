@@ -64,6 +64,15 @@ require 'null-browser.extras.statusline'.init {
   decoration = web.decorations.bottom,
 }
 
+
+web.keymap.set('n', '<c-h>', function()
+  local symbols = web.help.get_items()
+  menu:select(symbols, { select_last_line = true }, function(err, selection)
+    if err then return end
+    web.help.show(web.utils.string_trim(selection))
+  end)
+end)
+
 local hints = require 'null-browser.extras.hints'
 hints.init()
 web.keymap.set('n', 'f', function() hints.start('a[href], button', hints.action.open_in_view) end)

@@ -14,12 +14,13 @@
 - [X] Callback for result of run_js
 - [X] Generate docs for api
 - [X] Any hint action/generic (currently only url open)
-- [ ] Document events and event opts
-- [ ] Embed docs in app (`null:/docs`)
-- [ ] Update all api to use opts table pattern
+- [X] Embed docs in app (`null:/docs`)
 - [X] web.decorations.*.set_size()
-- [ ] web.keymap.configure_mode(modename, { passthrough = false })
 - [X] Vertical tabline ui
+- [ ] Document events and event opts
+- [ ] Update all api to use opts table pattern
+- [ ] Install doc/ in build
+- [ ] web.keymap.configure_mode(modename, { passthrough = false })
 - [ ] Fullscreen
 - [ ] Zoom in/out/reset
 - [ ] Remove unwanted "async"-ness in lua calls
@@ -28,6 +29,7 @@
 - [ ] json encode/decode
 
 ** Bugs
+- [ ] Closing webview should close devtools window
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
 - [ ] INVESTIGATE: Segfault on close sometimes
 - [ ] API's don't validate types. (invalid type conversion segfaults)

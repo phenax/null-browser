@@ -12,6 +12,7 @@ web.view = web.view or {}
 web.history = web.history or {}
 web.event = web.event or {}
 web.decorations = web.decorations or {}
+web.help = web.help or {}
 
 require 'null-browser.utils'
 
@@ -357,3 +358,29 @@ web.decorations.top = create_decoration_api('top')
 web.decorations.bottom = create_decoration_api('bottom')
 web.decorations.left = create_decoration_api('left')
 web.decorations.right = create_decoration_api('right')
+
+--- Get a list of items for help
+function web.help.get_items()
+  -- TODO: Use proper path from build
+  local file, _ = io.open('./doc/symbols.json', 'r')
+  if file then
+    local contents, _ = file:read('a')
+    return web.json.decode(contents)
+  end
+  return {}
+end
+
+--- Open help docs for a given item
+---
+--- @param item string?
+--- @param opts table?
+--- @param opts.view number?
+function web.help.show(item, opts)
+  opts = opts or {}
+  local url = 'null://docs/api#' .. (item or '')
+  if opts.view ~= nil then
+    web.view.set_url(url, opts.view)
+  else
+    web.view.create(url)
+  end
+end
