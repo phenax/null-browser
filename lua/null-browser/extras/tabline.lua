@@ -1,14 +1,23 @@
 local html = require 'null-browser.extras.html'
-local tabline = {}
+local tabline = {
+  config = { decoration = web.decorations.top }
+}
 
 -- TODO: vertical tabs
 function tabline.init(opts)
-  local decoration = (opts or {}).decoration or web.decorations.top
+  tabline.config = web.utils.table_merge(tabline.config, opts)
+  local decoration = tabline.config.decoration
 
   web.event.add_listener('WinCreated', {
     callback = function(event)
       decoration.enable({ win = event.win_id })
       tabline.show_tabs_in_window(event.win_id, decoration);
+
+      if tabline.is_vertical() then
+        tabline.config.decoration.set_size(200, { win = event.win_id })
+      else
+        tabline.config.decoration.set_size(20, { win = event.win_id })
+      end
     end,
   })
 
@@ -56,10 +65,14 @@ function tabline.tabs_html()
 
   local tabs_html = html.div({}, {
     html.style({}, { html.raw(tabline.css()) }),
-    html.div({ class = 'tabs' }, tab_list)
+    html.div({ class = 'tabs' .. (tabline.is_vertical() and ' vertical' or '') }, tab_list)
   })
 
   return html.to_string(tabs_html)
+end
+
+function tabline.is_vertical()
+  return web.utils.table_contains({ 'left', 'right' }, tabline.config.decoration.type())
 end
 
 function tabline.css()
@@ -74,6 +87,13 @@ function tabline.css()
     }
     .tabs.vertical {
       flex-direction: column;
+      justify-contents: flex-start;
+      align-items: flex-start;
+    }
+    .tabs.vertical .tab {
+      border-left: none;
+      padding: 6px 3px;
+      flex: none;
     }
     .tab {
       all: unset;

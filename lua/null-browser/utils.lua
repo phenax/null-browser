@@ -79,3 +79,16 @@ end
 function web.utils.equals(a, b)
   return is_deep_equal_helper(a, b, {})
 end
+
+--- Check if table contains given value
+--- @param tbl table
+--- @param value any
+--- @return boolean
+function web.utils.table_contains(tbl, value)
+  for _, tbl_val in ipairs(tbl) do
+    if tbl_val == value then
+      return true
+    end
+  end
+  return false
+end

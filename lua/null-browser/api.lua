@@ -315,10 +315,14 @@ function web.view.scroll_to_top(view_id) return __internals.view_scroll_to_top(v
 --- TODO: Document
 function web.view.scroll_to_bottom(view_id) return __internals.view_scroll_to_bottom(view_id) end
 
+--- Maps to values defined in ./src/widgets/Decorations.hpp
+local DecorationType = { top = 1, bottom = 2, left = 3, right = 4 }
+
 --- @class DecorationOpts
 --- @field win? number
 
 --- @class Decoration
+--- @field type fun(): 'left'|'right'|'top'|'bottom'
 --- @field enable fun(opts?: DecorationOpts): nil
 --- @field disable fun(opts?: DecorationOpts): nil
 --- @field set_enabled fun(enabled: boolean, opts?: DecorationOpts): nil
@@ -326,34 +330,30 @@ function web.view.scroll_to_bottom(view_id) return __internals.view_scroll_to_bo
 --- @field view fun(opts?: DecorationOpts): number|nil
 --- @field set_size fun(size: number, opts?: DecorationOpts): nil
 
---- @class DecorationType: number
-
 --- Decoration api
 ---
---- @param type DecorationType
+--- @param type 'left'|'right'|'top'|'bottom'
 --- @return Decoration
 local function create_decoration_api(type)
+  local type_id = DecorationType[type]
   local set_enabled = function(enabled, opts)
-    __internals.decorations_set_enabled(type, enabled, (opts or {}).win)
+    __internals.decorations_set_enabled(type_id, enabled, (opts or {}).win)
   end;
   return {
     type = function() return type end,
     enable = function(opts) set_enabled(true, opts) end,
     disable = function(opts) set_enabled(false, opts) end,
     is_enabled = function(opts)
-      return __internals.decorations_get_enabled(type, (opts or {}).win)
+      return __internals.decorations_get_enabled(type_id, (opts or {}).win)
     end,
     view = function(opts)
-      return __internals.decorations_get_view(type, (opts or {}).win)
+      return __internals.decorations_get_view(type_id, (opts or {}).win)
     end,
-    set_size = function(size, opts) __internals.decorations_set_size(type, size, (opts or {}).win) end,
+    set_size = function(size, opts) __internals.decorations_set_size(type_id, size, (opts or {}).win) end,
   }
 end
 
---- Maps to values defined in ./src/widgets/Decorations.hpp
-local DecorationType = { top = 1, bottom = 2, left = 3, right = 4 }
-
-web.decorations.top = create_decoration_api(DecorationType.top)
-web.decorations.bottom = create_decoration_api(DecorationType.bottom)
-web.decorations.left = create_decoration_api(DecorationType.left)
-web.decorations.right = create_decoration_api(DecorationType.right)
+web.decorations.top = create_decoration_api('top')
+web.decorations.bottom = create_decoration_api('bottom')
+web.decorations.left = create_decoration_api('left')
+web.decorations.right = create_decoration_api('right')
