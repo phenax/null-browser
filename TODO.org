@@ -12,11 +12,14 @@
 - [X] Show number of tabs in statusline
 - [X] On finder stop, exit find mode
 - [X] Callback for result of run_js
-- [ ] Generate docs for api
+- [X] Generate docs for api
+- [ ] Any hint action/generic (currently only url open)
+- [ ] Document events and event opts
 - [ ] Embed docs in app (`null:/docs`)
 - [ ] Update all api to use opts table pattern
 - [ ] web.decorations.*.set_size()
 - [ ] web.keymap.configure_mode(modename, { passthrough = false })
+- [ ] Vertical tabline ui
 - [ ] Fullscreen
 - [ ] Zoom in/out/reset
 - [ ] Remove unwanted "async"-ness in lua calls
@@ -31,6 +34,8 @@
 - [ ] Managing focus in decorations?
 
 ** Next
+- [ ] View focus event (between decorations/views)
+- [ ] Element focus (input focus)
 - [ ] User scripts (greasemonkey?)
 - [ ] User stylesheets (per site and global?)
 - [ ] Log stdout, errors and results from lua somewhere

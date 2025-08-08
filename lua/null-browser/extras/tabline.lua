@@ -72,6 +72,9 @@ function tabline.css()
       align-items: stretch;
       height: 100vh;
     }
+    .tabs.vertical {
+      flex-direction: column;
+    }
     .tab {
       all: unset;
       flex: 1;

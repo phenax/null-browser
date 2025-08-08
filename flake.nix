@@ -43,6 +43,7 @@
             gdb
             valgrind
             go-grip
+            luajitPackages.ldoc
           ] ++ dependencies;
 
           LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath buildInputs}";

@@ -1,0 +1,1228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Null browser api</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>null-browser</h1>
+
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>web</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>web</code></h1>
+<p></p>
+<p></p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#schedule">schedule (fn)</a></td>
+	<td class="summary">Schedule a function to be called on next tick (qt+libuv event loop)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.keymap.set">web.keymap.set (mode, key, action)</a></td>
+	<td class="summary">Add a keymap</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.keymap.set_mode">web.keymap.set_mode (mode)</a></td>
+	<td class="summary">Set the current keymap mode</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.keymap.get_mode">web.keymap.get_mode ()</a></td>
+	<td class="summary">Get the current keymap mode</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.close">web.view.close (view_id)</a></td>
+	<td class="summary">Close view</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.create">web.view.create (url)</a></td>
+	<td class="summary">Create a new view with a url</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.current">web.view.current ()</a></td>
+	<td class="summary">Get current view id</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.list">web.view.list ()</a></td>
+	<td class="summary">Get a list of views in the current window</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.select">web.view.select (view_id)</a></td>
+	<td class="summary">Select a view in current window</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.set_url">web.view.set_url (url, view_id)</a></td>
+	<td class="summary">Set url of a given view</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.set_html">web.view.set_html (html, opts)</a></td>
+	<td class="summary">Set html inside the page for a given view</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.run_js">web.view.run_js (js, opts)</a></td>
+	<td class="summary">Run js in a view</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.reload">web.view.reload (opts)</a></td>
+	<td class="summary">Relaod a given view</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.expose">web.view.expose (name, action, opts)</a></td>
+	<td class="summary">Expose a lua function inside a view (Only works with decorations)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.open_devtools">web.view.open_devtools (view_id)</a></td>
+	<td class="summary">Open devtools window for the view</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.current_index">web.view.current_index ()</a></td>
+	<td class="summary">Get current view index</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.event.add_listener">web.event.add_listener (events, opts)</a></td>
+	<td class="summary">Listen to events from the browser</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#set">set (key, value)</a></td>
+	<td class="summary">Set configuration options</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get">get (key)</a></td>
+	<td class="summary">Get configuration value</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.history.back">web.history.back (count, view_id)</a></td>
+	<td class="summary">Go back in history for given view</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.history.forward">web.history.forward (count, view_id)</a></td>
+	<td class="summary">Go forward in history for given view</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.search.set_text">web.search.set_text (text, view_id)</a></td>
+	<td class="summary">Search text inside a view</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.search.reset">web.search.reset (view_id)</a></td>
+	<td class="summary">Reset searched text in a view (Same as web.search.set_text(''))</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.search.get_text">web.search.get_text ()</a></td>
+	<td class="summary">Get the last searched text</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.search.next">web.search.next (view_id)</a></td>
+	<td class="summary">Highlight next search term for the last searched text</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.search.previous">web.search.previous (view_id)</a></td>
+	<td class="summary">Highlight previous search term for the last searched text</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.scroll">web.view.scroll (deltax, deltay, view_id)</a></td>
+	<td class="summary">TODO: Document</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.scroll_to_top">web.view.scroll_to_top (view_id)</a></td>
+	<td class="summary">TODO: Document</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.view.scroll_to_bottom">web.view.scroll_to_bottom (view_id)</a></td>
+	<td class="summary">TODO: Document</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.utils.string_trim">web.utils.string_trim (str)</a></td>
+	<td class="summary">Trim whitespace from start and end of a string</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.utils.table_merge">web.utils.table_merge (tbl)</a></td>
+	<td class="summary">Merge multiple tables</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.utils.table_keys">web.utils.table_keys (tbl)</a></td>
+	<td class="summary">Get keys of a table</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.utils.equals">web.utils.equals (a, b)</a></td>
+	<td class="summary">Check if 2 values are deeply equal</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#WebOpts">WebOpts</a></td>
+	<td class="summary">Maps to values defined in ./src/Configuration.hpp</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#_G.__internals">_G.__internals</a></td>
+	<td class="summary">Internal api (unstable)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#opts">opts</a></td>
+	<td class="summary">API for configuring browser options</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#uv">uv</a></td>
+	<td class="summary">luv api (https://github.com/luvit/luv/blob/master/docs.md)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#inspect">inspect</a></td>
+	<td class="summary">Returns human-readable string representation of Lua tables (https://github.com/kikito/inspect.lua)</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "schedule"></a>
+    <strong>schedule (fn)</strong>
+    </dt>
+    <dd>
+    Schedule a function to be called on next tick (qt+libuv event loop)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+            <span class="types"><span class="type">fun</span></span>
+         ():nil   Function to call
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.keymap.set"></a>
+    <strong>web.keymap.set (mode, key, action)</strong>
+    </dt>
+    <dd>
+    Add a keymap
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">mode</span>
+           string           Keymap mode ("i", "n", ...)
+        </li>
+        <li><span class="parameter">key</span>
+            string           Key sequence (Eg: `<c-t>j`)
+        </li>
+        <li><span class="parameter">action</span>
+            <span class="types"><span class="type">function</span></span>
+         Function to run when keymap is triggered
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.keymap.<span class="function-name">set</span>(<span class="string">'n'</span>, <span class="string">'o'</span>, <span class="keyword">function</span>()
+  web.view.<span class="function-name">create</span>(<span class="string">'https://google.com'</span>)
+<span class="keyword">end</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.keymap.set_mode"></a>
+    <strong>web.keymap.set_mode (mode)</strong>
+    </dt>
+    <dd>
+    Set the current keymap mode
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">mode</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The keymap mode to set
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.keymap.<span class="function-name">set_mode</span>(<span class="string">'n'</span>) <span class="comment">-- Set to normal mode
+</span>web.keymap.<span class="function-name">set_mode</span>(<span class="string">'i'</span>) <span class="comment">-- Set to insert mode</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.keymap.get_mode"></a>
+    <strong>web.keymap.get_mode ()</strong>
+    </dt>
+    <dd>
+    Get the current keymap mode
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> current_mode = web.keymap.<span class="function-name">get_mode</span>()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.close"></a>
+    <strong>web.view.close (view_id)</strong>
+    </dt>
+    <dd>
+    Close view
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">view_id</span>
+        ?  number    View id to close
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.view.<span class="function-name">close</span>()  <span class="comment">-- Close current view in active window
+</span>web.view.<span class="function-name">close</span>(<span class="number">3</span>) <span class="comment">-- Close view with id 3</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.create"></a>
+    <strong>web.view.create (url)</strong>
+    </dt>
+    <dd>
+    Create a new view with a url
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">url</span>
+              string    Url to open in the new view
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.view.<span class="function-name">create</span>(<span class="string">'https://duckduckgo.com'</span>) <span class="comment">-- Opens url in new view
+</span>web.view.<span class="function-name">create</span>() <span class="comment">-- Opens new_view_url by default</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.current"></a>
+    <strong>web.view.current ()</strong>
+    </dt>
+    <dd>
+    Get current view id
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        _id Current view id
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> view_id = web.view.<span class="function-name">current</span>()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.list"></a>
+    <strong>web.view.list ()</strong>
+    </dt>
+    <dd>
+    Get a list of views in the current window
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+        List of views
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> views = web.view.<span class="function-name">list</span>()
+<span class="global">print</span>(views[<span class="number">1</span>].url, views[<span class="number">1</span>].title, views[<span class="number">1</span>].id)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.select"></a>
+    <strong>web.view.select (view_id)</strong>
+    </dt>
+    <dd>
+    Select a view in current window
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">view_id</span>
+            <span class="types"><span class="type">number</span></span>
+         View id to select
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.view.<span class="global">select</span>(<span class="number">3</span>) <span class="comment">-- Select view with id 3</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.set_url"></a>
+    <strong>web.view.set_url (url, view_id)</strong>
+    </dt>
+    <dd>
+    Set url of a given view
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">url</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Url to open
+        </li>
+        <li><span class="parameter">view_id</span>
+            <span class="types"><span class="type">number</span></span>
+         View id to select
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.view.<span class="function-name">set_url</span>(<span class="string">'https://foobar.com'</span>)
+web.view.<span class="function-name">set_url</span>(<span class="string">'https://foobar.com'</span>, <span class="number">3</span>) <span class="comment">-- Set url for view with id 3</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.set_html"></a>
+    <strong>web.view.set_html (html, opts)</strong>
+    </dt>
+    <dd>
+    Set html inside the page for a given view
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">html</span>
+              string   HTML string
+        </li>
+        <li><span class="parameter">opts</span>      table    Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number   View id
+        </li>
+        </li></ul>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.view.<span class="function-name">set_html</span>(<span class="string">'&lt;h2&gt;HJello&lt;/h2&gt;'</span>)
+web.view.<span class="function-name">set_html</span>(<span class="string">'&lt;h2&gt;HJello&lt;/h2&gt;'</span>, { view = <span class="number">3</span> }) <span class="comment">-- Set html for view with id 3</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.run_js"></a>
+    <strong>web.view.run_js (js, opts)</strong>
+    </dt>
+    <dd>
+    Run js in a view
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">js</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         HTML string
+        </li>
+        <li><span class="parameter">opts</span>
+        ? RunJSOpts  Options
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.view.<span class="function-name">run_js</span>(<span class="string">'console.log(42)'</span>)
+web.view.<span class="function-name">run_js</span>(<span class="string">'console.log(42)'</span>, { view = <span class="number">3</span> }) <span class="comment">-- Set html for view with id 3</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.reload"></a>
+    <strong>web.view.reload (opts)</strong>
+    </dt>
+    <dd>
+    Relaod a given view
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">opts</span>
+        ? ReloadOpts  Options
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.view.<span class="function-name">reload</span>()
+web.view.<span class="function-name">reload</span>({ view = <span class="number">3</span> }) <span class="comment">-- Reload view with id 3</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.expose"></a>
+    <strong>web.view.expose (name, action, opts)</strong>
+    </dt>
+    <dd>
+    Expose a lua function inside a view (Only works with decorations)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            string             Func name
+        </li>
+        <li><span class="parameter">action</span>
+          fun(table):nil     Action to call when function is invoked in view
+        </li>
+        <li><span class="parameter">opts</span>
+            ExposeOpts?        Options
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example">web.view.<span class="function-name">expose</span>(<span class="string">'tabSelect'</span>, <span class="keyword">function</span>(args)
+  web.view.<span class="global">select</span>(<span class="global">tonumber</span>(args.view))
+<span class="keyword">end</span>)</pre></li>
+        <li><pre class="example"><span class="comment">-- In javascript
+</span>_nullbrowser.rpc.<span class="function-name">tabSelect</span>({ view: <span class="number">5</span> })</pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.open_devtools"></a>
+    <strong>web.view.open_devtools (view_id)</strong>
+    </dt>
+    <dd>
+    Open devtools window for the view
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">view_id</span>
+            <span class="types"><span class="type">number</span></span>
+         Id of the view
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.view.<span class="function-name">open_devtools</span>() <span class="comment">-- Open devtools window for current view
+</span>web.view.<span class="function-name">open_devtools</span>(<span class="number">5</span>) <span class="comment">-- Open devtools window for view id 5</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.current_index"></a>
+    <strong>web.view.current_index ()</strong>
+    </dt>
+    <dd>
+    Get current view index
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        |nil index Current view index
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> index = web.view.<span class="function-name">current_index</span>()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.event.add_listener"></a>
+    <strong>web.event.add_listener (events, opts)</strong>
+    </dt>
+    <dd>
+    Listen to events from the browser
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">events</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         |table              Event or events to listen to
+        </li>
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">callback</span>
+         fun(opts:any):nil  Callback called when that event occurs
+        </li>
+        </li></ul>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.event.<span class="function-name">add_listener</span>(<span class="string">'UrlChanged'</span>, {
+  callback = <span class="keyword">function</span>(opts)
+    <span class="global">print</span>(opts.url, opts.tab, opts.win)
+  <span class="keyword">end</span>,
+})</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "set"></a>
+    <strong>set (key, value)</strong>
+    </dt>
+    <dd>
+    Set configuration options
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The name of the configuration
+        </li>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">nil</span></span>
+         |string|boolean|number   Configuration value
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#WebOpts">WebOpts</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.<span class="function-name">set</span>(<span class="string">'new_view_url'</span>, <span class="string">'https://duckduckgo.com'</span>)
+<span class="comment">-- Can also be written as
+</span>web.opts.new_view_url = <span class="string">'https://duckduckgo.com'</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "get"></a>
+    <strong>get (key)</strong>
+    </dt>
+    <dd>
+    Get configuration value
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The name of the configuration
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#WebOpts">WebOpts</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> url = web.<span class="function-name">get</span>(<span class="string">'new_view_url'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.history.back"></a>
+    <strong>web.history.back (count, view_id)</strong>
+    </dt>
+    <dd>
+    Go back in history for given view
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">count</span>
+           number?     Number of history items to go back in (default = 1)
+        </li>
+        <li><span class="parameter">view_id</span>
+            <span class="types"><span class="type">number</span></span>
+         Id of the view
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.history.<span class="function-name">back</span>(<span class="number">2</span>, <span class="number">3</span>) <span class="comment">-- Go back 2 history items for view id 3</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.history.forward"></a>
+    <strong>web.history.forward (count, view_id)</strong>
+    </dt>
+    <dd>
+    Go forward in history for given view
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">count</span>
+           number?     Number of history items to go forward in (default = 1)
+        </li>
+        <li><span class="parameter">view_id</span>
+            <span class="types"><span class="type">number</span></span>
+         Id of the view
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.history.<span class="function-name">forward</span>(<span class="number">2</span>, <span class="number">3</span>) <span class="comment">-- Go forward 2 history items for view id 3</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.search.set_text"></a>
+    <strong>web.search.set_text (text, view_id)</strong>
+    </dt>
+    <dd>
+    Search text inside a view
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">text</span>
+            string?     Text to search
+        </li>
+        <li><span class="parameter">view_id</span>
+            <span class="types"><span class="type">number</span></span>
+         Id of the view
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.search.<span class="function-name">set_text</span>(<span class="string">'whatever'</span>) <span class="comment">-- Search in current view
+</span>web.search.<span class="function-name">set_text</span>(<span class="string">'whatever'</span>, <span class="number">5</span>) <span class="comment">-- Search in view id 5</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.search.reset"></a>
+    <strong>web.search.reset (view_id)</strong>
+    </dt>
+    <dd>
+    Reset searched text in a view (Same as web.search.set_text(''))
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">view_id</span>
+            <span class="types"><span class="type">number</span></span>
+         Id of the view
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.search.<span class="function-name">reset</span>() <span class="comment">-- Reset search state for current view
+</span>web.search.<span class="function-name">reset</span>(<span class="number">5</span>) <span class="comment">-- Reset search state for view id 5</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.search.get_text"></a>
+    <strong>web.search.get_text ()</strong>
+    </dt>
+    <dd>
+    Get the last searched text
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> text = web.search.<span class="function-name">get_text</span>()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.search.next"></a>
+    <strong>web.search.next (view_id)</strong>
+    </dt>
+    <dd>
+    Highlight next search term for the last searched text
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">view_id</span>
+            <span class="types"><span class="type">number</span></span>
+         Id of the view
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.search.<span class="global">next</span>() <span class="comment">-- Next search result in current view
+</span>web.search.<span class="global">next</span>(<span class="number">5</span>) <span class="comment">-- Next search result in view id 5</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.search.previous"></a>
+    <strong>web.search.previous (view_id)</strong>
+    </dt>
+    <dd>
+    Highlight previous search term for the last searched text
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">view_id</span>
+            <span class="types"><span class="type">number</span></span>
+         Id of the view
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.search.<span class="function-name">previous</span>() <span class="comment">-- Previous search result in current view
+</span>web.search.<span class="function-name">previous</span>(<span class="number">5</span>) <span class="comment">-- Previous search result in view id 5</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.scroll"></a>
+    <strong>web.view.scroll (deltax, deltay, view_id)</strong>
+    </dt>
+    <dd>
+    TODO: Document
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">deltax</span>
+
+        </li>
+        <li><span class="parameter">deltay</span>
+
+        </li>
+        <li><span class="parameter">view_id</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.view.scroll_to_top"></a>
+    <strong>web.view.scroll_to_top (view_id)</strong>
+    </dt>
+    <dd>
+    TODO: Document
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">view_id</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.view.scroll_to_bottom"></a>
+    <strong>web.view.scroll_to_bottom (view_id)</strong>
+    </dt>
+    <dd>
+    TODO: Document
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">view_id</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.utils.string_trim"></a>
+    <strong>web.utils.string_trim (str)</strong>
+    </dt>
+    <dd>
+    Trim whitespace from start and end of a string
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.utils.table_merge"></a>
+    <strong>web.utils.table_merge (tbl)</strong>
+    </dt>
+    <dd>
+    Merge multiple tables
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.utils.table_keys"></a>
+    <strong>web.utils.table_keys (tbl)</strong>
+    </dt>
+    <dd>
+    Get keys of a table
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.utils.equals"></a>
+    <strong>web.utils.equals (a, b)</strong>
+    </dt>
+    <dd>
+    Check if 2 values are deeply equal
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">a</span>
+            <span class="types"><span class="type">any</span></span>
+
+        </li>
+        <li><span class="parameter">b</span>
+            <span class="types"><span class="type">any</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "WebOpts"></a>
+    <strong>WebOpts</strong>
+    </dt>
+    <dd>
+    Maps to values defined in ./src/Configuration.hpp
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">app_data_dir</span>
+         string                 (readonly) Directory where app data is stored
+        </li>
+        <li><span class="parameter">close_window_when_no_views</span>
+         boolean  If true, when the last tab in a window is closed, the window closes (default: true)
+        </li>
+        <li><span class="parameter">config_dir</span>
+         string                   (readonly) Directory where app config is stored
+        </li>
+        <li><span class="parameter">downloads_dir</span>
+         string                Directory where downloaded files go
+        </li>
+        <li><span class="parameter">new_view_url</span>
+         string                 URL used when view url is not specified (default: 'https://duckduckgo.com')
+        </li>
+        <li><span class="parameter">permissions_persistance</span>
+         'always'|'session'|'never'  How to persist choices for permissions (default: 'always')
+        </li>
+        <li><span class="parameter">user_agent</span>
+         string                   User agent sent by the browser
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "_G.__internals"></a>
+    <strong>_G.__internals</strong>
+    </dt>
+    <dd>
+    Internal api (unstable)
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "opts"></a>
+    <strong>opts</strong>
+    </dt>
+    <dd>
+    API for configuring browser options
+
+
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#WebOpts">WebOpts</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.opts.new_view_url = <span class="string">'https://duckduckgo.com'</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "uv"></a>
+    <strong>uv</strong>
+    </dt>
+    <dd>
+    luv api (https://github.com/luvit/luv/blob/master/docs.md)
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "inspect"></a>
+    <strong>inspect</strong>
+    </dt>
+    <dd>
+    Returns human-readable string representation of Lua tables (https://github.com/kikito/inspect.lua)
+
+
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">any</span></span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 1980-01-01 00:00:00 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

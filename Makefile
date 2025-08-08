@@ -1,4 +1,4 @@
-.PHONY: clean build build-release dev-setup build-dev install build-source test run check fmt
+.PHONY: clean build build-release dev-setup build-dev install build-source test run check fmt docs
 
 all: build-dev
 
@@ -44,6 +44,11 @@ fmt:
 
 check: fmt
 	clang-tidy --config-file=.clang-tidy ./src/**/*.{hpp,cpp}
+
+docs:
+	ldoc -p null-browser -t "Null browser api" \
+		--merge --ignore --lls \
+		./lua/null-browser/
 
 # appimage:
 #   nix bundle --bundler github:ralismark/nix-appimage

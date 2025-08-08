@@ -14,7 +14,7 @@ local search_engines = require 'null-browser.extras.search-engines'
 search_engines.urls['ld'] = 'https://lite.duckduckgo.com/?q={}'
 search_engines.urls['g'] = 'https://github.com/{}'
 search_engines.urls['y'] = 'https://youtube.com/results?search_query={}'
-search_engines.urls['r'] = 'https://reddit.com/{}'
+search_engines.urls['r'] = 'https://reddit.com/r/{}'
 
 local Dmenu = require 'null-browser.extras.dmenu'
 local menu = Dmenu:new {
@@ -55,7 +55,9 @@ web.event.add_listener('NotificationReceived', {
 })
 
 -- Tabline
-require 'null-browser.extras.tabline'.init()
+require 'null-browser.extras.tabline'.init {
+  decoration = web.decorations.top,
+}
 
 -- Statusline
 require 'null-browser.extras.statusline'.init {

@@ -1,37 +1,46 @@
---- @type table
+--- Helper lua utils for null browser
+--- @module web
+
 _G.web = _G.web or {}
 web.utils = web.utils or {}
 
---- luv api
---- @type table
---- @link https://github.com/luvit/luv/blob/master/docs.md
+--- luv api (https://github.com/luvit/luv/blob/master/docs.md)
+---
 --- @diagnostic disable-next-line: undefined-global
 web.uv = web.uv or nil
 
 local inspector = require 'null-browser.inspect'
 
---- Returns human-readable string representation of Lua tables
----
---- @link https://github.com/kikito/inspect.lua
+--- Returns human-readable string representation of Lua tables (https://github.com/kikito/inspect.lua)
+--- @diagnostic disable-next-line: undefined-doc-param
+--- @param value any
+--- @return string
 web.inspect = inspector.inspect
 
--- TODO: Documentation
+--- Trim whitespace from start and end of a string
+--- @param str string
+--- @return string
 function web.utils.string_trim(str)
   local res, _ = string.gsub(str, '^%s*(.-)%s*$', '%1')
   return res
 end
 
--- TODO: Documentation
-function web.utils.table_merge(t, ...)
+--- Merge multiple tables
+--- @param tbl table
+--- @return table
+function web.utils.table_merge(tbl, ...)
   for i = 1, select("#", ...) do
     for k, v in pairs(select(i, ...) or {}) do
-      t[k] = v
+      tbl[k] = v
     end
   end
 
-  return t
+  return tbl
 end
 
+--- Get keys of a table
+--- @param tbl table
+--- @return table
 function web.utils.table_keys(tbl)
   local keys = {}
   for key, _ in pairs(tbl) do
@@ -63,6 +72,10 @@ local function is_deep_equal_helper(a, b, table_pairs)
   return a == b
 end
 
+--- Check if 2 values are deeply equal
+--- @param a any
+--- @param b any
+--- @return boolean
 function web.utils.equals(a, b)
   return is_deep_equal_helper(a, b, {})
 end
