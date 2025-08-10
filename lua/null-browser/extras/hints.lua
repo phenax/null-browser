@@ -90,6 +90,11 @@ function hints.action.open_in_view()
   ]]
 end
 
+function hints.action.focus()
+  web.keymap.set_mode 'i'
+  web.view.run_js([[ _nullbrowser.hints.currentMatch?.elem?.focus?.(); ]])
+end
+
 function hints.action.copy_link()
   web.view.run_js([[_nullbrowser.hints.currentMatch.elem?.href]], {
     on_result = function(url)
