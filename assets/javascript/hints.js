@@ -44,6 +44,8 @@
   const hints = {
     /** @type {string} */
     keys: '',
+    /** @type {string} */
+    searchText: '',
     /** @type {Array<Match>} */
     matches: [],
     /** @type {HTMLElement | null} */
@@ -56,6 +58,7 @@
     stop() {
       hints.matches = [];
       hints.keys = '';
+      hints.searchText = '';
       [...(hints.labelsRoot?.children ?? [])].forEach(child => {
         child.remove();
       });
@@ -77,11 +80,24 @@
      * @return {boolean}
      */
     filterOutByKey(char) {
-      if (!/[0-9]+/.test(char)) return false;
+      if (char.length !== 1) return false;
+      const isDigit = /[0-9]+/.test(char);
 
-      hints.keys = hints.keys + char;
+      if (isDigit) {
+        hints.keys = hints.keys + char;
+      } else {
+        hints.searchText = hints.searchText + char.toLowerCase();
+      }
       hints.matches = hints.matches.filter(m => {
-        const isMatch = m.key.startsWith(hints.keys);
+        const isKeyMatch = m.key.startsWith(hints.keys);
+        const texts = [
+          m.elem.textContent || '',
+          m.elem.getAttribute('title') || '',
+          m.elem.getAttribute('label') || '',
+          m.elem.getAttribute('aria-label') || '',
+        ];
+        const isTextMatch = texts.some(text => text.toLowerCase()?.includes(hints.searchText));
+        const isMatch = isKeyMatch && isTextMatch;
         if (!isMatch) {
           m.labelElem?.remove();
           return false
@@ -114,16 +130,18 @@
       hints.matches = [];
       const elements = document.querySelectorAll(selector);
 
-      const matches = [...elements].map(async (elem, index) => {
-        /** @type {Match} */
-        const match = {
-          elem,
-          key: `${index}`.padStart(`${elements.length}`.length, '0'),
-          labelElem: null,
-        }
-        match.labelElem = await createLabelElem(match);
-        return match
-      });
+      const matches = [...elements]
+        .filter(el => el.checkVisibility())
+        .map(async (elem, index) => {
+          /** @type {Match} */
+          const match = {
+            elem,
+            key: `${index}`.padStart(`${elements.length}`.length, '0'),
+            labelElem: null,
+          }
+          match.labelElem = await createLabelElem(match);
+          return match
+        });
 
       Promise.allSettled(matches).then(matches => {
         matches.forEach(result => {
