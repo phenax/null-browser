@@ -9,7 +9,6 @@ build-source:
 	@mkdir -p build
 	@cd build/ && cmake .. \
 		-G Ninja \
-		-DNULL_LUA_PREFIX="${LUA_PREFIX}" \
 		-DCMAKE_INSTALL_PREFIX="${PREFIX}" \
 		&& cmake --build . -j10
 

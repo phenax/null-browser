@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.25)
 set(PROJECT "null-browser")
 
 project(${PROJECT}
-  VERSION 0.0.0
-  LANGUAGES CXX)
+        VERSION 0.0.0
+        LANGUAGES CXX)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -18,11 +18,15 @@ find_package(PkgConfig REQUIRED)
 # message(COMMENT "${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}")
 
 # Lua path
-if(NOT DEFINED NULL_LUA_PREFIX OR NOT NULL_LUA_PREFIX)
-  set(NULL_LUA_PREFIX "${CMAKE_SOURCE_DIR}/lua")
+if(NOT DEFINED CMAKE_INSTALL_PREFIX OR NOT CMAKE_INSTALL_PREFIX)
+  message(FATAL_ERROR "CMAKE_INSTALL_PREFIX not defined")
 endif()
+set(PROJECT_TARGET_PATH "${CMAKE_INSTALL_PREFIX}")
+set(NULL_LUA_PREFIX "${PROJECT_TARGET_PATH}/lua")
 set(PROJECT_LUA_PATH "${NULL_LUA_PREFIX}/?.lua")
-add_compile_definitions(PROJECT_LUA_PATH="${PROJECT_LUA_PATH}")
+add_compile_definitions(PROJECT_LUA_PATH="${PROJECT_LUA_PATH}"
+                        PROJECT_DOCS_PATH="${PROJECT_TARGET_PATH}/docs"
+                        PROJECT_ASSETS_PATH="${PROJECT_TARGET_PATH}/assets")
 
 # Source
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
@@ -55,9 +59,9 @@ qt_standard_project_setup()
 qt_wrap_cpp(MOC_SRCS ${HEADER_FILES})
 target_sources(${PROJECT} PRIVATE ${MOC_SRCS})
 target_link_libraries(${PROJECT}
-  Qt6::Core
-  Qt6::Widgets
-  Qt6::WebEngineWidgets)
+                      Qt6::Core
+                      Qt6::Widgets
+                      Qt6::WebEngineWidgets)
 
 # Lua.LUV
 pkg_check_modules(LuaLUV REQUIRED libluv)
@@ -80,29 +84,30 @@ enable_testing()
 add_executable(tests)
 target_sources(tests PRIVATE ${SOURCE_FILES} ${MOC_SRCS} ${SPEC_FILES})
 target_include_directories(tests PRIVATE
-  src/
-  spec/
-  ${LuaLUV_INCLUDE_DIRS}
-  ${LuaJIT_INCLUDE_DIRS}
-  ${LibUV_INCLUDE_DIRS})
+                           src/
+                           spec/
+                           ${LuaLUV_INCLUDE_DIRS}
+                           ${LuaJIT_INCLUDE_DIRS}
+                           ${LibUV_INCLUDE_DIRS})
 target_link_libraries(tests PRIVATE
-  Qt6::Core
-  Qt6::Widgets
-  Qt6::WebEngineWidgets
-  Qt6::Test
-  ${LuaLUV_LINK_LIBRARIES}
-  ${LuaJIT_LINK_LIBRARIES}
-  ${LibUV_LINK_LIBRARIES})
+                      Qt6::Core
+                      Qt6::Widgets
+                      Qt6::WebEngineWidgets
+                      Qt6::Test
+                      ${LuaLUV_LINK_LIBRARIES}
+                      ${LuaJIT_LINK_LIBRARIES}
+                      ${LibUV_LINK_LIBRARIES})
 add_test(NAME NullBrowserTests COMMAND tests)
 
 
 # Install
 install(TARGETS ${PROJECT}
-  EXPORT               "${TARGETS_EXPORT_NAME}"
-  RUNTIME DESTINATION  "${CMAKE_INSTALL_BINDIR}"
-  LIBRARY DESTINATION  "${CMAKE_INSTALL_LIBDIR}"
-  ARCHIVE DESTINATION  "${CMAKE_INSTALL_LIBDIR}")
+        EXPORT               "${TARGETS_EXPORT_NAME}"
+        RUNTIME DESTINATION  "${CMAKE_INSTALL_BINDIR}"
+        LIBRARY DESTINATION  "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION  "${CMAKE_INSTALL_LIBDIR}")
 install(DIRECTORY lua/ DESTINATION lua)
 install(DIRECTORY assets/ DESTINATION assets)
+install(DIRECTORY docs/ DESTINATION docs)
 # file(COPY "${CMAKE_SOURCE_DIR}/lua" DESTINATION "${CMAKE_INSTALL_PREFIX}")
 
