@@ -56,7 +56,8 @@ function hints.stop()
 end
 
 function hints._load_hints_js(on_ready)
-  web.uv.fs_open('./assets/javascript/hints.js', 'r', 438, function(err, file)
+  local hints_js = web.opts.null_assets_dir .. '/javascript/hints.js'
+  web.uv.fs_open(hints_js, 'r', 438, function(err, file)
     if err then return end
     if not file then return {} end
     local stat = assert(web.uv.fs_fstat(file))

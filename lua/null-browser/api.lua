@@ -229,6 +229,8 @@ function web.get(key) return __internals.config_get(key) end
 --- @field config_dir string                   (readonly) Directory where app config is stored
 --- @field downloads_dir string                Directory where downloaded files go
 --- @field new_view_url string                 URL used when view url is not specified (default: 'https://duckduckgo.com')
+--- @field null_assets_dir string              (readonly) Directory where null assets are installed
+--- @field null_docs_dir string                (readonly) Directory where null docs are installed
 --- @field permissions_persistance 'always'|'session'|'never'  How to persist choices for permissions (default: 'always')
 --- @field user_agent string                   User agent sent by the browser
 
@@ -361,8 +363,8 @@ web.decorations.right = create_decoration_api('right')
 
 --- Get a list of items for help
 function web.help.get_items()
-  -- TODO: Use proper path from build
-  local file, _ = io.open('./docs/api/symbols.json', 'r')
+  local symbols_json = web.opts.null_docs_dir .. '/api/symbols.json'
+  local file, _ = io.open(symbols_json, 'r')
   if file then
     local contents, _ = file:read('a')
     return web.json.decode(contents)
@@ -377,7 +379,7 @@ end
 --- @param opts.view number?
 function web.help.show(item, opts)
   opts = opts or {}
-  local url = 'null://docs/api#' .. (item or '')
+  local url = 'null://docs/api/index.html#' .. (item or '')
   if opts.view ~= nil then
     web.view.set_url(url, opts.view)
   else

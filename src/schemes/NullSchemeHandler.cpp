@@ -16,7 +16,7 @@ void NullSchemeHandler::requestStarted(QWebEngineUrlRequestJob *job) {
 }
 
 QByteArray NullSchemeHandler::read_static_docs_file(const QString &path) {
-  QFile file(NULL_DOCS_DIR + path);
+  QFile file(PROJECT_DOCS_PATH + path);
   if (!file.exists())
     return read_index_html();
 
@@ -29,7 +29,8 @@ QByteArray NullSchemeHandler::read_static_docs_file(const QString &path) {
 }
 
 QByteArray NullSchemeHandler::read_index_html() {
-  QFile file(NULL_DOCS_DIR + QString("/index.html"));
+  // TODO: Change after index is defined
+  QFile file(PROJECT_DOCS_PATH + QString("/api/index.html"));
   qDebug() << ":::" << file.exists();
   if (file.open(QIODevice::ReadOnly)) {
     auto contents = file.readAll();

@@ -7,9 +7,6 @@
 #include <qdebug.h>
 #include <qurlquery.h>
 
-// TODO: Install doc dir and pass this path during build
-#define NULL_DOCS_DIR "./doc"
-
 class NullSchemeHandler : public QWebEngineUrlSchemeHandler {
   Q_OBJECT
 

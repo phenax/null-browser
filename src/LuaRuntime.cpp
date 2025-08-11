@@ -70,7 +70,7 @@ void LuaRuntime::require_module(const QString &module_name) {
 }
 
 void LuaRuntime::init_builtins_package_path() {
-  auto builtins_lua_path = QString(PROJECT_LUA_PATH);
+  auto builtins_lua_path = QString(PROJECT_LUA_PATH "/?.lua");
   append_package_path(builtins_lua_path);
 }
 

@@ -11,10 +11,6 @@
 #include "widgets/Decorations.hpp"
 #include "widgets/WebView.hpp"
 
-#ifndef PROJECT_LUA_PATH
-#define PROJECT_LUA_PATH ""
-#endif
-
 #define preserve_top(STATE, BODY)                                                                  \
   {                                                                                                \
     const int __top = lua_gettop(STATE);                                                           \

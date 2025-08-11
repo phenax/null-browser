@@ -16,6 +16,7 @@ dev-setup:
 	@cp build/compile_commands.json .
 
 build-dev: build-source dev-setup
+	cd build && cmake --install . --prefix "${PREFIX}"
 
 build:
 	RELEASE=1 make build-source LUA_PREFIX="${PREFIX}/lua"

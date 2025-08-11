@@ -9,15 +9,20 @@ class Configuration : public QObject {
   Q_OBJECT
 
 private:
+  QDir config_dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
   std::unordered_map<QString, QVariant> config_map{
       {"new_view_url", "https://duckduckgo.com"},
       {"close_window_when_no_views", true},
       {"user_agent", QWebEngineProfile::defaultProfile()->httpUserAgent()},
       {"downloads_dir", QWebEngineProfile::defaultProfile()->downloadPath()},
-      {"app_data_dir", QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)},
       {"permissions_persistance", "always"},
   };
-  QDir config_dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
+  std::unordered_map<QString, QVariant> readonly_config_map{
+      {"app_data_dir", QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)},
+      {"config_dir", config_dir.path()},
+      {"null_assets_dir", PROJECT_ASSETS_PATH},
+      {"null_docs_dir", PROJECT_DOCS_PATH},
+  };
 
 public:
   using QObject::QObject;
@@ -28,13 +33,13 @@ public:
   }
 
   QVariant get_config(const QString &name, QVariant default_value = "") const {
-    if (name == "config_dir") // readonly
-      return config_dir.path();
+    if (readonly_config_map.contains(name))
+      return readonly_config_map.at(name);
 
-    if (!config_map.contains(name))
-      return default_value;
+    if (config_map.contains(name))
+      return config_map.at(name);
 
-    return config_map.at(name);
+    return default_value;
   }
 
   bool close_window_when_no_views() const {
