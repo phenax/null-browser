@@ -19,7 +19,7 @@
 - [X] Vertical tabline ui
 - [ ] Document events and event opts
 - [ ] Update all api to use opts table pattern
-- [ ] Install doc/ in build
+- [ ] Install docs/ and assets/ in build
 - [ ] web.keymap.configure_mode(modename, { passthrough = false })
 - [ ] Fullscreen
 - [ ] Zoom in/out/reset
@@ -27,6 +27,7 @@
 - [ ] Api for enabling rpc api in view
 - [ ] Make the asset/config/lua paths readable via lua
 - [ ] json encode/decode
+- [ ] Fix path to symbols.json in web.help.get_items (use docs path)
 
 ** Bugs
 - [ ] Closing webview should close devtools window

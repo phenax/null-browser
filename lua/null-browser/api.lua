@@ -362,7 +362,7 @@ web.decorations.right = create_decoration_api('right')
 --- Get a list of items for help
 function web.help.get_items()
   -- TODO: Use proper path from build
-  local file, _ = io.open('./doc/symbols.json', 'r')
+  local file, _ = io.open('./docs/api/symbols.json', 'r')
   if file then
     local contents, _ = file:read('a')
     return web.json.decode(contents)

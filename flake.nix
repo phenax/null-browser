@@ -17,7 +17,7 @@
           lua-libluv = pkgs.callPackage (import ./nix/libluv.nix) {
             inherit (myPkgs) libuv luajit;
           };
-          # dkjson = pkgs.luajitPackages.dkjson;
+          dkjson = pkgs.luajitPackages.dkjson;
           luassert = pkgs.luajitPackages.luassert;
           # lua-busted = pkgs.luajitPackages.busted;
         };
@@ -28,7 +28,7 @@
           luajit
           libuv
           lua-libluv
-          # dkjson
+          dkjson
 
           luassert
           # lua-busted

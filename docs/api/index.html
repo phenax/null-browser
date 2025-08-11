@@ -169,6 +169,14 @@
 	<td class="summary">TODO: Document</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#web.help.get_items">web.help.get_items ()</a></td>
+	<td class="summary">Get a list of items for help</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.help.show">web.help.show (item, opts)</a></td>
+	<td class="summary">Open help docs for a given item</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#web.utils.string_trim">web.utils.string_trim (str)</a></td>
 	<td class="summary">Trim whitespace from start and end of a string</td>
 	</tr>
@@ -183,6 +191,10 @@
 	<tr>
 	<td class="name" nowrap><a href="#web.utils.equals">web.utils.equals (a, b)</a></td>
 	<td class="summary">Check if 2 values are deeply equal</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.utils.table_contains">web.utils.table_contains (tbl, value)</a></td>
+	<td class="summary">Check if table contains given value</td>
 	</tr>
 </table>
 <h2><a href="#Tables">Tables</a></h2>
@@ -987,6 +999,47 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
 </dd>
     <dt>
+    <a name = "web.help.get_items"></a>
+    <strong>web.help.get_items ()</strong>
+    </dt>
+    <dd>
+    Get a list of items for help
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.help.show"></a>
+    <strong>web.help.show (item, opts)</strong>
+    </dt>
+    <dd>
+    Open help docs for a given item
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">item</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+        </li>
+        <li><span class="parameter">opts</span>
+        <ul>
+        <li><span class="parameter">view</span>
+         number?
+        </li>
+        </li></ul>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
     <a name = "web.utils.string_trim"></a>
     <strong>web.utils.string_trim (str)</strong>
     </dt>
@@ -1082,6 +1135,37 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
         </li>
         <li><span class="parameter">b</span>
+            <span class="types"><span class="type">any</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.utils.table_contains"></a>
+    <strong>web.utils.table_contains (tbl, value)</strong>
+    </dt>
+    <dd>
+    Check if table contains given value
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+
+        </li>
+        <li><span class="parameter">value</span>
             <span class="types"><span class="type">any</span></span>
 
         </li>

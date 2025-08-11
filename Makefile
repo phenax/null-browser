@@ -46,9 +46,16 @@ check: fmt
 	clang-tidy --config-file=.clang-tidy ./src/**/*.{hpp,cpp}
 
 docs:
+	# API reference pages
 	ldoc -p null-browser -t "Null browser api" \
 		--merge --ignore --lls \
+		--dir ./docs/api \
 		./lua/null-browser/
+	# Symbols json
+	ldoc --merge --ignore --lls \
+		./lua/null-browser/ \
+		--dir ./docs/api \
+		--filter ldoc_json_filter.lua;
 
 # appimage:
 #   nix bundle --bundler github:ralismark/nix-appimage
