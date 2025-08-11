@@ -67,7 +67,7 @@ void WebView::on_rpc_message(const NullRPCMessage &message) {
     return;
 
   RpcArgs args;
-  for (auto pair : message.params.queryItems())
+  for (auto pair : message.params.queryItems(QUrl::FullyDecoded))
     args.insert(pair);
 
   auto func = exposed_functions.at(message.name);
