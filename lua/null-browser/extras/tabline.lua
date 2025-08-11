@@ -1,9 +1,14 @@
 local html = require 'null-browser.extras.html'
 local tabline = {
-  config = { decoration = web.decorations.top }
+  config = {
+    decoration = web.decorations.top,
+    transform_html = nil,
+    on_window_setup = nil,
+    vertical_size = 200,
+    horizontal_size = 20,
+  },
 }
 
--- TODO: vertical tabs
 function tabline.init(opts)
   tabline.config = web.utils.table_merge(tabline.config, opts)
   local decoration = tabline.config.decoration
@@ -13,10 +18,14 @@ function tabline.init(opts)
       decoration.enable({ win = event.win_id })
       tabline.show_tabs_in_window(event.win_id, decoration);
 
+      local size = tabline.config.horizontal_size
       if tabline.is_vertical() then
-        tabline.config.decoration.set_size(200, { win = event.win_id })
-      else
-        tabline.config.decoration.set_size(20, { win = event.win_id })
+        size = tabline.config.vertical_size
+      end
+      tabline.config.decoration.set_size(size, { win = event.win_id })
+
+      if type(tabline.config.on_window_setup) == 'function' then
+        tabline.config.on_window_setup(event.win_id)
       end
     end,
   })
@@ -63,10 +72,14 @@ function tabline.tabs_html()
     table.insert(tab_list, tab)
   end
 
-  local tabs_html = html.div({}, {
+  local tabs_html = html.div({ class = 'tabs-wrapper' }, {
     html.style({}, { html.raw(tabline.css()) }),
     html.div({ class = 'tabs' .. (tabline.is_vertical() and ' vertical' or '') }, tab_list)
   })
+
+  if type(tabline.config.transform_html) == 'function' then
+    tabs_html = tabline.config.transform_html(tabs_html)
+  end
 
   return html.to_string(tabs_html)
 end
@@ -80,15 +93,21 @@ function tabline.css()
     html, body {
       background: #000;
     }
+    body * { min-width: 0; box-sizing: border-box; }
+    .tabs-wrapper {
+      width: 100%;
+    }
     .tabs {
       display: flex;
       align-items: stretch;
       height: 100vh;
+      width: 100%;
     }
     .tabs.vertical {
       flex-direction: column;
       justify-contents: flex-start;
       align-items: flex-start;
+      height: auto;
     }
     .tabs.vertical .tab {
       border-left: none;

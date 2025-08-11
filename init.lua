@@ -54,9 +54,99 @@ web.event.add_listener('NotificationReceived', {
   end,
 })
 
+local extra_styles = [[
+  .fancy-tabline {
+    padding: 8px;
+  }
+  .quick {
+    display: flex;
+    justify-contents: space-between;
+    gap: 8px;
+    padding: 8px 0;
+  }
+  .quick .quick-link {
+    all: unset;
+    display: block;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #999;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    color: white;
+  }
+  .url-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    font-size: 8px;
+    padding: 6px;
+    border-radius: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+  }
+  .tabs-wrapper { }
+  .tabs.vertical {
+    padding: 8px 0;
+    width: 100vw;
+    gap: 4px;
+  }
+  .tabs.vertical .tab {
+    background-color: rgba(255, 255, 255, 0.07);
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+  .tabs.vertical .tab.current {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+]]
 -- Tabline
 require 'null-browser.extras.tabline'.init {
-  decoration = web.decorations.top,
+  decoration = web.decorations.left,
+  vertical_size = 300,
+  on_window_setup = function(win_id)
+    -- TODO: This should happen after toggle
+    web.schedule(function()
+      web.view.expose('open_url_in_view', function(args)
+        print(web.inspect(args))
+        local url = args and args.url
+        if url then web.view.set_url(url) end
+      end, { view = web.decorations.left.view() })
+    end)
+  end,
+  transform_html = function(tabs_html)
+    local html = require 'null-browser.extras.html'
+
+    local function current_url()
+      local views = web.view.list()
+      local view = views[web.view.current_index()]
+      return view and view.url or ''
+    end
+
+    local quicklinks = {
+      { icon = "λ", url = "https://ediblemonad.dev", },
+      { icon = "🦆", url = "https://duckduckgo.com", },
+      { icon = "🤮", url = "https://google.com", },
+    }
+
+    local quickhtml = {}
+    for _, link in ipairs(quicklinks) do
+      table.insert(quickhtml, html.button(
+        {
+          class = 'quick-link',
+          onclick = '_nullbrowser.rpc.open_url_in_view({url: this.dataset.href})',
+          ['data-href'] = link.url,
+        },
+        { link.icon }
+      ))
+    end
+
+    return html.div({ class = 'fancy-tabline' }, {
+      html.div({ class = 'url-info' }, { current_url() }),
+      html.div({ class = 'quick' }, quickhtml),
+      tabs_html,
+      html.style({}, { html.raw(extra_styles) }),
+    })
+  end,
 }
 
 -- Statusline

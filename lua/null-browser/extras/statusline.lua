@@ -82,7 +82,7 @@ end
 function statusline.current_url()
   local views = web.view.list()
   local view = views[web.view.current_index()]
-  return view and view.url or ""
+  return view and view.url or ''
 end
 
 local function segment_html(segment)

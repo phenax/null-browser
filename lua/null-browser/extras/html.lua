@@ -38,6 +38,7 @@ html.span = html.create_el('span')
 html.button = html.create_el('button')
 html.style = html.create_el('style')
 html.a = html.create_el('a')
+html.input = html.create_el('input')
 
 function html.escape_string(str)
   str = str:gsub('&', '&amp;')
