@@ -17,17 +17,17 @@
 - [X] Embed docs in app (`null:/docs`)
 - [X] web.decorations.*.set_size()
 - [X] Vertical tabline ui
-- [ ] Document events and event opts
+- [X] Install docs/ and assets/ in build
+- [X] Make the asset/config/lua paths readable via lua
+- [X] json encode/decode
+- [X] Fix path to symbols.json in web.help.get_items (use docs path)
+- [X] Document events and event opts
 - [ ] Update all api to use opts table pattern
-- [ ] Install docs/ and assets/ in build
 - [ ] web.keymap.configure_mode(modename, { passthrough = false })
 - [ ] Fullscreen
 - [ ] Zoom in/out/reset
 - [ ] Remove unwanted "async"-ness in lua calls
 - [ ] Api for enabling rpc api in view
-- [ ] Make the asset/config/lua paths readable via lua
-- [ ] json encode/decode
-- [ ] Fix path to symbols.json in web.help.get_items (use docs path)
 
 ** Bugs
 - [ ] Closing webview should close devtools window
@@ -127,22 +127,6 @@ web.decorations.top.disable()
 web.decorations.top.set_size(20)
 local view_id = web.decorations.top.view()
 web.view.set_html('<div>Hello world</div>', { view = view })
-web.decorations.top.destroy() -- Maybe to destroy unwanted webviews
-
--- Show tabs in top decoration
-web.view.expose_js('openTab', function(tabId)
-  web.view.select({ view = tabId })
-end, { view = web.decorations.top.view() })
-web.event.add_listener({ 'TabOpen', 'TabClose' }, {
-  callback = function()
-    local tabs_html = ''
-    local views = web.view.list()
-    for index, view in ipairs(web.view.list()) do
-      local text = index..': '..view.title..' ('..view.url..')'
-      local tab = '<span onclick="_nullbrowser.rpc.openTab('..view.id..')">' .. text .. '</span>')
-      tabs_html = tabs_html .. tab
-    end
-    web.view.set_html(tabs_html, { view = web.decorations.top.view() })
-  end,
-})
+-- Hide/unhide
+web.decorations.top.set_visible(false)
 #+end_src

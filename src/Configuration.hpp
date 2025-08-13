@@ -65,11 +65,11 @@ public:
     return QWebEngineProfile::PersistentPermissionsPolicy::StoreOnDisk;
   }
 
-  DEFINE_GETTER(get_config_dir, config_dir)
-  DEFINE_SETTER(set_config_dir, config_dir)
+  DEFINE_GETTER(get_user_config_dir, config_dir)
+  DEFINE_SETTER(set_user_config_dir, config_dir)
 
-  QString get_config_lua_init_file() const { return config_dir.filePath("init.lua"); }
-  QString get_config_lua_dir() const { return config_dir.filePath("lua"); }
+  QString get_user_config_lua_init_file() const { return config_dir.filePath("init.lua"); }
+  QString get_user_config_lua_dir() const { return config_dir.filePath("lua"); }
 
 private:
   void on_update(const QString &name, const QVariant &value) {

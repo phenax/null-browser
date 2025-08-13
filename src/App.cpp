@@ -16,7 +16,7 @@ void App::run() {
 
   auto config_dir = get_cli_config_dir();
   if (!config_dir.isEmpty())
-    configuration.set_config_dir(config_dir);
+    configuration.set_user_config_dir(config_dir);
 
   if (instance_manager.is_server()) {
     init_server();

@@ -24,13 +24,13 @@ BrowserApp::BrowserApp(Configuration &configuration) : configuration(configurati
   // Global event filter
   qApp->installEventFilter(this);
 
-  qDebug() << "Config dir:" << configuration.get_config_dir().path();
+  qDebug() << "Config dir:" << configuration.get_user_config_dir().path();
 
   // Load lua directory into package path
-  lua.append_package_path(configuration.get_config_lua_dir());
+  lua.append_package_path(configuration.get_user_config_lua_dir());
 
   // Load init.lua
-  auto lua_init_file = configuration.get_config_lua_init_file();
+  auto lua_init_file = configuration.get_user_config_lua_init_file();
   if (QFile::exists(lua_init_file)) {
     lua.load_file_sync(lua_init_file);
   } else {

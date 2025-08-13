@@ -177,6 +177,18 @@
 	<td class="summary">Open help docs for a given item</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#print">print (value)</a></td>
+	<td class="summary">Print a lua object to inspect</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.json.encode">web.json.encode (obj, opts)</a></td>
+	<td class="summary">Encodes lua object as json into a string</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#web.json.decode">web.json.decode (json_str, opts)</a></td>
+	<td class="summary">Decodes a string into a lua object</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#web.utils.string_trim">web.utils.string_trim (str)</a></td>
 	<td class="summary">Trim whitespace from start and end of a string</td>
 	</tr>
@@ -202,6 +214,46 @@
 	<tr>
 	<td class="name" nowrap><a href="#WebOpts">WebOpts</a></td>
 	<td class="summary">Maps to values defined in ./src/Configuration.hpp</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#WebEvents">WebEvents</a></td>
+	<td class="summary">Events that can be listened to with web.events.add_listener</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#WinCreatedEventOpts">WinCreatedEventOpts</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ViewCreatedEventOpts">ViewCreatedEventOpts</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ViewSelectedEventOpts">ViewSelectedEventOpts</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ViewClosedEventOpts">ViewClosedEventOpts</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#UrlChangedEventOpts">UrlChangedEventOpts</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#PermissionRequestedEventOpts">PermissionRequestedEventOpts</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ModeChangedEventOpts">ModeChangedEventOpts</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#KeyPressedEventOpts">KeyPressedEventOpts</a></td>
+	<td class="summary"></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#NotificationReceivedEventOpts">NotificationReceivedEventOpts</a></td>
+	<td class="summary"></td>
 	</tr>
 </table>
 <h2><a href="#Fields">Fields</a></h2>
@@ -676,12 +728,16 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#WebEvents">WebEvents</a>
+    </ul>
 
     <h3>Usage:</h3>
     <ul>
         <pre class="example">web.event.<span class="function-name">add_listener</span>(<span class="string">'UrlChanged'</span>, {
   callback = <span class="keyword">function</span>(opts)
-    <span class="global">print</span>(opts.url, opts.tab, opts.win)
+    <span class="global">print</span>(opts.url, opts.view, opts.win)
   <span class="keyword">end</span>,
 })</pre>
     </ul>
@@ -1040,6 +1096,93 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
 </dd>
     <dt>
+    <a name = "print"></a>
+    <strong>print (value)</strong>
+    </dt>
+    <dd>
+    Print a lua object to inspect
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">any</span></span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.json.encode"></a>
+    <strong>web.json.encode (obj, opts)</strong>
+    </dt>
+    <dd>
+    Encodes lua object as json into a string
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+            <span class="types"><span class="type">any</span></span>
+         Value to encode into json string
+        </li>
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">indent</span>
+         boolean?   Whether to enable indentation (default: false)
+        </li>
+        </li></ul>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "web.json.decode"></a>
+    <strong>web.json.decode (json_str, opts)</strong>
+    </dt>
+    <dd>
+    Decodes a string into a lua object
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">json_str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Json string to decode
+        </li>
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">null</span>
+         any          What to use as null value (default: nil)
+        </li>
+        </li></ul>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">any</span></span>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
     <a name = "web.utils.string_trim"></a>
     <strong>web.utils.string_trim (str)</strong>
     </dt>
@@ -1211,11 +1354,307 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
         <li><span class="parameter">new_view_url</span>
          string                 URL used when view url is not specified (default: 'https://duckduckgo.com')
         </li>
+        <li><span class="parameter">null_assets_dir</span>
+         string              (readonly) Directory where null assets are installed
+        </li>
+        <li><span class="parameter">null_docs_dir</span>
+         string                (readonly) Directory where null docs are installed
+        </li>
         <li><span class="parameter">permissions_persistance</span>
          'always'|'session'|'never'  How to persist choices for permissions (default: 'always')
         </li>
         <li><span class="parameter">user_agent</span>
          string                   User agent sent by the browser
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "WebEvents"></a>
+    <strong>WebEvents</strong>
+    </dt>
+    <dd>
+    Events that can be listened to with web.events.add_listener
+
+
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#KeyPressedEventOpts">KeyPressedEventOpts</a></li>
+         <li><a href="index.html#ModeChangedEventOpts">ModeChangedEventOpts</a></li>
+         <li><a href="index.html#NotificationReceivedEventOpts">NotificationReceivedEventOpts</a></li>
+         <li><a href="index.html#PermissionRequestedEventOpts">PermissionRequestedEventOpts</a></li>
+         <li><a href="index.html#UrlChangedEventOpts">UrlChangedEventOpts</a></li>
+         <li><a href="index.html#ViewClosedEventOpts">ViewClosedEventOpts</a></li>
+         <li><a href="index.html#ViewCreatedEventOpts">ViewCreatedEventOpts</a></li>
+         <li><a href="index.html#ViewSelectedEventOpts">ViewSelectedEventOpts</a></li>
+         <li><a href="index.html#WinCreatedEventOpts">WinCreatedEventOpts</a></li>
+         <li><a href="index.html#web.event.add_listener">web.event.add_listener</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">web.events.<span class="function-name">add_listener</span>(<span class="string">'UrlChanged'</span>, {
+  callback = <span class="keyword">function</span>(opts)
+    <span class="global">print</span>(opts.url)
+  },
+<span class="keyword">end</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "WinCreatedEventOpts"></a>
+    <strong>WinCreatedEventOpts</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+         'WinCreated'
+        </li>
+        <li><span class="parameter">view</span>
+         integer
+        </li>
+        <li><span class="parameter">win</span>
+         integer
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ViewCreatedEventOpts"></a>
+    <strong>ViewCreatedEventOpts</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+         'ViewCreated'
+        </li>
+        <li><span class="parameter">view</span>
+         integer
+        </li>
+        <li><span class="parameter">win</span>
+         integer
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ViewSelectedEventOpts"></a>
+    <strong>ViewSelectedEventOpts</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+         'ViewSelected'
+        </li>
+        <li><span class="parameter">view</span>
+         integer
+        </li>
+        <li><span class="parameter">win</span>
+         integer
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ViewClosedEventOpts"></a>
+    <strong>ViewClosedEventOpts</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+         'ViewClosed'
+        </li>
+        <li><span class="parameter">view</span>
+         integer
+        </li>
+        <li><span class="parameter">win</span>
+         integer
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "UrlChangedEventOpts"></a>
+    <strong>UrlChangedEventOpts</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+         'UrlChanged'
+        </li>
+        <li><span class="parameter">view_id</span>
+         integer
+        </li>
+        <li><span class="parameter">win_id</span>
+         integer
+        </li>
+        <li><span class="parameter">url</span>
+         string
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "PermissionRequestedEventOpts"></a>
+    <strong>PermissionRequestedEventOpts</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+         'PermissionRequested'
+        </li>
+        <li><span class="parameter">premission_type</span>
+         'MediaAudioCapture' | 'MediaVideoCapture' | 'MediaAudioVideoCapture' | 'DesktopVideoCapture' | 'DesktopAudioVideoCapture' | 'MouseLock' | 'Notifications' | 'Geolocation' | 'ClipboardReadWrite' | 'LocalFontsAccess' | 'Unsupported'
+        </li>
+        <li><span class="parameter">webview_id</span>
+         integer
+        </li>
+        <li><span class="parameter">win_id</span>
+         integer
+        </li>
+        <li><span class="parameter">accept</span>
+         fun():nil
+        </li>
+        <li><span class="parameter">reject</span>
+         fun():nil
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ModeChangedEventOpts"></a>
+    <strong>ModeChangedEventOpts</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+         'ModeChanged'
+        </li>
+        <li><span class="parameter">mode</span>
+         string
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "KeyPressedEventOpts"></a>
+    <strong>KeyPressedEventOpts</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+         'KeyPressed'
+        </li>
+        <li><span class="parameter">key</span>
+         string
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "NotificationReceivedEventOpts"></a>
+    <strong>NotificationReceivedEventOpts</strong>
+    </dt>
+    <dd>
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+         'NotificationReceived'
+        </li>
+        <li><span class="parameter">title</span>
+         string
+        </li>
+        <li><span class="parameter">message</span>
+         string
+        </li>
+        <li><span class="parameter">tag</span>
+         string
+        </li>
+        <li><span class="parameter">origin</span>
+         string
+        </li>
+        <li><span class="parameter">click</span>
+         fun():nil
+        </li>
+        <li><span class="parameter">show</span>
+         fun():nil
+        </li>
+        <li><span class="parameter">close</span>
+         fun():nil
         </li>
     </ul>
 

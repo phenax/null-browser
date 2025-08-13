@@ -187,10 +187,12 @@ end
 --- @param opts table                       Options
 --- @param opts.callback fun(opts:any):nil  Callback called when that event occurs
 ---
+--- @see WebEvents
+---
 --- @usage
 --- web.event.add_listener('UrlChanged', {
 ---   callback = function(opts)
----     print(opts.url, opts.tab, opts.win)
+---     print(opts.url, opts.view, opts.win)
 ---   end,
 --- })
 function web.event.add_listener(events, opts)

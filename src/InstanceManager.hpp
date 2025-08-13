@@ -41,6 +41,7 @@ private:
   bool is_server_mode = false;
 
   // TODO: On windows, \\.\pipe\null-browser
+  // TODO: Use path unique to app data
   const char *socket_path = "/tmp/null-browser-socket.sock";
 };
 

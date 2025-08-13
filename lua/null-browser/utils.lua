@@ -17,10 +17,38 @@ local inspector = require 'null-browser.inspect'
 --- @return string
 web.inspect = inspector.inspect
 
+--- Print a lua object to inspect
+--- @param value any
+function web.print(value)
+  print(web.inspect(value))
+end
+
 web.json = web.json or {}
 local json = require 'null-browser.json'
-web.json.encode = json.encode
-web.json.decode = json.decode
+
+--- Encodes lua object as json into a string
+--- @param obj any                Value to encode into json string
+--- @param opts table?            Options
+--- @param opts.indent boolean?   Whether to enable indentation (default: false)
+--- @return string
+web.json.encode = function(obj, opts)
+  opts = opts or {}
+  local state = { indent = opts.indent or false }
+  return tostring(json.encode(obj, state))
+end
+
+--- Decodes a string into a lua object
+--- @diagnostic disable-next-line: undefined-doc-param
+--- @param json_str string        Json string to decode
+--- @param opts table             Options
+--- @param opts.null any          What to use as null value (default: nil)
+--- @return any
+web.json.decode = function(json_str, opts)
+  opts = opts or {}
+  local value, _, err = json.decode(json_str, nil, opts.null)
+  if err then error(err) end
+  return value
+end
 
 --- Trim whitespace from start and end of a string
 --- @param str string

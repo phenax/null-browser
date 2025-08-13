@@ -46,6 +46,7 @@ check: fmt
 	clang-tidy --config-file=.clang-tidy ./src/**/*.{hpp,cpp}
 
 docs:
+	rm -rf ./docs/api;
 	# API reference pages
 	ldoc -p null-browser -t "Null browser api" \
 		--merge --ignore --lls \
