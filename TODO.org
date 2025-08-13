@@ -28,14 +28,15 @@
 - [ ] Zoom in/out/reset
 - [ ] Remove unwanted "async"-ness in lua calls
 - [ ] Api for enabling rpc api in view
+- [ ] Hide/show decoration api
+- [ ] Review all options and make sure they're passed correctly
 
 ** Bugs
-- [ ] Closing webview should close devtools window
-- [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
 - [ ] INVESTIGATE: Segfault on close sometimes
-- [ ] API's don't validate types. (invalid type conversion segfaults)
+- [ ] Closing webview should close devtools window
 - [ ] web.view apis in `-e` flag from "clients" (non-servers calls) don't work
-- [ ] Managing focus in decorations?
+- [ ] API's don't validate types. (invalid type conversion segfaults)
+- [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
 
 ** Next
 - [ ] View focus event (between decorations/views)

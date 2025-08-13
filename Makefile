@@ -48,15 +48,13 @@ check: fmt
 docs:
 	rm -rf ./docs/api;
 	# API reference pages
-	ldoc -p null-browser -t "Null browser api" \
+	ldoc -p null-browser -t "Null browser api" --style ./docs/assets/ \
 		--merge --ignore --lls \
-		--dir ./docs/api \
-		./lua/null-browser/
+		--dir ./docs/api ./lua/null-browser/
 	# Symbols json
 	ldoc --merge --ignore --lls \
 		./lua/null-browser/ \
-		--dir ./docs/api \
-		--filter ldoc_json_filter.lua;
+		--dir ./docs/api --filter ldoc_json_filter.lua;
 
 # appimage:
 #   nix bundle --bundler github:ralismark/nix-appimage
