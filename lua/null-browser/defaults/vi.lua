@@ -53,6 +53,11 @@ function M.initialize()
       end)
   end)
 
+  -- Copy current url to clipboard
+  web.keymap.set('n', 'yu', function()
+    require 'null-browser.extras.system'.copy_to_clipboard(web.view.current_url() or '')
+  end)
+
   -- Search
   web.keymap.set('n', '<c-f>', function()
     config.menu:input({ prompt = 'Search:', query = web.search.get_text() }, function(err, input)
@@ -131,12 +136,11 @@ function M.initialize()
 
   -- Update current url
   web.keymap.set('n', '<c-l>', function()
-    local views = web.view.list()
-    local view = views[web.view.current_index()];
-    if view == nil then return end
-    config.menu:select(config.history.list(), { prompt = 'Set url:', query = view.url }, function(err, result)
+    local url = web.view.current_url()
+    local view = web.view.current()
+    config.menu:select(config.history.list(), { prompt = 'Set url:', query = url or '' }, function(err, result)
       if err or not result then return end
-      web.view.set_url(web.utils.string_trim(result))
+      web.view.set_url(web.utils.string_trim(result), view)
     end)
   end)
 

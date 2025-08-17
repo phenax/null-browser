@@ -72,37 +72,24 @@ end
 function hints.action.open_in_new_view()
   web.view.run_js [[
     const match = _nullbrowser.hints.currentMatch;
-    if (match.elem?.href) {
-      window.open(match.elem.href)
-    } else {
-      match.elem?.click()
-    }
+    if (match.elem?.href) window.open(match.elem.href);
+    else match.elem?.click();
   ]]
 end
 
-function hints.action.open_in_view()
-  web.view.run_js [[
-    const match = _nullbrowser.hints.currentMatch;
-    if (match.elem?.href) {
-      location.href = match.elem.href
-    } else {
-      match.elem?.click()
-    }
-  ]]
+function hints.action.click()
+  web.view.run_js [[_nullbrowser.hints.currentMatch?.elem?.click?.();]]
 end
 
 function hints.action.focus()
   web.keymap.set_mode 'i'
-  web.view.run_js([[ _nullbrowser.hints.currentMatch?.elem?.focus?.(); ]])
+  web.view.run_js([[_nullbrowser.hints.currentMatch?.elem?.focus?.();]])
 end
 
 function hints.action.copy_link()
   web.view.run_js([[_nullbrowser.hints.currentMatch.elem?.href]], {
     on_result = function(url)
-      local pipe = io.popen('xclip -selection clipboard', 'w')
-      if not pipe then return end
-      pipe:write(url)
-      pipe:close()
+      require 'null-browser.extras.system'.copy_to_clipboard(url)
     end,
   })
 end

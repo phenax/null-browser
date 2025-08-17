@@ -22,6 +22,7 @@
 - [X] json encode/decode
 - [X] Fix path to symbols.json in web.help.get_items (use docs path)
 - [X] Document events and event opts
+- [ ] Element focus (input focus)
 - [ ] Update all api to use opts table pattern
 - [ ] web.keymap.configure_mode(modename, { passthrough = false })
 - [ ] Fullscreen
@@ -40,7 +41,6 @@
 
 ** Next
 - [ ] View focus event (between decorations/views)
-- [ ] Element focus (input focus)
 - [ ] User scripts (greasemonkey?)
 - [ ] User stylesheets (per site and global?)
 - [ ] Log stdout, errors and results from lua somewhere

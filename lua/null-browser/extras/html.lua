@@ -41,12 +41,11 @@ html.a = html.create_el('a')
 html.input = html.create_el('input')
 
 function html.escape_string(str)
-  str = str:gsub('&', '&amp;')
-  str = str:gsub('<', '&lt;')
-  str = str:gsub('>', '&gt;')
-  str = str:gsub('"', '&quot;')
-  str = str:gsub("'", '&apos;')
-  return str
+  return str:gsub('&', '&amp;')
+      :gsub('<', '&lt;')
+      :gsub('>', '&gt;')
+      :gsub('"', '&quot;')
+      :gsub("'", '&apos;')
 end
 
 return html

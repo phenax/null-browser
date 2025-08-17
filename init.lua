@@ -166,7 +166,7 @@ end)
 local hints = require 'null-browser.extras.hints'
 hints.init()
 web.keymap.set('n', 'f', function()
-  hints.start('a[href], button, [role="button"]', hints.action.open_in_view)
+  hints.start('a[href], button, [role="button"]', hints.action.click)
 end)
 web.keymap.set('n', '<s-f>', function()
   hints.start('a[href], button, [role="button"]', hints.action.open_in_new_view)

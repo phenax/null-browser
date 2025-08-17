@@ -74,6 +74,18 @@ function web.view.create(url) return __internals.view_create(url) end
 --- local view_id = web.view.current()
 function web.view.current() return __internals.view_current() end
 
+--- Get current url
+---
+--- @return string url Current view url
+---
+--- @usage
+--- local url = web.view.current_url()
+function web.view.current_url()
+  local views = web.view.list()
+  local view = views[web.view.current_index()];
+  return view and view.url
+end
+
 --- Get a list of views in the current window
 ---
 --- @return table views  List of views
