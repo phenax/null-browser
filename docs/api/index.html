@@ -69,7 +69,7 @@
 	<td class="summary">Get the current keymap mode</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.view.close">web.view.close (view_id)</a></td>
+	<td class="name" nowrap><a href="#web.view.close">web.view.close (opts)</a></td>
 	<td class="summary">Close view</td>
 	</tr>
 	<tr>
@@ -81,6 +81,10 @@
 	<td class="summary">Get current view id</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#web.view.current_url">web.view.current_url ()</a></td>
+	<td class="summary">Get current url</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#web.view.list">web.view.list ()</a></td>
 	<td class="summary">Get a list of views in the current window</td>
 	</tr>
@@ -89,7 +93,7 @@
 	<td class="summary">Select a view in current window</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.view.set_url">web.view.set_url (url, view_id)</a></td>
+	<td class="name" nowrap><a href="#web.view.set_url">web.view.set_url (url, opts)</a></td>
 	<td class="summary">Set url of a given view</td>
 	</tr>
 	<tr>
@@ -102,14 +106,14 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#web.view.reload">web.view.reload (opts)</a></td>
-	<td class="summary">Relaod a given view</td>
+	<td class="summary">Reload a given view</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#web.view.expose">web.view.expose (name, action, opts)</a></td>
 	<td class="summary">Expose a lua function inside a view (Only works with decorations)</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.view.open_devtools">web.view.open_devtools (view_id)</a></td>
+	<td class="name" nowrap><a href="#web.view.open_devtools">web.view.open_devtools (opts)</a></td>
 	<td class="summary">Open devtools window for the view</td>
 	</tr>
 	<tr>
@@ -129,19 +133,19 @@
 	<td class="summary">Get configuration value</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.history.back">web.history.back (count, view_id)</a></td>
+	<td class="name" nowrap><a href="#web.history.back">web.history.back (count, opts)</a></td>
 	<td class="summary">Go back in history for given view</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.history.forward">web.history.forward (count, view_id)</a></td>
+	<td class="name" nowrap><a href="#web.history.forward">web.history.forward (count, opts)</a></td>
 	<td class="summary">Go forward in history for given view</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.search.set_text">web.search.set_text (text, view_id)</a></td>
+	<td class="name" nowrap><a href="#web.search.set_text">web.search.set_text (text, opts)</a></td>
 	<td class="summary">Search text inside a view</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.search.reset">web.search.reset (view_id)</a></td>
+	<td class="name" nowrap><a href="#web.search.reset">web.search.reset (opts)</a></td>
 	<td class="summary">Reset searched text in a view (Same as web.search.set_text(''))</td>
 	</tr>
 	<tr>
@@ -149,23 +153,23 @@
 	<td class="summary">Get the last searched text</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.search.next">web.search.next (view_id)</a></td>
+	<td class="name" nowrap><a href="#web.search.next">web.search.next (opts)</a></td>
 	<td class="summary">Highlight next search term for the last searched text</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.search.previous">web.search.previous (view_id)</a></td>
+	<td class="name" nowrap><a href="#web.search.previous">web.search.previous (opts)</a></td>
 	<td class="summary">Highlight previous search term for the last searched text</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.view.scroll">web.view.scroll (deltax, deltay, view_id)</a></td>
+	<td class="name" nowrap><a href="#web.view.scroll">web.view.scroll (deltax, deltay, opts)</a></td>
 	<td class="summary">TODO: Document</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.view.scroll_to_top">web.view.scroll_to_top (view_id)</a></td>
+	<td class="name" nowrap><a href="#web.view.scroll_to_top">web.view.scroll_to_top (opts)</a></td>
 	<td class="summary">TODO: Document</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#web.view.scroll_to_bottom">web.view.scroll_to_bottom (view_id)</a></td>
+	<td class="name" nowrap><a href="#web.view.scroll_to_bottom">web.view.scroll_to_bottom (opts)</a></td>
 	<td class="summary">TODO: Document</td>
 	</tr>
 	<tr>
@@ -383,7 +387,7 @@
 </dd>
     <dt>
     <a name = "web.view.close"></a>
-    <strong>web.view.close (view_id)</strong>
+    <strong>web.view.close (opts)</strong>
     </dt>
     <dd>
     Close view
@@ -391,9 +395,12 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">view_id</span>
-        ?  number    View id to close
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?  View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -402,7 +409,7 @@
     <h3>Usage:</h3>
     <ul>
         <pre class="example">web.view.<span class="function-name">close</span>()  <span class="comment">-- Close current view in active window
-</span>web.view.<span class="function-name">close</span>(<span class="number">3</span>) <span class="comment">-- Close view with id 3</span></pre>
+</span>web.view.<span class="function-name">close</span>({ view = <span class="number">3</span> }) <span class="comment">-- Close view with id 3</span></pre>
     </ul>
 
 </dd>
@@ -452,6 +459,30 @@
     <h3>Usage:</h3>
     <ul>
         <pre class="example"><span class="keyword">local</span> view_id = web.view.<span class="function-name">current</span>()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "web.view.current_url"></a>
+    <strong>web.view.current_url ()</strong>
+    </dt>
+    <dd>
+    Get current url
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        Current view url
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> url = web.view.<span class="function-name">current_url</span>()</pre>
     </ul>
 
 </dd>
@@ -507,7 +538,7 @@
 </dd>
     <dt>
     <a name = "web.view.set_url"></a>
-    <strong>web.view.set_url (url, view_id)</strong>
+    <strong>web.view.set_url (url, opts)</strong>
     </dt>
     <dd>
     Set url of a given view
@@ -519,10 +550,12 @@
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          Url to open
         </li>
-        <li><span class="parameter">view_id</span>
-            <span class="types"><span class="type">number</span></span>
-         View id to select
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?  View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -531,7 +564,7 @@
     <h3>Usage:</h3>
     <ul>
         <pre class="example">web.view.<span class="function-name">set_url</span>(<span class="string">'https://foobar.com'</span>)
-web.view.<span class="function-name">set_url</span>(<span class="string">'https://foobar.com'</span>, <span class="number">3</span>) <span class="comment">-- Set url for view with id 3</span></pre>
+web.view.<span class="function-name">set_url</span>(<span class="string">'https://foobar.com'</span>, { view = <span class="number">3</span> }) <span class="comment">-- Set url for view with id 3</span></pre>
     </ul>
 
 </dd>
@@ -546,12 +579,12 @@ web.view.<span class="function-name">set_url</span>(<span class="string">'https:
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">html</span>
-              string   HTML string
+               string   HTML string
         </li>
-        <li><span class="parameter">opts</span>      table    Options
+        <li><span class="parameter">opts</span>?      table    Options
         <ul>
         <li><span class="parameter">view</span>
-         number   View id
+         number?   View id (default = 0)
         </li>
         </li></ul>
     </ul>
@@ -578,11 +611,17 @@ web.view.<span class="function-name">set_html</span>(<span class="string">'&lt;h
     <ul>
         <li><span class="parameter">js</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         HTML string
+         JS string
         </li>
-        <li><span class="parameter">opts</span>
-        ? RunJSOpts  Options
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?                 View id (default = 0)
         </li>
+        <li><span class="parameter">on_result</span>
+        ? fun(v: any): nil  Callback with serialized result of evaluation
+        </li>
+        </li></ul>
     </ul>
 
 
@@ -591,7 +630,12 @@ web.view.<span class="function-name">set_html</span>(<span class="string">'&lt;h
     <h3>Usage:</h3>
     <ul>
         <pre class="example">web.view.<span class="function-name">run_js</span>(<span class="string">'console.log(42)'</span>)
-web.view.<span class="function-name">run_js</span>(<span class="string">'console.log(42)'</span>, { view = <span class="number">3</span> }) <span class="comment">-- Set html for view with id 3</span></pre>
+web.view.<span class="function-name">run_js</span>(<span class="string">'console.log(42)'</span>, { view = <span class="number">3</span> }) <span class="comment">-- Set html for view with id 3
+</span>web.view.<span class="function-name">run_js</span>(<span class="string">'2 * 3'</span>, {
+  on_result = <span class="keyword">function</span>(result)
+    <span class="global">print</span>(result * <span class="number">7</span>)
+  <span class="keyword">end</span>,
+})</pre>
     </ul>
 
 </dd>
@@ -600,14 +644,17 @@ web.view.<span class="function-name">run_js</span>(<span class="string">'console
     <strong>web.view.reload (opts)</strong>
     </dt>
     <dd>
-    Relaod a given view
+    Reload a given view
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">opts</span>
-        ? ReloadOpts  Options
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?     View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -631,14 +678,17 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">name</span>
-            string             Func name
+            string           Func name
         </li>
         <li><span class="parameter">action</span>
-          fun(table):nil     Action to call when function is invoked in view
+          fun(table):nil   Action to call when function is invoked in view
         </li>
-        <li><span class="parameter">opts</span>
-            ExposeOpts?        Options
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?        View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -656,7 +706,7 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 </dd>
     <dt>
     <a name = "web.view.open_devtools"></a>
-    <strong>web.view.open_devtools (view_id)</strong>
+    <strong>web.view.open_devtools (opts)</strong>
     </dt>
     <dd>
     Open devtools window for the view
@@ -664,10 +714,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">view_id</span>
-            <span class="types"><span class="type">number</span></span>
-         Id of the view
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?        View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -809,7 +861,7 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 </dd>
     <dt>
     <a name = "web.history.back"></a>
-    <strong>web.history.back (count, view_id)</strong>
+    <strong>web.history.back (count, opts)</strong>
     </dt>
     <dd>
     Go back in history for given view
@@ -820,10 +872,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
         <li><span class="parameter">count</span>
            number?     Number of history items to go back in (default = 1)
         </li>
-        <li><span class="parameter">view_id</span>
-            <span class="types"><span class="type">number</span></span>
-         Id of the view
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?   View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -831,13 +885,13 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">web.history.<span class="function-name">back</span>(<span class="number">2</span>, <span class="number">3</span>) <span class="comment">-- Go back 2 history items for view id 3</span></pre>
+        <pre class="example">web.history.<span class="function-name">back</span>(<span class="number">2</span>, { view = <span class="number">3</span> }) <span class="comment">-- Go back 2 history items for view id 3</span></pre>
     </ul>
 
 </dd>
     <dt>
     <a name = "web.history.forward"></a>
-    <strong>web.history.forward (count, view_id)</strong>
+    <strong>web.history.forward (count, opts)</strong>
     </dt>
     <dd>
     Go forward in history for given view
@@ -848,10 +902,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
         <li><span class="parameter">count</span>
            number?     Number of history items to go forward in (default = 1)
         </li>
-        <li><span class="parameter">view_id</span>
-            <span class="types"><span class="type">number</span></span>
-         Id of the view
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?   View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -859,13 +915,13 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">web.history.<span class="function-name">forward</span>(<span class="number">2</span>, <span class="number">3</span>) <span class="comment">-- Go forward 2 history items for view id 3</span></pre>
+        <pre class="example">web.history.<span class="function-name">forward</span>(<span class="number">2</span>, { view = <span class="number">3</span> }) <span class="comment">-- Go forward 2 history items for view id 3</span></pre>
     </ul>
 
 </dd>
     <dt>
     <a name = "web.search.set_text"></a>
-    <strong>web.search.set_text (text, view_id)</strong>
+    <strong>web.search.set_text (text, opts)</strong>
     </dt>
     <dd>
     Search text inside a view
@@ -876,10 +932,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
         <li><span class="parameter">text</span>
             string?     Text to search
         </li>
-        <li><span class="parameter">view_id</span>
-            <span class="types"><span class="type">number</span></span>
-         Id of the view
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?   View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -888,13 +946,13 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
     <h3>Usage:</h3>
     <ul>
         <pre class="example">web.search.<span class="function-name">set_text</span>(<span class="string">'whatever'</span>) <span class="comment">-- Search in current view
-</span>web.search.<span class="function-name">set_text</span>(<span class="string">'whatever'</span>, <span class="number">5</span>) <span class="comment">-- Search in view id 5</span></pre>
+</span>web.search.<span class="function-name">set_text</span>(<span class="string">'whatever'</span>, { view = <span class="number">5</span> }) <span class="comment">-- Search in view id 5</span></pre>
     </ul>
 
 </dd>
     <dt>
     <a name = "web.search.reset"></a>
-    <strong>web.search.reset (view_id)</strong>
+    <strong>web.search.reset (opts)</strong>
     </dt>
     <dd>
     Reset searched text in a view (Same as web.search.set_text(''))
@@ -902,10 +960,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">view_id</span>
-            <span class="types"><span class="type">number</span></span>
-         Id of the view
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?   View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -914,7 +974,7 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
     <h3>Usage:</h3>
     <ul>
         <pre class="example">web.search.<span class="function-name">reset</span>() <span class="comment">-- Reset search state for current view
-</span>web.search.<span class="function-name">reset</span>(<span class="number">5</span>) <span class="comment">-- Reset search state for view id 5</span></pre>
+</span>web.search.<span class="function-name">reset</span>({ view = <span class="number">5</span> }) <span class="comment">-- Reset search state for view id 5</span></pre>
     </ul>
 
 </dd>
@@ -938,7 +998,7 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 </dd>
     <dt>
     <a name = "web.search.next"></a>
-    <strong>web.search.next (view_id)</strong>
+    <strong>web.search.next (opts)</strong>
     </dt>
     <dd>
     Highlight next search term for the last searched text
@@ -946,10 +1006,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">view_id</span>
-            <span class="types"><span class="type">number</span></span>
-         Id of the view
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?   View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -958,13 +1020,13 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
     <h3>Usage:</h3>
     <ul>
         <pre class="example">web.search.<span class="global">next</span>() <span class="comment">-- Next search result in current view
-</span>web.search.<span class="global">next</span>(<span class="number">5</span>) <span class="comment">-- Next search result in view id 5</span></pre>
+</span>web.search.<span class="global">next</span>({ view = <span class="number">5</span> }) <span class="comment">-- Next search result in view id 5</span></pre>
     </ul>
 
 </dd>
     <dt>
     <a name = "web.search.previous"></a>
-    <strong>web.search.previous (view_id)</strong>
+    <strong>web.search.previous (opts)</strong>
     </dt>
     <dd>
     Highlight previous search term for the last searched text
@@ -972,10 +1034,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">view_id</span>
-            <span class="types"><span class="type">number</span></span>
-         Id of the view
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?   View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -990,7 +1054,7 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 </dd>
     <dt>
     <a name = "web.view.scroll"></a>
-    <strong>web.view.scroll (deltax, deltay, view_id)</strong>
+    <strong>web.view.scroll (deltax, deltay, opts)</strong>
     </dt>
     <dd>
     TODO: Document
@@ -999,14 +1063,19 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">deltax</span>
+            <span class="types"><span class="type">number</span></span>
 
         </li>
         <li><span class="parameter">deltay</span>
+            <span class="types"><span class="type">number</span></span>
 
         </li>
-        <li><span class="parameter">view_id</span>
-
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?   View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -1016,7 +1085,7 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 </dd>
     <dt>
     <a name = "web.view.scroll_to_top"></a>
-    <strong>web.view.scroll_to_top (view_id)</strong>
+    <strong>web.view.scroll_to_top (opts)</strong>
     </dt>
     <dd>
     TODO: Document
@@ -1024,9 +1093,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">view_id</span>
-
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?   View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -1036,7 +1108,7 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 </dd>
     <dt>
     <a name = "web.view.scroll_to_bottom"></a>
-    <strong>web.view.scroll_to_bottom (view_id)</strong>
+    <strong>web.view.scroll_to_bottom (opts)</strong>
     </dt>
     <dd>
     TODO: Document
@@ -1044,9 +1116,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">view_id</span>
-
+        <li><span class="parameter">opts</span> Options
+        <ul>
+        <li><span class="parameter">view</span>
+         number?   View id (default = 0)
         </li>
+        </li></ul>
     </ul>
 
 
@@ -1063,6 +1138,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
 
 
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+        <string> help_items List of help item names
+    </ol>
 
 
 
@@ -1080,12 +1161,12 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
     <ul>
         <li><span class="parameter">item</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
+         Help item name
         </li>
-        <li><span class="parameter">opts</span>
+        <li><span class="parameter">opts</span> Options
         <ul>
         <li><span class="parameter">view</span>
-         number?
+         number?  View id (default = 0)
         </li>
         </li></ul>
     </ul>
@@ -1166,7 +1247,7 @@ web.view.<span class="function-name">reload</span>({ view = <span class="number"
         <li><span class="parameter">opts</span> Options
         <ul>
         <li><span class="parameter">null</span>
-         any          What to use as null value (default: nil)
+         any?          What to use as null value (default: nil)
         </li>
         </li></ul>
     </ul>

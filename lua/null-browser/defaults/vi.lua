@@ -8,7 +8,7 @@ local config = {
   transform_url_input = web.utils.string_trim,
 }
 
-function M.setup(opts)
+function M.configure(opts)
   config = web.utils.table_merge(config, opts)
 end
 
@@ -140,7 +140,7 @@ function M.initialize()
     local view = web.view.current()
     config.menu:select(config.history.list(), { prompt = 'Set url:', query = url or '' }, function(err, result)
       if err or not result then return end
-      web.view.set_url(web.utils.string_trim(result), view)
+      web.view.set_url(web.utils.string_trim(result), { view = view })
     end)
   end)
 

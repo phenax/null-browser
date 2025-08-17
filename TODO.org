@@ -23,7 +23,9 @@
 - [X] Fix path to symbols.json in web.help.get_items (use docs path)
 - [X] Document events and event opts
 - [ ] Element focus (input focus)
-- [ ] Update all api to use opts table pattern
+- [X] Update all api to use opts table pattern
+- [ ] Update internal apis to use table
+- [ ] Add win options for web.view.list / web.view.current / web.view.current_index /etc
 - [ ] web.keymap.configure_mode(modename, { passthrough = false })
 - [ ] Fullscreen
 - [ ] Zoom in/out/reset
@@ -31,6 +33,7 @@
 - [ ] Api for enabling rpc api in view
 - [ ] Hide/show decoration api
 - [ ] Review all options and make sure they're passed correctly
+- [ ] Delay in tabline module updating (shows outdated titles)
 
 ** Bugs
 - [ ] INVESTIGATE: Segfault on close sometimes
@@ -40,18 +43,18 @@
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes
 
 ** Next
-- [ ] View focus event (between decorations/views)
-- [ ] User scripts (greasemonkey?)
-- [ ] User stylesheets (per site and global?)
 - [ ] Log stdout, errors and results from lua somewhere
-- [ ] Move view to a different window (`web.view.move_to_window(view, win)`)
-- [ ] web.win.* apis (list, current_id)
-- [ ] Permission management (list/allow/deny) lua api
-- [ ] Granular updates in statusline plugin instead of set_html multiple times
+- [ ] User stylesheets (per site and global?)
+- [ ] View focus event (between decorations/views)
 - [ ] Use table for all internals api options?
+- [ ] User scripts (greasemonkey?)
+- [ ] web.win.* apis (list, current_id)
+- [ ] Move view to a different window (`web.view.move_to_window(view, win)`)
+- [ ] Permission management (list/allow/block) lua api
+- [ ] Granular updates in statusline plugin instead of set_html multiple times
 - [ ] Tests for window
 - [ ] More tests for stack
-- [ ] Tests for router
+- [ ] More tests for router
 - [ ] User data/profiles management
 - [ ] Create window with new profile
 - [ ] Configuration validation

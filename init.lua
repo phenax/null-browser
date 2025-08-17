@@ -1,6 +1,6 @@
 print('hello starting up...')
 
-web.opts.downloads_dir = os.getenv('HOME') .. '/Downloads/firefox'
+web.opts.downloads_dir = os.getenv('HOME') .. '/Downloads'
 web.opts.permissions_persistance = 'never'
 web.opts.user_agent =
 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'
@@ -11,7 +11,7 @@ local history = require 'null-browser.extras.history'
 history.attach_hooks()
 
 local search_engines = require 'null-browser.extras.search-engines'
-search_engines.urls['ld'] = 'https://lite.duckduckgo.com/?q={}'
+search_engines.urls['ld'] = 'https://lite.duckduckgo.com/lite/?q={}'
 search_engines.urls['g'] = 'https://github.com/{}'
 search_engines.urls['y'] = 'https://youtube.com/results?search_query={}'
 search_engines.urls['r'] = 'https://reddit.com/r/{}'
@@ -21,7 +21,7 @@ local menu = Dmenu:new {
   select_last_line = false,
   args = { '-r' },
   transform_output = function(selections)
-    if type(selections) ~= "table" then return selections end
+    if type(selections) ~= 'table' then return selections end
     if #selections <= 1 then return selections[1] end
     return selections[#selections - 1]
   end,
@@ -31,7 +31,7 @@ local menu = Dmenu:new {
   -- args = { 'input', '--layout=default', '--print-query' },
 }
 
-require 'null-browser.defaults.vi'.setup {
+require 'null-browser.defaults.vi'.configure {
   menu = menu,
   history = history,
   transform_url_input = search_engines.transform_url_input,

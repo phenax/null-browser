@@ -50,12 +50,13 @@ function web.keymap.get_mode() return __internals.keymap_get_mode() end
 
 --- Close view
 ---
---- @param view_id?  number    View id to close
+--- @param opts table?        Options
+--- @param opts.view number?  View id (default = 0)
 ---
 --- @usage
 --- web.view.close()  -- Close current view in active window
---- web.view.close(3) -- Close view with id 3
-function web.view.close(view_id) return __internals.view_close(view_id) end
+--- web.view.close({ view = 3 }) -- Close view with id 3
+function web.view.close(opts) return __internals.view_close((opts or {}).view) end
 
 --- Create a new view with a url
 ---
@@ -105,45 +106,50 @@ function web.view.select(view_id) return __internals.view_select(view_id) end
 
 --- Set url of a given view
 ---
---- @param url string      Url to open
---- @param view_id number?  View id to select
+--- @param url string         Url to open
+--- @param opts table?        Options
+--- @param opts.view number?  View id (default = 0)
 ---
 --- @usage
 --- web.view.set_url('https://foobar.com')
---- web.view.set_url('https://foobar.com', 3) -- Set url for view with id 3
-function web.view.set_url(url, view_id) return __internals.view_set_url(url, view_id) end
+--- web.view.set_url('https://foobar.com', { view = 3 }) -- Set url for view with id 3
+function web.view.set_url(url, opts) return __internals.view_set_url(url, (opts or {}).view) end
 
 --- Set html inside the page for a given view
 ---
---- @param html      string   HTML string
---- @param opts      table    Options
---- @param opts.view number   View id
+--- @param html       string   HTML string
+--- @param opts?      table    Options
+--- @param opts.view number?   View id (default = 0)
 ---
 --- @usage
 --- web.view.set_html('<h2>HJello</h2>')
 --- web.view.set_html('<h2>HJello</h2>', { view = 3 }) -- Set html for view with id 3
 function web.view.set_html(html, opts) return __internals.view_set_html(html, (opts or {}).view) end
 
---- @class RunJSOpts
---- @field view? number View id
---- @field on_result fun(v: any): nil Callback when
-
 --- Run js in a view
 ---
---- @param js string        HTML string
---- @param opts? RunJSOpts  Options
+--- @param js string                         JS string
+--- @param opts table?                       Options
+--- @param opts.view number?                 View id (default = 0)
+--- @param opts.on_result? fun(v: any): nil  Callback with serialized result of evaluation
 ---
 --- @usage
 --- web.view.run_js('console.log(42)')
 --- web.view.run_js('console.log(42)', { view = 3 }) -- Set html for view with id 3
+--- web.view.run_js('2 * 3', {
+---   on_result = function(result)
+---     print(result * 7)
+---   end,
+--- })
 function web.view.run_js(js, opts) return __internals.view_run_js(js, opts or {}) end
 
 --- @class ReloadOpts
 --- @field view? number View id
 
---- Relaod a given view
+--- Reload a given view
 ---
---- @param opts? ReloadOpts  Options
+--- @param opts table?           Options
+--- @param opts.view number?     View id (default = 0)
 ---
 --- @usage
 --- web.view.reload()
@@ -151,13 +157,14 @@ function web.view.run_js(js, opts) return __internals.view_run_js(js, opts or {}
 function web.view.reload(opts) return __internals.view_reload((opts or {}).view) end
 
 --- @class ExposeOpts
---- @field view? number View id
+--- @field view? number View id (default = 0)
 
 --- Expose a lua function inside a view (Only works with decorations)
 ---
---- @param name    string             Func name
---- @param action  fun(table):nil     Action to call when function is invoked in view
---- @param opts    ExposeOpts?        Options
+--- @param name    string           Func name
+--- @param action  fun(table):nil   Action to call when function is invoked in view
+--- @param opts table?              Options
+--- @param opts.view number?        View id (default = 0)
 ---
 --- @usage
 --- web.view.expose('tabSelect', function(args)
@@ -171,12 +178,13 @@ function web.view.expose(name, action, opts) return __internals.view_expose(name
 
 --- Open devtools window for the view
 ---
---- @param view_id number?    Id of the view
+--- @param opts table?              Options
+--- @param opts.view number?        View id (default = 0)
 ---
 --- @usage
 --- web.view.open_devtools() -- Open devtools window for current view
 --- web.view.open_devtools(5) -- Open devtools window for view id 5
-function web.view.open_devtools(view_id) return __internals.view_open_devtools(view_id) end
+function web.view.open_devtools(opts) return __internals.view_open_devtools((opts or {}).view) end
 
 --- Get current view index
 ---
@@ -195,6 +203,7 @@ function web.view.current_index()
 end
 
 --- Listen to events from the browser
+---
 --- @param events string|table              Event or events to listen to
 --- @param opts table                       Options
 --- @param opts.callback fun(opts:any):nil  Callback called when that event occurs
@@ -265,39 +274,43 @@ web.opts = setmetatable({}, {
 --- Go back in history for given view
 ---
 --- @param count   number?     Number of history items to go back in (default = 1)
---- @param view_id number?   Id of the view
+--- @param opts table?         Options
+--- @param opts.view number?   View id (default = 0)
 ---
 --- @usage
---- web.history.back(2, 3) -- Go back 2 history items for view id 3
-function web.history.back(count, view_id) return __internals.history_back(count, view_id) end
+--- web.history.back(2, { view = 3 }) -- Go back 2 history items for view id 3
+function web.history.back(count, opts) return __internals.history_back(count, (opts or {}).view) end
 
 --- Go forward in history for given view
 ---
 --- @param count   number?     Number of history items to go forward in (default = 1)
---- @param view_id number?   Id of the view
+--- @param opts table?         Options
+--- @param opts.view number?   View id (default = 0)
 ---
 --- @usage
---- web.history.forward(2, 3) -- Go forward 2 history items for view id 3
-function web.history.forward(count, view_id) return __internals.history_forward(count, view_id) end
+--- web.history.forward(2, { view = 3 }) -- Go forward 2 history items for view id 3
+function web.history.forward(count, opts) return __internals.history_forward(count, (opts or {}).view) end
 
 --- Search text inside a view
 ---
 --- @param text    string?     Text to search
---- @param view_id number?    Id of the view
+--- @param opts table?         Options
+--- @param opts.view number?   View id (default = 0)
 ---
 --- @usage
 --- web.search.set_text('whatever') -- Search in current view
---- web.search.set_text('whatever', 5) -- Search in view id 5
-function web.search.set_text(text, view_id) return __internals.search_set_text(text, view_id) end
+--- web.search.set_text('whatever', { view = 5 }) -- Search in view id 5
+function web.search.set_text(text, opts) return __internals.search_set_text(text, (opts or {}).view) end
 
 --- Reset searched text in a view (Same as web.search.set_text(''))
 ---
---- @param view_id number?    Id of the view
+--- @param opts table?         Options
+--- @param opts.view number?   View id (default = 0)
 ---
 --- @usage
 --- web.search.reset() -- Reset search state for current view
---- web.search.reset(5) -- Reset search state for view id 5
-function web.search.reset(view_id) return __internals.search_set_text('', view_id) end
+--- web.search.reset({ view = 5 }) -- Reset search state for view id 5
+function web.search.reset(opts) return __internals.search_set_text('', (opts or {}).view) end
 
 --- Get the last searched text
 ---
@@ -307,38 +320,48 @@ function web.search.get_text() return __internals.search_get_text() end
 
 --- Highlight next search term for the last searched text
 ---
---- @param view_id number?    Id of the view
+--- @param opts table?         Options
+--- @param opts.view number?   View id (default = 0)
 ---
 --- @usage
 --- web.search.next() -- Next search result in current view
---- web.search.next(5) -- Next search result in view id 5
-function web.search.next(view_id) return __internals.search_next(view_id) end
+--- web.search.next({ view = 5 }) -- Next search result in view id 5
+function web.search.next(opts) return __internals.search_next((opts or {}).view) end
 
 --- Highlight previous search term for the last searched text
 ---
---- @param view_id number?    Id of the view
+--- @param opts table?         Options
+--- @param opts.view number?   View id (default = 0)
 ---
 --- @usage
 --- web.search.previous() -- Previous search result in current view
 --- web.search.previous(5) -- Previous search result in view id 5
-function web.search.previous(view_id) return __internals.search_previous(view_id) end
+function web.search.previous(opts) return __internals.search_previous((opts or {}).view) end
 
 --- TODO: Document
-function web.view.scroll(deltax, deltay, view_id) return __internals.view_scroll(deltax, deltay, view_id) end
+--- @param deltax number
+--- @param deltay number
+--- @param opts table?         Options
+--- @param opts.view number?   View id (default = 0)
+function web.view.scroll(deltax, deltay, opts) return __internals.view_scroll(deltax, deltay, (opts or {}).view) end
 
 --- TODO: Document
-function web.view.scroll_to_top(view_id) return __internals.view_scroll_to_top(view_id) end
+--- @param opts table?         Options
+--- @param opts.view number?   View id (default = 0)
+function web.view.scroll_to_top(opts) return __internals.view_scroll_to_top((opts or {}).view) end
 
 --- TODO: Document
-function web.view.scroll_to_bottom(view_id) return __internals.view_scroll_to_bottom(view_id) end
+--- @param opts table?         Options
+--- @param opts.view number?   View id (default = 0)
+function web.view.scroll_to_bottom(opts) return __internals.view_scroll_to_bottom((opts or {}).view) end
 
 --- Maps to values defined in ./src/widgets/Decorations.hpp
 local DecorationType = { top = 1, bottom = 2, left = 3, right = 4 }
 
---- @class DecorationOpts
+--- @table DecorationOpts
 --- @field win? number
 
---- @class Decoration
+--- @table Decoration
 --- @field type fun(): 'left'|'right'|'top'|'bottom'
 --- @field enable fun(opts?: DecorationOpts): nil
 --- @field disable fun(opts?: DecorationOpts): nil
@@ -376,6 +399,7 @@ web.decorations.left = create_decoration_api('left')
 web.decorations.right = create_decoration_api('right')
 
 --- Get a list of items for help
+--- @return table<string> help_items List of help item names
 function web.help.get_items()
   local symbols_json = web.opts.null_docs_dir .. '/api/symbols.json'
   local file, _ = io.open(symbols_json, 'r')
@@ -388,14 +412,13 @@ end
 
 --- Open help docs for a given item
 ---
---- @param item string?
---- @param opts table?
---- @param opts.view number?
+--- @param item string? Help item name
+--- @param opts table? Options
+--- @param opts.view number?  View id (default = 0)
 function web.help.show(item, opts)
-  opts = opts or {}
   local url = 'null://docs/api/index.html#' .. (item or '')
-  if opts.view ~= nil then
-    web.view.set_url(url, opts.view)
+  if opts and opts.view ~= nil then
+    web.view.set_url(url, opts)
   else
     web.view.create(url)
   end
