@@ -160,8 +160,6 @@ void WindowActionRouter::add_window(BrowserWindow *window) {
           &WindowActionRouter::new_window_requested);
 }
 
-const WindowMap &WindowActionRouter::windows() { return window_map; }
-
 void WindowActionRouter::add_keymap(const QString &mode_string, const QString &keyseq,
                                     std::function<void()> action) {
   auto &keymap_evaluator = KeymapEvaluator::instance();
@@ -199,20 +197,31 @@ std::optional<WebViewId> WindowActionRouter::fetch_get_decoration_view_id(Decora
 }
 
 std::vector<BrowserWindow *>
-WindowActionRouter::get_relevant_windows(std::optional<WindowId> win_id) {
+WindowActionRouter::get_relevant_windows(std::optional<WindowId> win_id,
+                                         std::optional<WebViewId> view_id) {
   const std::lock_guard<std::mutex> lock(window_map_mutex);
   std::vector<BrowserWindow *> windows;
 
   if (!win_id.has_value()) {
-    for (auto &win_pair : window_map)
-      windows.push_back(win_pair.second);
+    for (auto &win_pair : window_map) {
+      // TODO: If view is 0, use active window
+      if (!view_id.has_value() || win_pair.second->has_webview(view_id.value())) {
+        windows.push_back(win_pair.second);
+      }
+    }
   } else if (win_id.value() == 0) {
     for (auto &win_pair : window_map) {
-      if (win_pair.second->isActiveWindow())
-        windows.push_back(win_pair.second);
+      if (win_pair.second->isActiveWindow()) {
+        if (!view_id.has_value() || win_pair.second->has_webview(view_id.value())) {
+          windows.push_back(win_pair.second);
+        }
+      }
     }
   } else if (win_id.value() > 0 && window_map.contains(win_id.value())) {
-    windows.push_back(window_map.at(win_id.value()));
+    auto *win = window_map.at(win_id.value());
+    if (!view_id.has_value() || win->has_webview(view_id.value())) {
+      windows.push_back(win);
+    }
   }
 
   return windows;

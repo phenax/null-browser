@@ -1,6 +1,8 @@
 #include <QtTest/QtTest>
 #include <QtTest/qtestcase.h>
 #include <cstdio>
+#include <qmainwindow.h>
+#include <qtestsupport_widgets.h>
 
 #include "LuaRuntime.hpp"
 
@@ -64,4 +66,10 @@ bool wait_for_lua_to_be_true(QString lua_code) {
     evaluation_completed_spy.wait();
     return evaluation_completed_spy.first().first().toBool();
   });
+}
+
+void activate_window(QMainWindow *win) {
+  win->show();
+  QVERIFY(QTest::qWaitForWindowExposed(win));
+  QTRY_VERIFY(win->isActiveWindow());
 }

@@ -3,6 +3,7 @@
 #include <QtTest/QtTest>
 #include <QtTest/qtestcase.h>
 #include <cstdio>
+#include <qmainwindow.h>
 
 #define NOT !
 
@@ -50,3 +51,4 @@ int run_lua_tests();
   };
 
 bool wait_for_lua_to_be_true(QString lua_code);
+void activate_window(QMainWindow *win);

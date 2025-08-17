@@ -34,7 +34,7 @@ public:
   void initialize(Configuration *config);
 
   void add_window(BrowserWindow *window);
-  const WindowMap &windows();
+  const WindowMap &windows() { return window_map; }
 
   WebViewId fetch_current_view_id(WindowId win_id = 0);
   QList<WebViewData> fetch_webview_data_list(WindowId win_id = 0);
@@ -49,12 +49,14 @@ public:
   DELEGATE(&event_queue, dispatch_event, dispatch_event)
   DELEGATE(&event_queue, register_event, register_event)
 
-private:
+protected:
   WindowActionRouter() = default;
 
   void add_keymap(const QString &mode_string, const QString &keyseq, std::function<void()> action);
   void find_current_search_text(WebViewId webview_id, bool forward);
-  std::vector<BrowserWindow *> get_relevant_windows(std::optional<WindowId> win_id);
+  std::vector<BrowserWindow *>
+  get_relevant_windows(std::optional<WindowId> win_id = std::nullopt,
+                       std::optional<WebViewId> view_id = std::nullopt);
 
 signals:
   void new_window_requested(const QUrl &url);
