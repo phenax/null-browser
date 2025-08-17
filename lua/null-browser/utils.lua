@@ -58,7 +58,7 @@ function web.utils.string_trim(str)
   return res
 end
 
---- Merge multiple tables
+--- Merge multiple tables into the first table
 --- @param tbl table
 --- @return table
 function web.utils.table_merge(tbl, ...)

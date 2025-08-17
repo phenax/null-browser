@@ -11,6 +11,7 @@ function Dmenu:new(opts)
     prompt = nil,
     query = nil,
     select_last_line = true,
+    call_on_input = false,
     transform_output = nil,
   }
   local obj = {}
@@ -39,12 +40,10 @@ function Dmenu:prepare_options(opts)
     table.insert(args, options.query)
   end
 
-  return {
-    command = options.command,
+  return web.utils.table_merge({}, options, {
     args = args,
-    select_last_line = options.select_last_line,
     transform_output = options.transform_output or function(s) return s end,
-  }
+  })
 end
 
 function Dmenu:select(list, opts, callback)
@@ -63,14 +62,18 @@ function Dmenu:select(list, opts, callback)
 
     local result = options.transform_output(selection)
     if code == 0 then
-      callback(nil, result)
+      callback(nil, result, true)
     else
-      callback('[dmenu] Exit with status code: ' .. code, result)
+      callback('[dmenu] Exit with status code: ' .. code, result, true)
     end
   end)
 
   web.uv.read_start(stdout, function(_, data)
     if data then
+      if options.call_on_input then
+        callback(nil, data, false)
+      end
+
       if options.select_last_line then
         selection = data
       else

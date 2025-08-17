@@ -60,9 +60,13 @@ function M.initialize()
 
   -- Search
   web.keymap.set('n', '<c-f>', function()
-    config.menu:input({ prompt = 'Search:', query = web.search.get_text() }, function(err, input)
-      if err then return end
-      web.search.set_text(input)
+    local view = web.view.current()
+    config.menu:input({ prompt = 'Search:', call_on_input = true, query = web.search.get_text() }, function(err, input)
+      if err then
+        web.search.set_text('', { view = view })
+      else
+        web.search.set_text(input, { view = view })
+      end
     end)
   end)
   web.keymap.set('n', '<esc>', function() web.search.reset() end)
