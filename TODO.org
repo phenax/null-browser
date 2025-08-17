@@ -26,6 +26,7 @@
 - [X] Set search text as the user is typing (dmenu -r)
 - [X] Update all api to use opts table options/filters pattern
 - [ ] Element focus (input focus)
+- [ ] Prevent scroll when finder is active
 - [ ] Add win options for web.view.list / web.view.current / web.view.current_index /etc
 - [ ] web.keymap.configure_mode(modename, { passthrough = false })
 - [ ] Fullscreen
