@@ -24,6 +24,11 @@ void WebView::open_devtools() {
     devtools_window = nullptr;
   });
 
+  connect(this, &WebView::destroyed, this, [this]() {
+    devtools_window->deleteLater();
+    devtools_window = nullptr;
+  });
+
   page()->setDevToolsPage(devtools_window->page());
 }
 

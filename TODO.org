@@ -26,20 +26,23 @@
 - [X] Set search text as the user is typing (dmenu -r)
 - [X] Update all api to use opts table options/filters pattern
 - [ ] Element focus (input focus)
-- [ ] Prevent scroll when finder is active
+- [ ] Prevent scroll when hints is active
 - [ ] Add win options for web.view.list / web.view.current / web.view.current_index /etc
 - [ ] web.keymap.configure_mode(modename, { passthrough = false })
 - [ ] Fullscreen
-- [ ] Zoom in/out/reset
-- [ ] Remove unwanted "async"-ness in lua calls
 - [ ] Api for enabling rpc api in view
 - [ ] Hide/show decoration api
 - [ ] Review all options and make sure they're passed correctly
 - [ ] Delay in tabline module updating (shows outdated titles)
+- [ ] Look into removing unwanted "async"-ness in lua calls
+- [ ] Zoom in/out/reset
+- [ ] Clearing event handlers (auto groups?)
 
 ** Bugs
+- [X] Closing webview should close devtools window
 - [ ] INVESTIGATE: Segfault on close sometimes
-- [ ] Closing webview should close devtools window
+- [ ] Glitchy find/hints mode (async problem)
+- [ ] Statusline mode doesnt update when a different window updates mode
 - [ ] web.view apis in `-e` flag from "clients" (non-servers calls) don't work
 - [ ] API's don't validate types. (invalid type conversion segfaults)
 - [ ] INVESTIGATE: Check why urlchanged doesnt fire for first url open sometimes

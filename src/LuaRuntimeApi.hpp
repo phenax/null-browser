@@ -134,6 +134,7 @@ int lua_api_keymap_set(lua_State *state) {
 
 int lua_api_view_current(lua_State *state) {
   auto &router = WindowActionRouter::instance();
+  // TODO: get win id param
   auto view_id = router.fetch_current_view_id();
   lua_pushinteger(state, view_id);
   return 1;
@@ -141,6 +142,7 @@ int lua_api_view_current(lua_State *state) {
 
 int lua_view_list(lua_State *state) {
   auto &router = WindowActionRouter::instance();
+  // TODO: get win id param
   auto views = router.fetch_webview_data_list();
   lua_newtable(state);
 
